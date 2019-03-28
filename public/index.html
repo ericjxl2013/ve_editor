@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<title>VeRyEngine 编辑器</title>
+		<link rel="icon" href="favicon.ico" />
+
+		<!--For canvas/code separator-->
+		<script src="js/libs/split.js"></script>
+
+		<!-- Babylon.js -->
+		<script src="js/libs/pep.min.js"></script>
+		<script src="js/libs/dat.gui.min.js"></script>
+		<script src="js/online/ammo.js"></script>
+		<script src="js/online/cannon.js"></script>
+		<script src="js/online/Oimo.js"></script>
+		<script src="js/online/gltf_validator.js"></script>
+		<script src="js/online/earcut.min.js"></script>
+		<script src="js/online/babylon.js"></script>
+		<script src="js/online/babylon.inspector.bundle.js"></script>
+		<script src="js/online/babylonjs.materials.min.js"></script>
+		<script src="js/online/babylonjs.proceduralTextures.min.js"></script>
+		<script src="js/online/babylonjs.postProcess.min.js"></script>
+		<script src="js/online/babylonjs.loaders.min.js"></script>
+		<script src="js/online/babylonjs.serializers.min.js"></script>
+		<script src="js/online/babylon.gui.min.js"></script>
+
+		<!-- HandsonTable -->
+		<script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
+		<link
+			href="node_modules/handsontable/dist/handsontable.full.min.css"
+			rel="stylesheet"
+			media="screen"
+		/>
+
+		<!-- axios -->
+		<script src="js/online/axios.min.js"></script>
+
+		<!-- CSS -->
+		<link href="css/index.css" rel="stylesheet" />
+
+		<style>
+			html,
+			body {
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+
+			#renderCanvas {
+				width: 100%;
+				height: 100%;
+				touch-action: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="navbar navBar1600">
+			<div class="title">
+				VeRyEngine 编辑器
+			</div>
+			<div class="version" id="mainTitle">
+				v 0.0.1
+			</div>
+
+			<div class="category">
+				<div class="button run" id="runButton1600">
+					运行
+					<i class="fa fa-play" aria-hidden="true"></i>
+				</div>
+			</div>
+
+			<div class="category">
+				<div class="button" id="newButton1600">
+					设置
+					<i class="fa fa-file" aria-hidden="true"></i>
+				</div>
+				<div class="button" id="saveButton1600">
+					保存
+					<i class="fa fa-floppy-o" aria-hidden="true"></i>
+				</div>
+				<div class="button removeOnPhone" id="zipButton1600">
+					发布
+					<i class="fa fa-download" aria-hidden="true"></i>
+				</div>
+				<div class="button removeOnPhone" id="clearButton1600">
+					清除
+					<i class="fa fa-trash" aria-hidden="true"></i>
+				</div>
+			</div>
+
+			<!-- <div class="category">
+				<div class="button" id="saveButton1600">
+					Save
+					<i class="fa fa-floppy-o" aria-hidden="true"></i>
+				</div>
+				<div class="button removeOnPhone" id="zipButton1600">
+					Zip
+					<i class="fa fa-download" aria-hidden="true"></i>
+				</div>
+			</div> -->
+
+			<!-- <div class="category">
+				<div class="button select">
+					Settings
+					<div class="toDisplay">
+						<div class="option subSelect">
+							Theme
+							<i
+								class="fa fa-chevron-right"
+								aria-hidden="true"
+							></i>
+							<div class="toDisplaySub">
+								<div class="option" id="darkTheme1600">
+									Dark
+								</div>
+								<div class="option" id="lightTheme1600">
+									Light
+								</div>
+							</div>
+						</div>
+						<div class="option subSelect">
+							<span id="currentFontSize1600">Font: 14</span>
+							<i
+								class="fa fa-chevron-right"
+								aria-hidden="true"
+							></i>
+							<div class="toDisplaySub">
+								<div class="option" onclick="setFontSize(12);">
+									12
+								</div>
+								<div class="option" onclick="setFontSize(14);">
+									14
+								</div>
+								<div class="option" onclick="setFontSize(16);">
+									16
+								</div>
+								<div class="option" onclick="setFontSize(18);">
+									18
+								</div>
+								<div class="option" onclick="setFontSize(20);">
+									20
+								</div>
+								<div class="option" onclick="setFontSize(22);">
+									22
+								</div>
+							</div>
+						</div>
+						<div class="option" id="safemodeToggle1600">
+							Safe mode
+							<i class="far fa-square" aria-hidden="true"></i>
+						</div>
+						<div class="option checked" id="editorButton1600">
+							Editor
+							<i
+								class="fa fa-check-square"
+								aria-hidden="true"
+							></i>
+						</div>
+						<div class="option" id="fullscreenButton1600">
+							Fullscreen
+						</div>
+						<div class="option" id="editorFullscreenButton1600">
+							Editor Fullscreen
+						</div>
+						<div class="option" id="formatButton1600">
+							Format code
+						</div>
+						<div class="option" id="minimapToggle1600">
+							Minimap
+							<i class="far fa-square" aria-hidden="true"></i>
+						</div>
+					</div>
+				</div>
+
+				<div class="button uncheck" id="debugButton1600">Inspector</div>
+				<div class="button" id="metadataButton1600">Metadata</div>
+			</div>
+
+			<div class="category right">
+				<div class="button select">
+					<span id="currentVersion1600">Version: Latest</span>
+					<div class="toDisplay">
+						<div class="option" onclick="setVersion('latest');">
+							Latest
+						</div>
+						<div class="option" onclick="setVersion('stable');">
+							Stable
+						</div>
+					</div>
+				</div>
+				<div class="button select">
+					<span class="examplesButton">Examples</span>
+				</div>
+			</div> -->
+		</div>
+
+		<div class="wrapper">
+			<!-- <div id="jsEditor"></div> -->
+			<div class="split" id="VeryTable"></div>
+			<div class="split" id="canvasZone">
+				<canvas touch-action="none" id="renderCanvas"></canvas>
+			</div>
+		</div>
+
+		<div id="errorZone"></div>
+
+		<span class="label" id="fpsLabel">FPS</span>
+
+		<div class="navbarBottom">
+			<div id="statusBar"></div>
+			<div class="links">
+				<!-- <div class="link">
+					<a target="_new" href="https://www.netlify.com/"
+						>Deployed by Netlify</a
+					>
+				</div>
+				<div class="link">
+					<a target="_new" href="https://forum.babylonjs.com/"
+						>Forum</a
+					>
+				</div> -->
+				<div class="link">
+					<a target="_new" href="https://www.babylonjs.com/sandbox"
+						>模型预览</a
+					>
+				</div>
+				<div class="link">
+					<a target="_new" href="https://doc.babylonjs.com"
+						>开发文档</a
+					>
+				</div>
+				<div class="link">
+					<a target="_new" href="https://doc.babylonjs.com/playground"
+						>资源搜索</a
+					>
+				</div>
+			</div>
+		</div>
+
+		<script src="js/very/table.js"></script>
+		<script src="js/very/very2.js"></script>
+	</body>
+</html>
