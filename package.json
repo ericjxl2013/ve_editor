@@ -4,6 +4,7 @@
   "description": "VeryEngine Editor based on Babylon.js Playground",
   "main": "app.js",
   "dependencies": {
+    "babylonjs": "^3.3.0",
     "child_process": "^1.0.2",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
@@ -11,10 +12,27 @@
     "koa-send": "^5.0.0"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.12.3"
+    "@types/chai": "^4.1.7",
+    "@types/handsontable": "^0.35.0",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^11.13.4",
+    "browserify": "^16.2.3",
+    "chai": "^4.2.0",
+    "gulp": "^4.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^5.0.1",
+    "gulp-uglify": "^3.0.2",
+    "gulp-util": "^3.0.8",
+    "mocha": "^6.1.2",
+    "ts-node": "^8.0.3",
+    "tsify": "^4.0.1",
+    "typescript": "^3.4.3",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0",
+    "watchify": "^3.11.1"
   },
   "scripts": {
-    "test": "dev"
+    "test": "./node_modules/.bin/mocha -r ./node_modules/ts-node/register src/__test__/**/*.ts"
   },
   "author": "Eric.J",
   "license": "ISC"

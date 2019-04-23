@@ -1,149 +1,162 @@
 (function() {
-	//
-	var splitInstance = Split(['#VeryTable', '#canvasZone'], {
-		onDragEnd: function() {
-			// 表格重新渲染
-			hot1.render();
-		}
-	});
+  //
+  var splitInstance = Split(["#VeryTable", "#canvasZone"], {
+    onDragEnd: function() {
+      // 表格重新渲染
+      hot1.render();
+    }
+  });
 
-	var elementToTheme = [
-		'.wrapper .gutter',
-		'.wrapper #jsEditor',
-		'.navbar',
-		'.navbar .select .toDisplay .option',
-		'.navbar .select .toDisplayBig',
-		'.navbar .select .toDisplayBig a',
-		'.navbar .select .toDisplayBig ul li',
-		'.navbarBottom',
-		'.navbarBottom .links .link'
-	];
+  var elementToTheme = [
+    ".wrapper .gutter",
+    ".wrapper #jsEditor",
+    ".navbar",
+    ".navbar .select .toDisplay .option",
+    ".navbar .select .toDisplayBig",
+    ".navbar .select .toDisplayBig a",
+    ".navbar .select .toDisplayBig ul li",
+    ".navbarBottom",
+    ".navbarBottom .links .link"
+  ];
 
-	// console.log(hot1);
-	//showError('当前浏览器不支持WebGL，请更换其他浏览器使用本引擎！', null);
+  // console.log(hot1);
+  //showError('当前浏览器不支持WebGL，请更换其他浏览器使用本引擎！', null);
 })();
 
 function showError(errorMessage, errorEvent) {
-	var errorContent =
-		'<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button>';
-	if (errorEvent) {
-		var regEx = /\(.+:(\d+):(\d+)\)\n/g;
+  var errorContent =
+    '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button>';
+  if (errorEvent) {
+    var regEx = /\(.+:(\d+):(\d+)\)\n/g;
 
-		var match = regEx.exec(errorEvent.stack);
-		if (match) {
-			errorContent += 'Line ';
-			var lineNumber = match[1];
-			var columnNumber = match[2];
+    var match = regEx.exec(errorEvent.stack);
+    if (match) {
+      errorContent += "Line ";
+      var lineNumber = match[1];
+      var columnNumber = match[2];
 
-			errorContent += lineNumber + ':' + columnNumber + ' - ';
-		}
-	}
+      errorContent += lineNumber + ":" + columnNumber + " - ";
+    }
+  }
 
-	errorContent += errorMessage + '</div>';
+  errorContent += errorMessage + "</div>";
 
-	document.getElementById('errorZone').style.display = 'block';
-	document.getElementById('errorZone').innerHTML = errorContent;
+  document.getElementById("errorZone").style.display = "block";
+  document.getElementById("errorZone").innerHTML = errorContent;
 
-	// Close button error
-	document
-		.getElementById('errorZone')
-		.querySelector('.close')
-		.addEventListener('click', function() {
-			document.getElementById('errorZone').style.display = 'none';
-		});
+  // Close button error
+  document
+    .getElementById("errorZone")
+    .querySelector(".close")
+    .addEventListener("click", function() {
+      document.getElementById("errorZone").style.display = "none";
+    });
 }
 
-var fpsLabel = document.getElementById('fpsLabel');
+var fpsLabel = document.getElementById("fpsLabel");
 var engine;
 
-var canvas = document.getElementById('renderCanvas');
+var canvas = document.getElementById("renderCanvas");
 
+// 入口函数，主要改变对象
 var createScene = function() {
-	// This creates a basic Babylon Scene object (non-mesh)
-	var scene = new BABYLON.Scene(engine);
+  // This creates a basic Babylon Scene object (non-mesh)
+  var scene = new BABYLON.Scene(engine);
 
-	// This creates and positions a free camera (non-mesh)
-	var camera = new BABYLON.FreeCamera(
-		'camera1',
-		new BABYLON.Vector3(0, 5, -10),
-		scene
-	);
+  // This creates and positions a free camera (non-mesh)
+  var camera = new BABYLON.FreeCamera(
+    "camera1",
+    new BABYLON.Vector3(0, 5, -10),
+    scene
+  );
 
-	// This targets the camera to scene origin
-	camera.setTarget(BABYLON.Vector3.Zero());
+  // This targets the camera to scene origin
+  camera.setTarget(BABYLON.Vector3.Zero());
 
-	// This attaches the camera to the canvas
-	camera.attachControl(canvas, true);
+  // This attaches the camera to the canvas
+  camera.attachControl(canvas, true);
 
-	// This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-	var light = new BABYLON.HemisphericLight(
-		'light1',
-		new BABYLON.Vector3(0, 1, 0),
-		scene
-	);
+  // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+  var light = new BABYLON.HemisphericLight(
+    "light1",
+    new BABYLON.Vector3(0, 1, 0),
+    scene
+  );
 
-	console.log('Hello World');
-	console.log(hot1);
-	console.log(hot1.getDataAtCell(0,0));
+  // Default intensity is 1. Let's dim the light a small amount
+  light.intensity = 0.7;
 
-	// Default intensity is 1. Let's dim the light a small amount
-	light.intensity = 0.7;
+  // Our built-in 'sphere' shape. Params: name, subdivs, size, scene
+  var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
 
-	// Our built-in 'sphere' shape. Params: name, subdivs, size, scene
-	var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene);
+  // Move the sphere upward 1/2 its height
+  sphere.position.y = 1;
 
-	// Move the sphere upward 1/2 its height
-	sphere.position.y = 1;
+  // Our built-in 'ground' shape. Params: name, width, depth, subdivs, scene
+  var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
 
-	// Our built-in 'ground' shape. Params: name, width, depth, subdivs, scene
-	var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
-
-	return scene;
+  return scene;
 };
 
 engine = new BABYLON.Engine(canvas, true, {
-	preserveDrawingBuffer: true,
-	stencil: true
+  preserveDrawingBuffer: true,
+  stencil: true
 });
 var scene = createScene();
 
 engine.runRenderLoop(function() {
-	if (canvas.width !== canvas.clientWidth) {
-		engine.resize();
-	}
+  if (canvas.width !== canvas.clientWidth) {
+    engine.resize();
+  }
 
-	if (scene) {
-		scene.render();
-	}
+  if (scene) {
+    scene.render();
+  }
 
-	// 右上角fps显示控制
-	// fpsLabel.style.right =
-	// 	document.body.clientWidth -
-	// 	(jsEditor._domElement.clientWidth + canvas.clientWidth) +
-	// 	'px';
-	fpsLabel.innerHTML = engine.getFps().toFixed() + ' fps';
+  // 右上角fps显示控制
+  // fpsLabel.style.right =
+  // 	document.body.clientWidth -
+  // 	(jsEditor._domElement.clientWidth + canvas.clientWidth) +
+  // 	'px';
+  fpsLabel.innerHTML = engine.getFps().toFixed() + " fps";
 });
 
 // Resize
-window.addEventListener('resize', function() {
-	engine.resize();
+window.addEventListener("resize", function() {
+  engine.resize();
 });
 
-
-
 const Stop = () => {
-	if(engine){
-		engine.dispose();
-		engine = null;
-		eval(scriptCode);
-	}
-	console.log('dispose');
-}
+  if (engine) {
+    engine.dispose();
+    engine = null;
+    eval(scriptCode);
+  }
+  console.log("dispose");
+  // 首先应该解析表格，将handsontable数据转换为我的数据结构;
+  // 获取入口节点函数，进行关联，运行函数
+};
+document.getElementById("runButton1600").addEventListener("click", Stop);
 
-document.getElementById('runButton1600').addEventListener('click', Stop);
+let log = () => {
+  let originData = hot1.getData();
+  for (let i = 0; i < originData.length; i++) {
+    let str = "";
+    for (let j = 0; j < originData[i].length; j++) {
+      str += originData[i][j] + "~";
+    }
+    console.log(str);
+  }
 
+  // 在这里，导入表格数据到中间结构，实现VeryTable数据填充；
+	// 除了全局环境变量外，将之前的数据结构全部清空，并且重头开始解析和编译表格数据，并且将Babylon的所有参数都重新初始化；
+	// 数据填充 => 语法解析 => 编译和组装 => Babylon设置
+};
+document.getElementById("settingsButton").addEventListener("click", log);
 
-const scriptCode = `var delayCreateScene = function() {
+const scriptCode = `var delayCreateScene = function(
+
+) {
 	// Model by Mixamo
 
 	engine.enableOfflineSupport = false;

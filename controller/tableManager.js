@@ -30,13 +30,13 @@ exports.acquire = async (ctx, next) => {
 	// 	console.log('Saved.');
 	// });
 
-	if (!fs.existsSync('public/data/tableTest.json')) {
+	if (!fs.existsSync('dist/data/tableTest.json')) {
 		console.log('文件不存在');
 		return ctx.send('file not exists');
 	} else {
 		var data;
 		try {
-			data = await readFile('public/data/tableTest.json');
+			data = await readFile('dist/data/tableTest.json');
 		} catch {
 			return ctx.sendError('00005', 'No Such File');
 		}
@@ -57,7 +57,7 @@ exports.commit = async (ctx, next) => {
 	if (data) {
 		// 数据格式
 		try {
-			await writeFile('public/data/tableTest.json', JSON.stringify(data));
+			await writeFile('dist/data/tableTest.json', JSON.stringify(data));
 			return ctx.send('success');
 		} catch (err) {
 			console.log('write file error: ' + err);
