@@ -11,7 +11,7 @@
   //showError('当前浏览器不支持WebGL，请更换其他浏览器使用本引擎！', null);
 })();
 
-var projectName = 'VeryProj';
+var projectName = "VeryProj";
 var example = document.getElementById("VeryTable");
 var hot1 = new Handsontable(example, {
   data: Handsontable.helper.createEmptySpreadsheetData(300, 9),
@@ -178,7 +178,7 @@ const saveImmediate = () => {
 // 初始化
 (function() {
   loadData();
-  console.log(document.getElementById("VeryTable").clientWidth);
+  // console.log(document.getElementById("VeryTable").clientWidth);
   // console.log(document.getElementById("renderCanvas").style.width);
 })();
 
