@@ -1,5 +1,6 @@
 import { IVeryVar } from "./IVeryVar";
 import { ErrorInfo } from "../utility/errorInfo";
+import { VeryVarManager } from "./veryVarManager";
 
 export class VeryBool implements IVeryVar {
 
@@ -13,8 +14,8 @@ export class VeryBool implements IVeryVar {
   }
   private _value: boolean = false;
 
-  constructor(val: boolean) {
-    this._value = val;
+  constructor() {
+    this._value = false;
   }
 
   setValue(val: any): void {
@@ -41,3 +42,5 @@ export class VeryBool implements IVeryVar {
   }
 
 }
+
+VeryVarManager.AddVarType('bool', new VeryBool());
