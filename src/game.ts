@@ -1,6 +1,6 @@
 /// <reference path="./dts/babylon.d.ts"/>
 
-import { VeryEngine } from "./veryengine/veryEngine";
+import { VeryEngine, Time } from "./veryengine/veryEngine";
 
 export default class Game {
 	private _canvas: HTMLCanvasElement;
@@ -13,6 +13,7 @@ export default class Game {
 
 	constructor(canvasElement: HTMLCanvasElement, fps: HTMLElement) {
 		this._canvas = canvasElement;
+		VeryEngine.Canvas = this._canvas;
 		this._fps = fps;
 		// this._engine = new BABYLON.Engine(this._canvas, true);
 		this._table = document.getElementById("VeryTable")!;
@@ -27,6 +28,7 @@ export default class Game {
 			this._engine.dispose();
 		}
 		this._engine = new BABYLON.Engine(this._canvas, true);
+		VeryEngine.Engine = this._engine;
 		// Resize
 		let engine = this._engine;
 		window.addEventListener("resize", function () {
@@ -34,33 +36,51 @@ export default class Game {
 		});
 
 		this._scene = new BABYLON.Scene(this._engine);
+		VeryEngine.Scene = this._scene;
 
-		const cameraPos = new BABYLON.Vector3(0, 5, -10);
+		// 设定相机
+		var camera = new BABYLON.ArcRotateCamera("MainCamera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0), this._scene);
+    camera.setPosition(new BABYLON.Vector3(20, 200, 400));
+    camera.attachControl(this._canvas, true);
+    camera.lowerBetaLimit = 0.1;
+    camera.upperBetaLimit = (Math.PI / 2) * 0.99;
+    camera.lowerRadiusLimit = 150;
 
-		let camera = new BABYLON.FreeCamera('maincam', cameraPos, this._scene);
-		camera.setTarget(BABYLON.Vector3.Zero());
-		camera.attachControl(this._canvas, false);
+		// 加载过度动画开
+		engine.displayLoadingUI();
 
-		const lightPos = new BABYLON.Vector3(0, 1, 0);
-		new BABYLON.HemisphericLight('hemlight', lightPos, this._scene);
+		// 加载scene.babylon场景文件
+		BABYLON.SceneLoader.Append("./scene/", "scene.babylon", this._scene, function (scene) {
+				// do something with the scene
+				// 加载过度动画关
+				engine.hideLoadingUI();
+		});
 
-		const sphereOpts = { segments: 16, diameter: 1 };
-		let sphere = BABYLON.MeshBuilder.CreateSphere(
-			'mainsphere',
-			sphereOpts,
-			this._scene
-		);
-		sphere.position.y = 1;
 
-		const groundOpts = { width: 6, height: 6, subdivisions: 2 };
-		BABYLON.MeshBuilder.CreateGround('mainground', groundOpts, this._scene);
+		// const lightPos = new BABYLON.Vector3(0, 1, 0);
+		// new BABYLON.HemisphericLight('hemlight', lightPos, this._scene);
+
+		// const sphereOpts = { segments: 16, diameter: 1 };
+		// let sphere = BABYLON.MeshBuilder.CreateSphere(
+		// 	'mainsphere',
+		// 	sphereOpts,
+		// 	this._scene
+		// );
+		// sphere.position.y = 1;
+
+		// const groundOpts = { width: 6, height: 6, subdivisions: 2 };
+		// BABYLON.MeshBuilder.CreateGround('mainground', groundOpts, this._scene);
 
 		// 表格加载测试
 		// console.log(hot1.getData());
 		let entrance: VeryEngine = new VeryEngine();
 		entrance.init(hot1.getData(), projectName);
 
-
+		// 全局渲染帧循环
+		this._scene.onBeforeRenderObservable.add(() => {
+			// 添加帧函数
+			Time._sum();
+		})
 		return this;
 	}
 

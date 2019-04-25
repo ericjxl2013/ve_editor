@@ -6,6 +6,10 @@ export * from "./index";
 
 export class VeryEngine {
 
+  public static Canvas: HTMLCanvasElement;
+  public static Engine: BABYLON.Engine;
+  public static Scene: BABYLON.Scene;
+
 
   constructor() {
 

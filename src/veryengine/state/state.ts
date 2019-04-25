@@ -34,4 +34,8 @@ export class VE_State {
     this._stateActions.push(state_action);
     BABYLON.Mesh.bind;
   }
+
+  public action(trigger_id: string): void {
+    
+  }
 }

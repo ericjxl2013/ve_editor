@@ -49,4 +49,8 @@ export class VE_Fsm {
     }
   }
 
+  // receiveEvent(trigger_id: string): boolean {
+
+  // }
+
 }

@@ -55,7 +55,15 @@ export abstract class VE_ActionBehaviour {
   abstract Active(): void;
 
 
+  Update(): void {
 
+  }
+
+  OnUpdate(): void {
+
+  }
+
+  
 
 
 }
