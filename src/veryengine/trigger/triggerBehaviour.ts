@@ -1,12 +1,25 @@
 import { VE_State } from "../state/state";
 import { StateConst } from "../state/stateConst";
-import { ExpressTree } from "../expression";
+import { IExpression } from "../expression";
 
 export abstract class VE_TriggerBehaviour {
 
   abstract get ID(): string;
 
-  ProjectName: string = '';
+  protected scene!: BABYLON.Scene;
+
+  public get enabled(): boolean {
+    return this._enabled;
+  }
+  public set enabled(val: boolean) {
+    this._enabled = val;
+  }
+  private _enabled: boolean = true;
+
+  public get projectName(): string {
+    return this._projectName;
+  }
+  private _projectName: string = '';
 
   public get isEnabled(): boolean {
     if (this._logicalSwitch) {
@@ -20,8 +33,8 @@ export abstract class VE_TriggerBehaviour {
   }
 
   // Logical
-  private _logicalSwitch: ExpressTree[] = [];
-  private _logicalExp: ExpressTree[] = [];
+  private _logicalSwitch: IExpression[] = [];
+  private _logicalExp: IExpression[] = [];
   // State
   private _triggerTargets: VE_State[] = [];
 
@@ -40,23 +53,30 @@ export abstract class VE_TriggerBehaviour {
 
   private _id: string = '';
 
+
+  public set(scene: BABYLON.Scene): void {
+    this.scene = scene;
+  }
+
   public setTriggerID(trigger_id: string, object_id: string): void {
     this._triggerID = trigger_id;
     this._objectID = object_id;
     this._id = object_id + StateConst.STATE_SEPARATOR + trigger_id;
   }
 
-  public addLogicalSwitch(exp: ExpressTree): void {
+  public addLogicalSwitch(exp: IExpression): void {
     this._logicalSwitch.push(exp);
   }
 
-  public addTriggerTarget(exp: ExpressTree, state: VE_State): void {
+  public addTriggerTarget(exp: IExpression, state: VE_State): void {
     this._logicalExp.push(exp);
     this._triggerTargets.push(state);
   }
 
   public sendEvent(): void {
-    this.eventProcess();
+    if(this.isEnabled) {
+      this.eventProcess();
+    }
   }
 
   // 关联具体响应
@@ -73,6 +93,16 @@ export abstract class VE_TriggerBehaviour {
 
   public paraParser(para_array: string[]): boolean {
     return true;
+  }
+
+  public update(): void {
+    if(this.isEnabled) {
+      this.onUpdate();
+    }
+  }
+
+  public onUpdate(): void {
+
   }
 
   public abstract destroy(): void;

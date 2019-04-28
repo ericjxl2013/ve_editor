@@ -1,2 +1,1 @@
-export * from './actionType';
-export * from './stateActionType';
+export * from './enumTypes';

@@ -1,69 +1,118 @@
-import { ActionType } from "../enum/actionType";
+import { ActionType, SequenceActionState } from "../enum";
 
 export abstract class VE_ActionBehaviour {
 
-  abstract get ID(): string;
+  public abstract get ID(): string;
 
-  ProjectName: string = '';
+  public get enabled(): boolean {
+    return this._enabled;
+  }
+  public set enabled(val: boolean) {
+    this._enabled = val;
+  }
+  private _enabled: boolean = true;
+
+  public get projectName(): string {
+    return this._projectName;
+  };
+  private _projectName: string = '';
 
   // protected GameObject ObjectInstance = null;
-  // protected VeryEngineObject VeryObject = null;
+  // protected veryObject: VeryObject = null;
 
-  ObjectID: string = '';
-  ActionID: string = '';
+  public get objectID(): string {
+    return this._objectID;
+  };
+  private _objectID: string = '';
 
-  get Type(): ActionType {
+  public get actionID(): string {
+    return this._actionID;
+  }
+  private _actionID: string = '';
+
+  public get Type(): ActionType {
     return ActionType.Normal;
   }
 
   private _erveryFrame: boolean = false;
-  get EveryFrame(): boolean {
+  public get everyFrame(): boolean {
     return this._erveryFrame;
   }
 
-  /*
-  public bool IsSequence = false;
 
-  public SequenceActionState SequenceState
-  {
-    get { return this._sequenceState; }
-    set { this._sequenceState = value; }
+  public isSequence: boolean = false;
+
+  public get SequenceState(): SequenceActionState {
+    return this._sequenceState;
   }
-  private SequenceActionState _sequenceState = SequenceActionState.Initial;
+  public set SequenceState(val: SequenceActionState) {
+    this._sequenceState = val;
+  }
+  private _sequenceState: SequenceActionState = SequenceActionState.Initial;
 
-  private VE_SequenceActions _sequenceAction = null;
-  */
+  // private VE_SequenceActions _sequenceAction = null;
 
-  SetEveryFrame(is_every_frame: boolean): void {
+
+  public setEveryFrame(is_every_frame: boolean): void {
     this._erveryFrame = is_every_frame;
   }
 
-  SetActionID(object_id: string, action_id: string): void {
-    this.ObjectID = object_id;
-    this.ActionID = action_id;
+  public setActionID(object_id: string, action_id: string): void {
+    this._objectID = object_id;
+    this._actionID = action_id;
   }
 
   // SetVeryObject(): void {}
 
-  ParaParser(para_array: string[]): boolean {
+  public paraParser(para_array: string[]): boolean {
     if (para_array) { }
     return true;
   }
 
-  // Action(): void {}
+  public action(action_val: boolean, every_frame: boolean): void {
+    this._enabled = action_val;
+    this._erveryFrame = every_frame;
+    if (this._enabled) {
+      this.active()
+      if (!this._erveryFrame) {
+        this.onUpdate();
+      }
+    }
+  }
 
-  abstract Active(): void;
+  public abstract active(): void;
 
 
-  Update(): void {
+  public update(): void {
+    if(this._enabled && this._erveryFrame) {
+      this.onUpdate();
+    }
+  }
+
+  public onUpdate(): void {
 
   }
 
-  OnUpdate(): void {
-
+  public pause(): void {
+    this._sequenceState = SequenceActionState.Pause;
   }
 
-  
+  public resume(): void {
+    this._sequenceState = SequenceActionState.Running;
+  }
+
+  public stop(): void {
+    this._sequenceState = SequenceActionState.Initial;
+  }
+
+  public finish(): void {
+    this._sequenceState = SequenceActionState.Initial;
+
+    this.enabled = false;
+  }
+
+  // 如果创建过程中有add callback，需要destroy时删除
+  public abstract destroy(): void;
 
 
 }

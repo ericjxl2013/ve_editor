@@ -4,7 +4,7 @@ import { VeryVarManager } from "./veryVarManager";
 
 export class VeryBool implements IVeryVar {
 
-  VarType: string = 'Bool';
+  VarType: string = 'bool';
 
   public get Value(): boolean {
     return this._value;
@@ -121,7 +121,7 @@ export class VeryFloat implements IVeryVar {
 
 export class VeryNumber implements IVeryVar {
 
-  VarType: string = 'Number';
+  VarType: string = 'number';
 
   public get Value(): number {
     return this._value;
@@ -158,7 +158,7 @@ export class VeryNumber implements IVeryVar {
 
 export class VeryString implements IVeryVar {
 
-  VarType: string = 'String';
+  VarType: string = 'string';
 
   public get Value(): string {
     return this._value;
@@ -192,7 +192,7 @@ export class VeryString implements IVeryVar {
 
 export class VeryVector3 implements IVeryVar {
 
-  VarType: string = 'Vector3';
+  VarType: string = 'vector3';
 
   public get Value(): BABYLON.Vector3 {
     //let a: BABYLON.Vector3 = new BABYLON.Vector3 (1,1,1);
@@ -226,16 +226,16 @@ export class VeryVector3 implements IVeryVar {
   }
 }
 
-VeryVarManager.AddVarType('bool', new VeryBool());
-VeryVarManager.AddVarType('开关', new VeryBool());
+VeryVarManager.addVarType('bool', new VeryBool());
+VeryVarManager.addVarType('开关', new VeryBool());
 
-VeryVarManager.AddVarType('int', new VeryInt());
-VeryVarManager.AddVarType('float', new VeryFloat());
+VeryVarManager.addVarType('int', new VeryInt());
+VeryVarManager.addVarType('float', new VeryFloat());
 
-VeryVarManager.AddVarType('number', new VeryNumber());
-VeryVarManager.AddVarType('数字', new VeryNumber());
+VeryVarManager.addVarType('number', new VeryNumber());
+VeryVarManager.addVarType('数字', new VeryNumber());
 
-VeryVarManager.AddVarType('string', new VeryString());
-VeryVarManager.AddVarType('字符串', new VeryString());
-VeryVarManager.AddVarType('vector3', new VeryVector3());
-VeryVarManager.AddVarType('响应', new VeryVector3());
+VeryVarManager.addVarType('string', new VeryString());
+VeryVarManager.addVarType('字符串', new VeryString());
+VeryVarManager.addVarType('vector3', new VeryVector3());
+VeryVarManager.addVarType('响应', new VeryVector3());

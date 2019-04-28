@@ -36,6 +36,8 @@ export class VE_State {
   }
 
   public action(trigger_id: string): void {
-    
+    if(this._fsm.receiveEvent(trigger_id)) {
+      
+    }
   }
 }

@@ -1,5 +1,7 @@
 import { Dictionary } from "../utility/dictionary";
 import { VE_State } from "./state";
+import { Time } from "../global";
+import { StateConst } from "./stateConst";
 
 export class VE_Fsm {
 
@@ -20,7 +22,10 @@ export class VE_Fsm {
 
   private _stateDics: Dictionary<string, VE_State> = new Dictionary<string, VE_State>();
   private _states: VE_State[] = [];
- 
+
+  private _frameCount: number = -1;
+  private _triggerIDs: string[] = [];
+
   constructor() {
     // this._stateDics.TryGetValue(1);
   }
@@ -39,7 +44,7 @@ export class VE_Fsm {
   getState(state_value: string): VE_State | null {
     return this._stateDics.GetValue(state_value);
   }
- 
+
   removeState(state_value: string): boolean {
     if (this.hasState(state_value)) {
       this._stateDics.Remove(state_value);
@@ -49,8 +54,25 @@ export class VE_Fsm {
     }
   }
 
-  // receiveEvent(trigger_id: string): boolean {
-
-  // }
+  receiveEvent(trigger_id: string): boolean {
+    if (Time.frameCount != this._frameCount) {
+      this._frameCount = Time.frameCount;
+      this._triggerIDs = [];
+      this._triggerIDs.push(trigger_id);
+      return true;
+    } else {
+      if (trigger_id.startsWith(StateConst.ASSOCIATED_STATE_PREFIX)) {
+        // console.log(`ID: ${trigger_id} Return True`);
+        return true;
+      } else {
+        if (this._triggerIDs.indexOf(trigger_id) !== -1) {
+          return false;
+        } else {
+          this._triggerIDs.push(trigger_id);
+          return true;
+        }
+      }
+    }
+  }
 
 }

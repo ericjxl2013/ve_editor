@@ -1,8 +1,9 @@
-import { StateActionType } from "../enum/stateActionType";
+
 import { VE_ActionBehaviour } from "../action/actionBehaviour";
+import { StateActionType } from "../enum";
 
 export class VE_StateAction {
-
+  
   public get Type(): StateActionType {
     return this._type;
   }
