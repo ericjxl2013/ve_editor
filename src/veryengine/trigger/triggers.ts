@@ -10,7 +10,7 @@ export class VE_Triggers {
     for(let i: number = 0; i < ids.length; i++) {
       let id: string = ids[i].trim().toLowerCase();
       if(this._triggerDics[id]) {
-        ShowError.showError(`触发初始化错误，触发ID重复，当前触发ID：${id}，请问当前触发重新分配触发ID！`);
+        ShowError.showError(`触发初始化错误，触发ID重复，当前触发ID：${id}，请为当前触发重新分配触发ID！`);
       } else {
         this._triggerDics[id] = trigger;
       }
@@ -28,6 +28,7 @@ export class VE_Triggers {
 
   public static createTrigger(trigger_id: string): VE_TriggerBehaviour {
     trigger_id = trigger_id.toLowerCase();
+    // console.log(this._triggerDics[trigger_id]);
     return Object.create(this._triggerDics[trigger_id]);
   }
   

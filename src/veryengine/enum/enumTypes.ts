@@ -24,3 +24,10 @@ export enum AssociatedFsmType {
   Object = 0,
   Template
 }
+
+export enum VariableScope {
+  Local = 0,
+  Fsm,
+  Global,
+  Scene
+}

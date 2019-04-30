@@ -44,7 +44,7 @@ export abstract class VE_TriggerBehaviour {
   public get objectID(): string {
     return this._objectID;
   }
-  private _objectID: string = '';
+  private _objectID: string = 'object-axxx';
 
   public get triggerID(): string {
     return this._triggerID;
@@ -52,6 +52,10 @@ export abstract class VE_TriggerBehaviour {
   private _triggerID: string = '';
 
   private _id: string = '';
+
+  public call(): void {
+    console.log(this._objectID);
+  }
 
 
   public set(scene: BABYLON.Scene): void {

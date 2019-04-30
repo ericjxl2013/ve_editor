@@ -1,3 +1,5 @@
+export * from './utility/index';
+
 export * from './action/index';
 export * from './dataSource/index';
 export * from './enum/index';
@@ -9,7 +11,7 @@ export * from './object/index';
 export * from './state/index';
 export * from './template/index';
 export * from './trigger/index';
-export * from './utility/index';
+
 export * from './variables/index';
 export * from '../verytable/index';
 

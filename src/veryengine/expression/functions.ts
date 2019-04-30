@@ -3,7 +3,7 @@ import { ShowError } from "../html";
 
 export interface IFunction {
   expType: string;
-  name: string;
+  className: string;
   parameterNumber(): number;
   evaluate(args: Array<IExpression>): any;
 }
@@ -14,7 +14,7 @@ export class Pow implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'pow';
   }
 
@@ -39,7 +39,7 @@ export class Ln implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'ln';
   }
 
@@ -64,7 +64,7 @@ export class Lg implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'lg';
   }
 
@@ -89,7 +89,7 @@ export class Sqrt implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'sqrt';
   }
 
@@ -114,7 +114,7 @@ export class Abs implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'abs';
   }
 
@@ -139,7 +139,7 @@ export class Random implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'random';
   }
 
@@ -165,7 +165,7 @@ export class Round implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'round';
   }
 
@@ -190,7 +190,7 @@ export class Sin implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'sin';
   }
 
@@ -215,7 +215,7 @@ export class ASin implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'asin';
   }
 
@@ -240,7 +240,7 @@ export class Cos implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'cos';
   }
 
@@ -265,7 +265,7 @@ export class ACos implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'acos';
   }
 
@@ -290,7 +290,7 @@ export class Tan implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'tan';
   }
 
@@ -315,7 +315,7 @@ export class ATan implements IFunction {
     return 'number';
   }
 
-  public get name(): string {
+  public get className(): string {
     return 'atan';
   }
 
@@ -333,3 +333,52 @@ export class ATan implements IFunction {
     }
   }
 }
+
+
+export class CustomFunctions {
+  private static _functions: {[key:string]: IFunction} = {};
+
+  public static hasFunction(func_name: string): boolean {
+    func_name = func_name.toLowerCase();
+    if(this._functions[func_name]) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static addFunction(func: IFunction): void {
+    let funcName: string = func.className.toLowerCase();
+    if(this._functions[funcName]) {
+      ShowError.showError(`自定义函数初始化错误，函数ID重复，当前函数ID：${funcName}，请为当前自定义函数重新分配ID！`);
+    } else {
+      this._functions[funcName] = func;
+    }
+  }
+
+  public static createFunction(func_name: string): IFunction {
+    func_name = func_name.toLowerCase();
+    return Object.create(this._functions[func_name]);
+  }
+
+  public static remove(func_name: string): void {
+    func_name = func_name.toLowerCase();
+    delete this._functions[func_name];
+  }
+}
+
+
+CustomFunctions.addFunction(new Pow());
+CustomFunctions.addFunction(new Ln());
+CustomFunctions.addFunction(new Lg());
+CustomFunctions.addFunction(new Sqrt());
+CustomFunctions.addFunction(new Abs());
+CustomFunctions.addFunction(new Random());
+CustomFunctions.addFunction(new Round());
+CustomFunctions.addFunction(new Sin());
+CustomFunctions.addFunction(new ASin());
+CustomFunctions.addFunction(new Cos());
+CustomFunctions.addFunction(new ACos());
+CustomFunctions.addFunction(new Tan());
+CustomFunctions.addFunction(new ATan());
+

@@ -10,7 +10,7 @@ export class VE_Actions {
     for(let i: number = 0; i < ids.length; i++) {
       let id: string = ids[i].trim().toLowerCase();
       if(this._actionDics[id]) {
-        ShowError.showError(`响应初始化错误，响应ID重复，当前响应ID：${id}，请问当前响应重新分配响应ID！`);
+        ShowError.showError(`响应初始化错误，响应ID重复，当前响应ID：${id}，请为当前响应重新分配响应ID！`);
       } else {
         this._actionDics[id] = action;
       }

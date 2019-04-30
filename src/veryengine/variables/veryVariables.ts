@@ -4,7 +4,9 @@ import { VeryVarManager } from "./veryVarManager";
 
 export class VeryBool implements IVeryVar {
 
-  VarType: string = 'bool';
+  public get varType(): string {
+    return 'bool';
+  } 
 
   public get Value(): boolean {
     return this._value;
@@ -36,7 +38,7 @@ export class VeryBool implements IVeryVar {
       return false;
     } else {
       error_info.isRight = false;
-      error_info.message = 'Type: ' + this.VarType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message = 'Type: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
       return undefined;
     }
   }
@@ -45,7 +47,9 @@ export class VeryBool implements IVeryVar {
 
 export class VeryInt implements IVeryVar {
 
-  VarType: string = 'Int';
+  public get varType(): string {
+    return 'int';
+  }
 
   public get Value(): number {
     return Math.round(this._value);
@@ -75,7 +79,7 @@ export class VeryInt implements IVeryVar {
       return Math.round(newFloat);
     } else {
       error_info.isRight = false;
-      error_info.message = 'Type: ' + this.VarType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message = 'Type: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
       return undefined;
     }
   }
@@ -84,7 +88,9 @@ export class VeryInt implements IVeryVar {
 
 export class VeryFloat implements IVeryVar {
 
-  VarType: string = 'Float';
+  public get varType(): string {
+    return 'float';
+  }
 
   public get Value(): number {
     return this._value;
@@ -113,7 +119,7 @@ export class VeryFloat implements IVeryVar {
       return newVal;
     } else {
       error_info.isRight = false;
-      error_info.message = 'Type: ' + this.VarType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message = 'Type: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
       return undefined;
     }
   }
@@ -121,7 +127,9 @@ export class VeryFloat implements IVeryVar {
 
 export class VeryNumber implements IVeryVar {
 
-  VarType: string = 'number';
+  public get varType(): string {
+    return 'number';
+  }
 
   public get Value(): number {
     return this._value;
@@ -150,7 +158,7 @@ export class VeryNumber implements IVeryVar {
       return newVal;
     } else {
       error_info.isRight = false;
-      error_info.message = 'Type: ' + this.VarType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message = 'Type: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
       return undefined;
     }
   }
@@ -158,7 +166,9 @@ export class VeryNumber implements IVeryVar {
 
 export class VeryString implements IVeryVar {
 
-  VarType: string = 'string';
+  public get varType(): string {
+    return 'string';
+  }
 
   public get Value(): string {
     return this._value;
@@ -192,7 +202,9 @@ export class VeryString implements IVeryVar {
 
 export class VeryVector3 implements IVeryVar {
 
-  VarType: string = 'vector3';
+  public get varType(): string {
+    return 'vector3';
+  }
 
   public get Value(): BABYLON.Vector3 {
     //let a: BABYLON.Vector3 = new BABYLON.Vector3 (1,1,1);
@@ -221,7 +233,7 @@ export class VeryVector3 implements IVeryVar {
       
     } else {
       error_info.isRight = false;
-      error_info.message = 'Type: ' + this.VarType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message = 'Type: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
     }
   }
 }
