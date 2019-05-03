@@ -26,11 +26,11 @@ export class VE_State {
     this._value = state_value;
   }
 
-  setValue(state_value: string): void {
+  public setValue(state_value: string): void {
     this._value = state_value;
   }
 
-  addAction(state_action: VE_StateAction): void {
+  public addAction(state_action: VE_StateAction): void {
     this._stateActions.push(state_action);
     BABYLON.Mesh.bind;
   }

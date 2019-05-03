@@ -4,12 +4,11 @@ import { IFunction } from "./functions";
 export class FunctionExpression implements IExpression {
 
   public get expType(): string {
-    return this._expType;
+    return this._function.expType;
   }
-  private _expType = '';
 
   public get className(): string {
-    return 'FunctionExpression';
+    return this._function.className;
   }
 
   private _function!: IFunction;
@@ -48,15 +47,15 @@ export class FunctionExpression implements IExpression {
   }
 
   public toString(): string {
-    let printStr: string = this._function.className + '( ';
+    let printStr: string = this._function.className + '(';
     for(let i: number = 0; i < this._paras.length; i++) {
       if(i > 0) {
-        printStr += ', ' + this._paras[i].className;
+        printStr += ',' + this._paras[i].toString();
       } else {
-        printStr += this._paras[i].className;
+        printStr += this._paras[i].toString();
       }
     }
-    return printStr + ' )';
+    return printStr + ')';
   }
 
 }

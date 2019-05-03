@@ -55,7 +55,7 @@ export class VE_StateData {
     this._stateIndex = state_index;
   }
 
-  hasTrigger(index: number): boolean {
+  public hasTrigger(index: number): boolean {
     if(index >= 0 && index < this._triggers.length) {
       return true;
     } else {
@@ -63,15 +63,15 @@ export class VE_StateData {
     }
   }
 
-  addTrigger(trigger_data: VE_StateTriggerData): void {
+  public addTrigger(trigger_data: VE_StateTriggerData): void {
     this._triggers.push(trigger_data);
   }
 
-  getTrigger(index: number): VE_StateTriggerData {
+  public getTrigger(index: number): VE_StateTriggerData {
     return this._triggers[index];
   }
 
-  hasAction(index: number): boolean {
+  public hasAction(index: number): boolean {
     if(index >= 0 && index < this._actions.length) {
       return true;
     } else {
@@ -79,15 +79,15 @@ export class VE_StateData {
     }
   }
 
-  addAction(action_data: VE_StateActionData): void {
+  public addAction(action_data: VE_StateActionData): void {
     this._actions.push(action_data);
   }
 
-  getAction(index: number): VE_StateActionData {
+  public getAction(index: number): VE_StateActionData {
     return this._actions[index];
   }
 
-  hasAssociatedState(index: number): boolean {
+  public hasAssociatedState(index: number): boolean {
     if(index >= 0 && index < this._associatedStates.length) {
       return true;
     } else {
@@ -95,15 +95,15 @@ export class VE_StateData {
     }
   }
 
-  addAssociatedState(associated_state_data: string): void {
+  public addAssociatedState(associated_state_data: string): void {
     this._associatedStates.push(associated_state_data);
   }
 
-  getAssociatedState(index: number): string {
+  public getAssociatedState(index: number): string {
     return this._associatedStates[index];
   }
 
-  setSequence(): void {
+  public setSequence(): void {
     this._isSequence = true;
   }
 

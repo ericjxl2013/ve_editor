@@ -30,22 +30,22 @@ export class VE_Fsm {
     // this._stateDics.TryGetValue(1);
   }
 
-  hasState(state_value: string): boolean {
+  public hasState(state_value: string): boolean {
     return this._stateDics.ContainsKey(state_value);
   }
 
-  addState(state_value: string, state: VE_State): void {
+  public addState(state_value: string, state: VE_State): void {
     if (!this._stateDics.ContainsKey(state_value)) {
       this._stateDics.Add(state_value, state);
       this._states.push(state);
     }
   }
 
-  getState(state_value: string): VE_State | null {
+  public getState(state_value: string): VE_State | null {
     return this._stateDics.GetValue(state_value);
   }
 
-  removeState(state_value: string): boolean {
+  public removeState(state_value: string): boolean {
     if (this.hasState(state_value)) {
       this._stateDics.Remove(state_value);
       return true;
@@ -54,7 +54,7 @@ export class VE_Fsm {
     }
   }
 
-  receiveEvent(trigger_id: string): boolean {
+  public receiveEvent(trigger_id: string): boolean {
     if (Time.frameCount != this._frameCount) {
       this._frameCount = Time.frameCount;
       this._triggerIDs = [];

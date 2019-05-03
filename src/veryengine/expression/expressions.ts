@@ -32,6 +32,10 @@ export class TrueExpression implements IExpression {
     let exp: TrueExpression = new TrueExpression();
     return exp;
   }
+
+  public toString(): string {
+    return 'true';
+  }
 }
 
 export class ConstantExpression implements IExpression {
@@ -84,7 +88,7 @@ export class ConstantExpression implements IExpression {
 }
 
 export enum BinaryOperator {
-  Add, Subtract, Multiply, Divide, Modulo, Power, LT, LT_EQ, EQ, GT_EQ, GT, NEQ, And, Or, Not
+  Add = '+', Subtract = '-', Multiply = '*', Divide = '/', Modulo = '%', Power = '^', LT = '<', LT_EQ = '<=', EQ = '=', GT_EQ = '>=', GT = '>', NEQ = '!=', And = '&&', Or = '||', Not = '!'
 }
 
 export class BinaryExpression implements IExpression {
@@ -143,8 +147,8 @@ export class BinaryExpression implements IExpression {
     this._left = left_exp;
     this._right = right_exp;
     this._op = op;
-    console.log(this._left);
-    console.log(this._right);
+    // console.log(this._left);
+    // console.log(this._right);
     this._expType = this.resultAutoType(left_exp, right_exp, op);
     if (this._expType === 'null') {
       console.log("公式两边类型不匹配，左侧类型：" + left_exp.expType + "，右侧类型：" + right_exp.expType + "，计算类型：" + op.toString());
@@ -251,7 +255,8 @@ export class BinaryExpression implements IExpression {
   }
 
   public toString(): string {
-    return "( " + this._left.toString() + " " + this._op.toString() + " " + this._right.toString() + " )";
+    return "(" + this._left.toString() + " " + this._op.toString() + " " + this._right.toString() + ")";
+    // return this._left.toString() + this._op.toString() + this._right.toString();
   }
 
   public clone(): IExpression {

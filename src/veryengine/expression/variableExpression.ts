@@ -29,13 +29,6 @@ export class VariableExpression implements IExpression {
     let expClone: VariableExpression = new VariableExpression(this._value);
     return expClone;
   }
-
-
-
-
-
-
-
   
 
 }

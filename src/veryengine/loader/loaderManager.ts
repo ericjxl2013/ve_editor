@@ -9,7 +9,7 @@ export class LoaderManager {
 
   }
 
-  load(project_name: string): boolean {
+  public load(project_name: string): boolean {
     
 
     return true;

@@ -53,7 +53,7 @@ export class Token implements IPosition {
   }
 
   public addToContent(ch: string): Token {
-    this._trigger += ch;
+    this._contents += ch;
     this._source += ch;
     return this;
   }

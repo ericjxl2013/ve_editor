@@ -20,15 +20,15 @@ export class VeryBool implements IVeryVar {
     this._value = false;
   }
 
-  setValue(val: any): void {
+  public setValue(val: any): void {
     this._value = val;
   }
 
-  getValue(): any {
+  public getValue(): any {
     return this._value;
   }
 
-  initValue(value_str: string, error_info: ErrorInfo): any {
+  public initValue(value_str: string, error_info: ErrorInfo): any {
     if(value_str.toLowerCase() === 'false') {
       return false;
     } else if(value_str.toLowerCase() === 'true'){
@@ -63,15 +63,15 @@ export class VeryInt implements IVeryVar {
     this._value = 0;
   }
 
-  getValue(): any {
+  public getValue(): any {
     return this.Value;
   }
 
-  setValue(val: any): void {
+  public setValue(val: any): void {
     this.Value = val;
   }
 
-  initValue(value_str: string, error_info: ErrorInfo):any {
+  public initValue(value_str: string, error_info: ErrorInfo):any {
     // 先转化为float，直接使用parseInt没有四舍五入的效果
     let newFloat = parseFloat(value_str);
     if(!isNaN(newFloat)) {
@@ -104,16 +104,16 @@ export class VeryFloat implements IVeryVar {
     this._value = 0;
   }
 
-  setValue(val: number) {
+  public setValue(val: number) {
     this._value = val;
   }
 
   // 之后可能会有公式的情况
-  getValue(): any {
+  public getValue(): any {
     return this._value;
   }
 
-  initValue(value_str: string, error_info: ErrorInfo): any {
+  public initValue(value_str: string, error_info: ErrorInfo): any {
     let newVal = parseFloat(value_str);
     if(!isNaN(newVal)) {
       return newVal;
@@ -143,16 +143,16 @@ export class VeryNumber implements IVeryVar {
     this._value = 0;
   }
 
-  setValue(val: number) {
+  public setValue(val: number) {
     this._value = val;
   }
 
   // 之后可能会有公式的情况
-  getValue(): any {
+  public getValue(): any {
     return this._value;
   }
 
-  initValue(value_str: string, error_info: ErrorInfo): any {
+  public initValue(value_str: string, error_info: ErrorInfo): any {
     let newVal = parseFloat(value_str);
     if(!isNaN(newVal)) {
       return newVal;
@@ -182,15 +182,15 @@ export class VeryString implements IVeryVar {
     this._value = '';
   }
 
-  getValue(): any {
+  public getValue(): any {
     return this._value;
   }
 
-  setValue(val: any): void {
+  public setValue(val: any): void {
     this._value = val;
   }
 
-  initValue(value_str: string, error_info: ErrorInfo): any {
+  public initValue(value_str: string, error_info: ErrorInfo): any {
     if (value_str.startsWith('\'') || value_str.startsWith('"') || value_str.startsWith('“') || value_str.startsWith('‘')) {
       this._value = value_str.substr(1, value_str.length - 2);
     } else {
@@ -220,15 +220,15 @@ export class VeryVector3 implements IVeryVar {
     this._value = BABYLON.Vector3.Zero();
   }
 
-  getValue(): any {
+  public getValue(): any {
     return this._value;
   }
 
-  setValue(val: any) {
+  public setValue(val: any) {
     this._value = val;
   }
 
-  initValue(value_str: string, error_info: ErrorInfo): any {
+  public initValue(value_str: string, error_info: ErrorInfo): any {
     if(value_str === 'none' || value_str === 'null') {
       
     } else {

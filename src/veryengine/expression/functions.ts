@@ -148,8 +148,9 @@ export class Random implements IFunction {
   }
 
   public evaluate(args: IExpression[]): any {
+    let start: number = args[0].evaluate();
     let distance: number = args[1].evaluate() - args[0].evaluate();
-    let value: number = Math.random() * distance;
+    let value: number = Math.random() * distance + start;
     if (value === NaN) {
       ShowError.showError(`表达式编译错误：Random函数参数错误，参数1类型：${args[0].expType}，参数1值：${args[0].evaluate()}，参数2类型：${args[1].expType}，参数2值：${args[1].evaluate()}，请检查！`);
       return undefined;

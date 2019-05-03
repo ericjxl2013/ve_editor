@@ -2,14 +2,14 @@ import { StateActionType } from "../enum";
 
 export class VE_StateActionData {
 
-  actionID: string;
-  enabled: string;
-  everyFrame: string;
-  isSequence: string;
-  type: StateActionType;
-  totalString: string = '';
-  varID: string = '';
-  varValue: string = '';
+  public actionID: string;
+  public enabled: string;
+  public everyFrame: string;
+  public isSequence: string;
+  public type: StateActionType;
+  public totalString: string = '';
+  public varID: string = '';
+  public varValue: string = '';
 
   constructor(action_id: string, enabled: string = 'false', every_frame: string = 'false', sequence: string = 'false', type: StateActionType = StateActionType.Action) {
     this.actionID = action_id;
@@ -19,7 +19,7 @@ export class VE_StateActionData {
     this.type = type;
   }
 
-  setNormalAction(action_id: string, enabled: string = 'false', every_frame: string = 'false', sequence: string = 'false'): void {
+  public setNormalAction(action_id: string, enabled: string = 'false', every_frame: string = 'false', sequence: string = 'false'): void {
     this.actionID = action_id;
     this.enabled = enabled;
     this.everyFrame = every_frame;
@@ -27,7 +27,7 @@ export class VE_StateActionData {
     this.type = StateActionType.Action;
   }
 
-  setAssignmentAction(total_string: string, var_id: string, var_value: string): void {
+  public setAssignmentAction(total_string: string, var_id: string, var_value: string): void {
     this.totalString = total_string;
     this.varID = var_id;
     this.varValue = var_value;

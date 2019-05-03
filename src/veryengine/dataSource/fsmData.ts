@@ -27,15 +27,15 @@ export class VE_FsmData {
     this._fsmID = fsm_id;
   }
 
-  initFsm(initial_var: string): void {
+  public initFsm(initial_var: string): void {
     this._initialValStr = initial_var;
   }
 
-  addState(state_data: VE_StateData): void {
+  public addState(state_data: VE_StateData): void {
     this._states.push(state_data);
   }
 
-  getState(index: number): VE_StateData {
+  public getState(index: number): VE_StateData {
     return this._states[index];
   }
 }

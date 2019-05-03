@@ -17,7 +17,7 @@ export class VeryObject {
   }
   private _objectID: string = '';
 
-  gameObject: GameObject = new GameObject();
+  public gameObject: GameObject = new GameObject();
 
   private _variables: { [key: string]: IVeryVar } = {};
   private _expressions: { [key: string]: IExpression } = {};
@@ -34,7 +34,7 @@ export class VeryObject {
     this.gameObject = game_object;
   }
 
-  hasFsm(fsm_id: string): boolean {
+  public hasFsm(fsm_id: string): boolean {
     if (this._fsms[fsm_id]) {
       return true;
     } else {
@@ -42,15 +42,15 @@ export class VeryObject {
     }
   }
 
-  addFsm(fsm_id: string, fsm: VE_Fsm): void {
+  public addFsm(fsm_id: string, fsm: VE_Fsm): void {
     this._fsms[fsm_id] = fsm;
   }
 
-  getFsm(fsm_id: string): VE_Fsm {
+  public getFsm(fsm_id: string): VE_Fsm {
     return this._fsms[fsm_id];
   }
 
-  hasTrigger(trigger_id: string): boolean {
+  public hasTrigger(trigger_id: string): boolean {
     if (this._triggers[trigger_id]) {
       return true;
     } else {
@@ -58,15 +58,15 @@ export class VeryObject {
     }
   }
 
-  addTrigger(trigger_id: string, trigger: VE_TriggerBehaviour): void {
+  public addTrigger(trigger_id: string, trigger: VE_TriggerBehaviour): void {
     this._triggers[trigger_id] = trigger;
   }
 
-  getTrigger(trigger_id: string): VE_TriggerBehaviour {
+  public getTrigger(trigger_id: string): VE_TriggerBehaviour {
     return this._triggers[trigger_id];
   }
 
-  hasAction(action_id: string): boolean {
+  public hasAction(action_id: string): boolean {
     if (this._actions[action_id]) {
       return true;
     } else {
@@ -74,15 +74,15 @@ export class VeryObject {
     }
   }
 
-  addAction(action_id: string, action: VE_ActionBehaviour): void {
+  public addAction(action_id: string, action: VE_ActionBehaviour): void {
     this._actions[action_id] = action;
   }
 
-  getAction(action_id: string): VE_ActionBehaviour {
+  public getAction(action_id: string): VE_ActionBehaviour {
     return this._actions[action_id];
   }
 
-  hasVariable(var_id: string): boolean {
+  public hasVariable(var_id: string): boolean {
     if (this._variables[var_id]) {
       return true;
     } else {
@@ -90,15 +90,15 @@ export class VeryObject {
     }
   }
 
-  addVariable(var_id: string, variable: IVeryVar): void {
+  public addVariable(var_id: string, variable: IVeryVar): void {
     this._variables[var_id] = variable;
   }
 
-  getVariable(var_id: string): IVeryVar {
+  public getVariable(var_id: string): IVeryVar {
     return this._variables[var_id];
   }
 
-  hasExpression(exp_id: string): boolean {
+  public hasExpression(exp_id: string): boolean {
     if (this._expressions[exp_id]) {
       return false;
     } else {
@@ -106,15 +106,15 @@ export class VeryObject {
     }
   }
 
-  addExpression(exp_id: string, expression: IExpression): void {
+  public addExpression(exp_id: string, expression: IExpression): void {
     this._expressions[exp_id] = expression;
   }
 
-  getExpression(exp_id: string): IExpression {
+  public getExpression(exp_id: string): IExpression {
     return this._expressions[exp_id];
   }
 
-  hasTemplate(template_id: string): boolean {
+  public hasTemplate(template_id: string): boolean {
     if (this._templates[template_id]) {
       return true;
     } else {
@@ -122,15 +122,15 @@ export class VeryObject {
     }
   }
 
-  addTemplate(template_id: string, template: VE_Template): void {
+  public addTemplate(template_id: string, template: VE_Template): void {
     this._templates[template_id] = template;
   }
 
-  getTemplate(template_id: string): VE_Template {
+  public getTemplate(template_id: string): VE_Template {
     return this._templates[template_id];
   }
 
-  hasAnyVar(var_id: string): boolean {
+  public hasAnyVar(var_id: string): boolean {
     if (this._variables[var_id] || this._expressions[var_id] || this._templates[var_id]) {
       return true;
     } else {
@@ -149,7 +149,7 @@ export class VeryObject {
 
 
 
-  clear(): void {
+    public clear(): void {
 
   }
 }

@@ -42,8 +42,10 @@ export class VE_ExpressionParsing {
     this._objectID = object_id;
     this._fsmID = fsm_id;
     this._varScope = var_scope;
-    console.log(input_exp);
     this._tokenizer = new Tokenizer(input_exp);
+    // while(!this._tokenizer.current().isEnd()) {
+    //   console.log(this._tokenizer.consume());
+    // }
     this.errors = [];
     return this.parse();
   }
@@ -185,7 +187,7 @@ export class VE_ExpressionParsing {
     if (this._tokenizer.current().isOperator('+') && this._tokenizer.next().isIdentifier()) {
       this._tokenizer.consume();
     }
-    // TODO：VeryVar解析
+    // TODO：VeryVar解析，此处解析“*变量名”类型
 
     // 括号开始
     if (this._tokenizer.current().isStartBracket()) {
@@ -207,10 +209,12 @@ export class VE_ExpressionParsing {
       } else if (this._tokenizer.current().isNumber()) {
         value = parseFloat(this._tokenizer.current().getContents());
         typeStr = 'number';
+        // console.log('常量：' + value);
       } else {
         value = this._tokenizer.current().getContents();
         typeStr = 'string';
       }
+      this._tokenizer.consume();
       let constantExp: IExpression = new ConstantExpression(value, typeStr);
       return constantExp;
     }
@@ -225,14 +229,14 @@ export class VE_ExpressionParsing {
         let varValue: Variable | null;
         let loc: IPosition = this._tokenizer.current();
         let variableID: string = this._tokenizer.consume().getContents();
-        if (this._tokenizer.current().isOperator('*') && this._tokenizer.next().isIdentifier()) { // 对象.*变量
-          // TODO：解析VeryVar变量
+        if (variableID.endsWith('.') && this._tokenizer.current().isOperator('*') && this._tokenizer.next().isIdentifier()) { // 对象.*变量
+          // TODO：解析VeryVar变量，此处解析“对象.*变量名”类型
           console.log('TODO：解析VeryVar变量');
           return ConstantExpression.Empty();
         } else {
           // 一般变量
           varValue = this._scope.find(variableID);
-          console.log(variableID + '  ---  ' + varValue);
+          // console.log(variableID + '  ---  ' + varValue);
           if (varValue === null) {
             this._tokenizer.addError(loc, `变量名：${variableID}，该变量在变量作用域中未定义，也未定义该表达式，无法识别！另外，赋值响应右侧如果是公式，不允许引用模板变量！`);
             return ConstantExpression.Empty();
@@ -240,7 +244,6 @@ export class VE_ExpressionParsing {
             return new VariableExpression(varValue);
           }
         }
-
       }
     }
     // 关键字处理

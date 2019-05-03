@@ -4,7 +4,7 @@ import { IExpression } from "../expression";
 
 export abstract class VE_TriggerBehaviour {
 
-  abstract get ID(): string;
+  public abstract get ID(): string;
 
   protected scene!: BABYLON.Scene;
 

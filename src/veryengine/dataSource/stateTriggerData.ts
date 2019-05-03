@@ -1,8 +1,8 @@
 export class VE_StateTriggerData {
 
-  triggerID: string;
-  logicalSwitch: string;
-  logicalExp: string;
+  public triggerID: string;
+  public logicalSwitch: string;
+  public logicalExp: string;
 
   public static get Empty(): VE_StateTriggerData {
     return new VE_StateTriggerData('');

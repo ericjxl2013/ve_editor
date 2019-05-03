@@ -19,7 +19,7 @@ export class VE_Objects {
     this._projectName = project_name;
   }
 
-  isCreated(object_id: string): boolean {
+  public isCreated(object_id: string): boolean {
     if (this._objectDics[object_id]) {
       return true;
     } else {
@@ -27,14 +27,14 @@ export class VE_Objects {
     }
   }
 
-  add(object_id: string, very_object: VeryObject): void {
+  public add(object_id: string, very_object: VeryObject): void {
     if (!this.isCreated(object_id)) {
       this._objectIDs.push(object_id);
       this._objectDics[object_id] = very_object;
     }
   }
 
-  getObjectID(index: number): string {
+  public getObjectID(index: number): string {
     if(index >= 0 && index < this._objectIDs.length) {
       return this._objectIDs[index];
     } else {
@@ -42,18 +42,18 @@ export class VE_Objects {
     }
   }
 
-  getVeryObject(object_id: string): VeryObject {
+  public getVeryObject(object_id: string): VeryObject {
     return this._objectDics[object_id];
   }
 
-  unloadObject(object_id: string): void {
+  public unloadObject(object_id: string): void {
     // this._objectIDs.re
     ArrayUtility.remove(this._objectIDs, object_id);
     delete this._objectDics.object_id;
 
   }
 
-  clear(): void {
+  public clear(): void {
     for(let i: number = 0; i < this._objectIDs.length; i++) {
       let tempObject = this._objectDics[this._objectIDs[i]];
       if(tempObject) {

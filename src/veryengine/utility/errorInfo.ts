@@ -1,13 +1,13 @@
 export class ErrorInfo {
 
-  isRight: boolean = true;
-  message: string = '';
+  public isRight: boolean = true;
+  public message: string = '';
 
   constructor() {
     
   }
 
-  clear(): void {
+  public clear(): void {
     this.isRight = true;
     this.message = '';
   }
