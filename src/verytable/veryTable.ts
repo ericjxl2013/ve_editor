@@ -37,13 +37,14 @@ export class VeryTable {
    * @param row_index 行序号
    * @param column_index 列序号
    */
-  public getData(row_index: number, column_index: number): string | undefined {
-    if (row_index >= 0 && row_index < this._rows.length) {
-      let row: VeryTableRow = this._rows[row_index];
-      return row.getData(column_index);
-    } else {
-      return undefined;
-    }
+  public getData(row_index: number, column_index: number): string {
+    // if (row_index >= 0 && row_index < this._rows.length) {
+    //   let row: VeryTableRow = this._rows[row_index];
+    //   return row.getData(column_index);
+    // } else {
+    //   return undefined;
+    // }
+    return this._rows[row_index].getData(column_index);
   }
 
   /**

@@ -13,3 +13,4 @@ export * from './scope';
 export * from './functionExpression';
 export * from './expressionParsing';
 export * from './expManager';
+export * from './veryExpressions';

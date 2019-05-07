@@ -18,12 +18,13 @@ export class VeryTableRow {
    * 根据列序号获取表格数据
    * @param column_index 列序号
    */
-  public getData(column_index: number): string | undefined {
-    if (column_index >= 0 && column_index < this.Count) {
-      return this._rowData[column_index];
-    } else {
-      return undefined;
-    }
+  public getData(column_index: number): string {
+    // if (column_index >= 0 && column_index < this.Count) {
+    //   return this._rowData[column_index];
+    // } else {
+    //   return undefined;
+    // }
+    return this._rowData[column_index];
   }
 
   public add(data: string): void {

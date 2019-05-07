@@ -74,6 +74,7 @@ export default class Game {
 		// 表格加载测试
 		// console.log(hot1.getData());
 		let entrance: VeryEngine = new VeryEngine();
+		// console.log(`空行数：${hot1.countEmptyRows()}`);
 		entrance.init(hot1.getData(), projectName);
 
 		// 全局渲染帧循环

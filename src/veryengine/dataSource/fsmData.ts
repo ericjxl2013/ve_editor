@@ -11,6 +11,11 @@ export class VE_FsmData {
   }
   private _fsmID: string;
 
+  public get fsmType(): string {
+    return this._fsmType;
+  }
+  private _fsmType: string = '';
+
   public get initialValStr(): string {
     return this._initialValStr;
   }
@@ -27,7 +32,8 @@ export class VE_FsmData {
     this._fsmID = fsm_id;
   }
 
-  public initFsm(initial_var: string): void {
+  public initFsm(fsm_type: string, initial_var: string): void {
+    this._fsmType = fsm_type;
     this._initialValStr = initial_var;
   }
 

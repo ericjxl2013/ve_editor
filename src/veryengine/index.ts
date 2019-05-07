@@ -11,6 +11,7 @@ export * from './object/index';
 export * from './state/index';
 export * from './template/index';
 export * from './trigger/index';
+export * from './loader/index';
 
 export * from './variables/index';
 export * from '../verytable/index';

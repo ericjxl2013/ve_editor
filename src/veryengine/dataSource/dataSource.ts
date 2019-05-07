@@ -63,7 +63,7 @@ export class VE_DataSource {
     }
   }
 
-  public hasFsm(fsm_id: string): boolean {
+  public isCreatedFsm(fsm_id: string): boolean {
     if(this._fsmDic[fsm_id]) {
       return true;
     } else {
@@ -76,7 +76,7 @@ export class VE_DataSource {
     this._fsmDic[fsm_id] = new VE_FsmData(fsm_id, this);
   }
 
-  public getFsm(fsm_id: string): VE_FsmData {
+  public getFsmData(fsm_id: string): VE_FsmData {
     return this._fsmDic[fsm_id];
   }
 
@@ -92,7 +92,7 @@ export class VE_DataSource {
     return this._fsmIDs[index];
   }
 
-  public hasTrigger(trigger_id: string): boolean {
+  public isCreatedTrigger(trigger_id: string): boolean {
     if(this._triggerDic[trigger_id]) {
       return true;
     } else {
@@ -121,7 +121,7 @@ export class VE_DataSource {
     return this._triggerIDs[index];
   }
 
-  public hasAction(action_id: string): boolean {
+  public isCreatedAction(action_id: string): boolean {
     if(this._actionDic[action_id]) {
       return true;
     } else {

@@ -102,6 +102,8 @@ export class BinaryExpression implements IExpression {
     return 'BinaryExpression';
   }
 
+  public isRight: boolean = true;
+
   private _op: BinaryOperator = BinaryOperator.EQ;
 
   private _left: IExpression;
@@ -151,6 +153,8 @@ export class BinaryExpression implements IExpression {
     // console.log(this._right);
     this._expType = this.resultAutoType(left_exp, right_exp, op);
     if (this._expType === 'null') {
+      // TODO
+      this.isRight = false;
       console.log("公式两边类型不匹配，左侧类型：" + left_exp.expType + "，右侧类型：" + right_exp.expType + "，计算类型：" + op.toString());
     }
   }

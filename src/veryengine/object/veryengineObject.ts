@@ -4,8 +4,9 @@ import { VE_ActionBehaviour } from "../action";
 import { VE_TriggerBehaviour } from "../trigger";
 import { VE_Fsm, VE_State } from "../state";
 import { VE_Template } from "../template";
+import { VE_DataSource, VE_VariableData } from "../dataSource";
 
-export class VeryObject {
+export class VeryEngineObject {
 
   public get projectName(): string {
     return this._projectName;
@@ -17,7 +18,7 @@ export class VeryObject {
   }
   private _objectID: string = '';
 
-  public gameObject: GameObject = new GameObject();
+  public gameObject: GameObject = new GameObject('');
 
   private _variables: { [key: string]: IVeryVar } = {};
   private _expressions: { [key: string]: IExpression } = {};
@@ -26,15 +27,21 @@ export class VeryObject {
   private _fsms: { [key: string]: VE_Fsm } = {};
   private _templates: { [key: string]: VE_Template } = {};
 
+  public dataSource: VE_DataSource;
+
+  public varData: VE_VariableData;
+
 
 
   constructor(project_name: string, object_id: string, game_object: GameObject) {
     this._projectName = projectName;
     this._objectID = object_id;
     this.gameObject = game_object;
+    this.dataSource = new VE_DataSource(project_name, object_id, false);
+    this.varData = new VE_VariableData(project_name);
   }
 
-  public hasFsm(fsm_id: string): boolean {
+  public isCreatedFsm(fsm_id: string): boolean {
     if (this._fsms[fsm_id]) {
       return true;
     } else {
@@ -50,7 +57,7 @@ export class VeryObject {
     return this._fsms[fsm_id];
   }
 
-  public hasTrigger(trigger_id: string): boolean {
+  public isCreatedTrigger(trigger_id: string): boolean {
     if (this._triggers[trigger_id]) {
       return true;
     } else {
@@ -66,7 +73,7 @@ export class VeryObject {
     return this._triggers[trigger_id];
   }
 
-  public hasAction(action_id: string): boolean {
+  public isCreatedAction(action_id: string): boolean {
     if (this._actions[action_id]) {
       return true;
     } else {
@@ -82,7 +89,7 @@ export class VeryObject {
     return this._actions[action_id];
   }
 
-  public hasVariable(var_id: string): boolean {
+  public isCreatedVariable(var_id: string): boolean {
     if (this._variables[var_id]) {
       return true;
     } else {
@@ -98,7 +105,7 @@ export class VeryObject {
     return this._variables[var_id];
   }
 
-  public hasExpression(exp_id: string): boolean {
+  public isCreatedExpression(exp_id: string): boolean {
     if (this._expressions[exp_id]) {
       return false;
     } else {
@@ -114,7 +121,7 @@ export class VeryObject {
     return this._expressions[exp_id];
   }
 
-  public hasTemplate(template_id: string): boolean {
+  public isCreatedTemplate(template_id: string): boolean {
     if (this._templates[template_id]) {
       return true;
     } else {
@@ -130,7 +137,7 @@ export class VeryObject {
     return this._templates[template_id];
   }
 
-  public hasAnyVar(var_id: string): boolean {
+  public isCreatedVar(var_id: string): boolean {
     if (this._variables[var_id] || this._expressions[var_id] || this._templates[var_id]) {
       return true;
     } else {
@@ -142,14 +149,47 @@ export class VeryObject {
 
   // }
 
-    unload():void {}
+  unload(): void { }
 
-    // setUnloadCallback(callback): void {}
-
-
+  // setUnloadCallback(callback): void {}
 
 
-    public clear(): void {
 
+
+  public clear(): void {
+
+    if (this.dataSource) {
+      this.dataSource.clear();
+    }
+    if (this.varData) {
+      this.varData.clear();
+    }
+    this._variables = {};
+    this._expressions = {};
+
+    if (this._templates) {
+      Object.keys(this._templates).forEach(key => {
+        this._templates[key].clear();
+      })
+      this._templates = {};
+    }
+
+    this._fsms = {};
+
+    if (this._actions) {
+      Object.keys(this._actions).forEach(key => {
+        this._actions[key].destroy();
+      })
+      this._actions = {};
+    }
+
+    if (this._triggers) {
+      Object.keys(this._triggers).forEach(key => {
+        this._triggers[key].destroy();
+      })
+      this._triggers = {};
+    }
   }
+
+
 }

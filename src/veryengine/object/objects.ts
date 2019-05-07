@@ -1,4 +1,4 @@
-import { VeryObject } from "./veryObject";
+import { VeryEngineObject } from "./veryengineObject";
 import { ArrayUtility } from "../utility";
 
 export class VE_Objects {
@@ -9,7 +9,7 @@ export class VE_Objects {
   private _projectName: string = '';
 
   private _objectIDs: string[] = [];
-  private _objectDics: { [key: string]: VeryObject } = {};
+  private _objectDics: { [key: string]: VeryEngineObject } = {};
 
   public get count(): number {
     return this._objectIDs.length;
@@ -27,7 +27,7 @@ export class VE_Objects {
     }
   }
 
-  public add(object_id: string, very_object: VeryObject): void {
+  public add(object_id: string, very_object: VeryEngineObject): void {
     if (!this.isCreated(object_id)) {
       this._objectIDs.push(object_id);
       this._objectDics[object_id] = very_object;
@@ -42,7 +42,7 @@ export class VE_Objects {
     }
   }
 
-  public getVeryObject(object_id: string): VeryObject {
+  public getVeryObject(object_id: string): VeryEngineObject {
     return this._objectDics[object_id];
   }
 

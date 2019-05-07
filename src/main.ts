@@ -2,27 +2,29 @@
 
 import Game from "./game";
 
-let game!:Game;
+let game!: Game;
+let initFlag: boolean = false;
+
 /**
  * 初始化入口；
  */
 function initGame(): void {
   let canvas = <HTMLCanvasElement>document.getElementById("renderCanvas");
   let fpsLabel = document.getElementById("fpsLabel");
-  if(canvas !== null && fpsLabel !== null) {
+  if (canvas !== null && fpsLabel !== null) {
     game = new Game(canvas, fpsLabel);
     game.createScene().animate();  // 链式调用
   }
 }
 
 function runBtn(): void {
-  if(game) {
+  if (game) {
     game.createScene().animate();
   }
 }
 
 function toggleDebug(): void {
-  if(game) {
+  if (game) {
     game.toggleDebug();
   }
 }
@@ -34,7 +36,13 @@ document.getElementById("runButton")!.addEventListener("click", runBtn);
 document.getElementById("debugButton")!.addEventListener("click", toggleDebug);
 
 // 启动引擎
+// 第一次启动时，先异步加载数据后再初始化，后期可以直接点击按钮进行加载；
 initGame();
+// loadData2()
+//   .then(function (hot: HandTable) {
+//     console.log(hot.getData());
+//   }
+//   );
 
 
 

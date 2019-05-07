@@ -1,5 +1,6 @@
 import { ShowError } from "../html/showError";
 import { IVeryVar } from "./IVeryVar";
+import { ErrorInfo } from "../utility";
 
 export class VeryVarManager {
 
@@ -36,6 +37,25 @@ export class VeryVarManager {
   public static createVar(var_type: string): IVeryVar {
     var_type = var_type.toLowerCase();
     return Object.create(this.getVarType(var_type));
+  }
+
+  public static createVariable(var_id: string, var_type: string, value: string, error_info: ErrorInfo): Nullable<IVeryVar> {
+    var_type = var_type.toLowerCase();
+    let variable: any;
+    try {
+      variable = Object.create(this.getVarType(var_type));
+    } catch (error) {
+      console.log(error.message);
+      error_info.isRight = false;
+      error_info.message = '变量创建错误：当前类型在平台中不存在，请检查！类型名：' + var_type + '，错误原因：' + error.message;
+      return null;
+    }
+    if (variable === null) {
+      error_info.isRight = false;
+      error_info.message = '变量创建错误：当前类型在平台中不存在，请检查！类型名：' + var_type;
+      return null;
+    }
+    return variable;
   }
 
   public static getVarType(var_type: string): any {

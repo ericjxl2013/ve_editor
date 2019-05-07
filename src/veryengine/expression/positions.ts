@@ -32,7 +32,7 @@ export class NameLocation implements IPosition {
   }
 }
 
-export enum Severity{
+export enum SeverityExp{
   Warning,
   Error
 }
@@ -41,9 +41,9 @@ export class ParseError{
 
   private _pos: IPosition;
   private _message: string;
-  private _severity: Severity;
+  private _severity: SeverityExp;
 
-  constructor(pos: IPosition, msg: string, severity: Severity) {
+  constructor(pos: IPosition, msg: string, severity: SeverityExp) {
     this._pos = pos;
     this._message = msg;
     this._severity = severity;
@@ -54,7 +54,7 @@ export class ParseError{
     if(pos.getLine() > 0) {
       message = `警告>>>行号：${pos.getLine()}，字符序号：${pos.getPos()}，警告信息：${msg}`;
     }
-    return new ParseError(pos, message, Severity.Warning);
+    return new ParseError(pos, message, SeverityExp.Warning);
   }
 
   public static Error(pos: IPosition, msg: string): ParseError {
@@ -62,7 +62,7 @@ export class ParseError{
     if(pos.getLine() > 0) {
       message = `错误>>>行号：${pos.getLine()}，字符序号：${pos.getPos()}，警告信息：${msg}`;
     }
-    return new ParseError(pos, message, Severity.Error);
+    return new ParseError(pos, message, SeverityExp.Error);
   }
 
   public getPosition(): IPosition {
@@ -73,7 +73,7 @@ export class ParseError{
     return this._message;
   }
 
-  public getSeverity(): Severity {
+  public getSeverity(): SeverityExp {
     return this._severity;
   }
 

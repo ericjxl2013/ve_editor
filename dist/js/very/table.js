@@ -140,6 +140,36 @@ const loadData = () => {
     });
 };
 
+// 加载数据
+const loadData2 = () => {
+  return new Promise(function(resolve, reject) {
+    // 获取表格数据
+    axios
+      .get("/data/table/acquire")
+      .then(function(response) {
+        let data = response.data;
+        // console.log(data);
+        if (data.code === "00000") {
+          // 先将json转化为字符串
+          let tempData = JSON.stringify(data.data);
+          // 对字符串再进行反转义
+          tempData = escape2Html(tempData);
+          // 转化为json后，赋值给表格
+          hot1.loadData(JSON.parse(tempData).table);
+          resolve(hot1);
+        } else {
+          // Do nothing
+          console.log("load not right: " + data.message);
+          reject(data.message);
+        }
+      })
+      .catch(function(error) {
+        console.log("load error: " + error);
+        reject(error);
+      });
+  });
+};
+
 var saveFlag;
 // 保存数据，延迟5秒
 const saveData = () => {

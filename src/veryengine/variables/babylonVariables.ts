@@ -12,18 +12,28 @@ export class GameObject {
   }
   private _transform: Transform = new Transform();
 
+  public name: string;
 
   private mesh: BABYLON.Nullable<BABYLON.Mesh> = null;
 
-  constructor() {
+  constructor(name: string) {
+    this.name = name;
     // VeryEngine.Scene.getMeshByName()
   }
 
+  // TODO
+  public static find(name: string): Nullable<GameObject> {
+    return new GameObject(name);
+  }
 
 }
 
 
 export class Transform {
+
+
+  private _transformNode: BABYLON.Nullable<BABYLON.TransformNode> = null;
+  private _mesh: BABYLON.Nullable<BABYLON.Mesh> = null;
 
   public localPosition: BABYLON.Vector3 = BABYLON.Vector3.Zero();
   public position: BABYLON.Vector3 = BABYLON.Vector3.Zero();
@@ -49,5 +59,8 @@ export class Transform {
   constructor() {
 
   }
+
+
+
 
 }

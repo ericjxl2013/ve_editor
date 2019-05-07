@@ -31,3 +31,8 @@ export enum VariableScope {
   Global,
   Scene
 }
+
+export enum Severity {
+  Warning,
+  Error
+}
