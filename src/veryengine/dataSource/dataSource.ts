@@ -32,13 +32,16 @@ export class VE_DataSource {
 
   private _fsmIDs: string[] = [];
   private _fsmDic: { [key: string]: VE_FsmData } = {};
+  private _fsmPosDic: { [key: string]: string } = {};
 
   private _triggerIDs: string[] = [];
   private _triggerDic: { [key: string]: string[] } = {};
+  private _triggerPosDic: { [key: string]: string } = {};
 
   private _actionIDs: string[] = [];
   private _actionDic: { [key: string]: string[] } = {};
   private _actionInitValue: { [key: string]: string[] } = {};
+  private _actionPosDic: { [key: string]: string } = {};
 
   public get triggerCount(): number {
     return this._triggerIDs.length;
@@ -71,13 +74,18 @@ export class VE_DataSource {
     }
   }
 
-  public createFsm(fsm_id: string): void {
+  public createFsm(fsm_id: string, pos: string): void {
     this._fsmIDs.push(fsm_id);
     this._fsmDic[fsm_id] = new VE_FsmData(fsm_id, this);
+    this._fsmPosDic[fsm_id] = pos;
   }
 
   public getFsmData(fsm_id: string): VE_FsmData {
     return this._fsmDic[fsm_id];
+  }
+
+  public getFsmPos(fsm_id: string): string {
+    return this._fsmPosDic[fsm_id];
   }
 
   public hasFsmIndex(index: number): boolean {
@@ -100,13 +108,18 @@ export class VE_DataSource {
     }
   }
 
-  public addTrigger(trigger_id: string, trigger_data: string[]): void {
+  public addTrigger(trigger_id: string, trigger_data: string[], pos: string): void {
     this._triggerIDs.push(trigger_id);
     this._triggerDic[trigger_id] = trigger_data;
+    this._triggerPosDic[trigger_id] = pos;
   }
 
   public getTrigger(trigger_id: string): string[] {
     return this._triggerDic[trigger_id];
+  }
+
+  public getTriggerPos(trigger_id: string): string {
+    return this._triggerPosDic[trigger_id];
   }
 
   public hasTriggerIndex(index: number): boolean {
@@ -121,6 +134,10 @@ export class VE_DataSource {
     return this._triggerIDs[index];
   }
 
+  public getTriggerPara(trigger_id: string): string[] {
+    return this._triggerDic[trigger_id];
+  }
+
   public isCreatedAction(action_id: string): boolean {
     if(this._actionDic[action_id]) {
       return true;
@@ -129,14 +146,19 @@ export class VE_DataSource {
     }
   }
 
-  public addAction(action_id: string, action_data: string[], action_init_val: string[]): void {
+  public addAction(action_id: string, action_data: string[], action_init_val: string[], pos: string): void {
     this._actionIDs.push(action_id);
     this._actionDic[action_id] = action_data;
     this._actionInitValue[action_id] = action_init_val;
+    this._actionPosDic[action_id] = pos;
   }
 
-  public getAction(action_id: string): string[] {
+  public getActionPara(action_id: string): string[] {
     return this._actionDic[action_id];
+  }
+
+  public getActionPos(action_id: string): string {
+    return this._actionPosDic[action_id];
   }
 
   public getActionInitVal(action_id: string): string[] {

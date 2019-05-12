@@ -41,7 +41,8 @@ export class VE_FsmData {
     this._states.push(state_data);
   }
 
-  public getState(index: number): VE_StateData {
+  public getStateData(index: number): VE_StateData {
     return this._states[index];
   }
+
 }

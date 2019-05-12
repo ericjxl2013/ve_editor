@@ -1,6 +1,11 @@
 import { ShowError } from "../html/showError";
 import { IVeryVar } from "./IVeryVar";
 import { ErrorInfo } from "../utility";
+import { VE_Variables } from "./variables";
+import { VE_Manager } from "../manager";
+import { VeryExpression } from "./veryVariables";
+import { VE_Objects, VeryEngineObject } from "../object";
+import { VE_Template } from "../template";
 
 export class VeryVarManager {
 
@@ -44,18 +49,24 @@ export class VeryVarManager {
     let variable: any;
     try {
       variable = Object.create(this.getVarType(var_type));
+      if (!variable) {
+        error_info.isRight = false;
+        error_info.message = '变量创建错误：当前类型在平台中不存在，请检查！类型名：' + var_type;
+        return null;
+      }
+      let result: any = (<IVeryVar>variable).initValue(value, error_info);
+      if (error_info.isRight) {
+        (<IVeryVar>variable).setValue(result);
+        return <IVeryVar>variable;
+      } else {
+        return null;
+      }
     } catch (error) {
       console.log(error.message);
       error_info.isRight = false;
       error_info.message = '变量创建错误：当前类型在平台中不存在，请检查！类型名：' + var_type + '，错误原因：' + error.message;
       return null;
     }
-    if (variable === null) {
-      error_info.isRight = false;
-      error_info.message = '变量创建错误：当前类型在平台中不存在，请检查！类型名：' + var_type;
-      return null;
-    }
-    return variable;
   }
 
   public static getVarType(var_type: string): any {
@@ -72,6 +83,160 @@ export class VeryVarManager {
     delete this._veryVarTypes[var_type];
   }
 
+  // *变量
+  // 对象名.*变量
+  public static getVariable(var_id: string, project_name: string, object_id: string, error_info: ErrorInfo): Nullable<IVeryVar> {
+    if (project_name === '') {
+      return this.getSceneVariable(var_id, error_info);
+    } else if (object_id === '') {
+      return this.getGlobalVariable(var_id, project_name, error_info);
+    } else {
+      let objects: VE_Objects = VE_Manager.objects(project_name);
+      if (objects) {
+        let veryObject: VeryEngineObject = objects.getVeryObject(object_id);
+        if (veryObject) {
+          if (veryObject.isCreatedVariable(var_id)) {
+            return veryObject.getVariable(var_id);
+          } else if (veryObject.isCreatedExpression(var_id)) {
+            return new VeryExpression(veryObject.getExpression(var_id));
+          } else if (veryObject.isCreatedFsm(var_id)) {
+            return veryObject.getFsm(var_id).fsmVar;
+          } else {
+            return this.getGlobalVariable(var_id, project_name, error_info);
+          }
+        } else {
+          return this.getGlobalVariable(var_id, project_name, error_info);
+        }
+      } else {
+        return this.getGlobalVariable(var_id, project_name, error_info);
+      }
+    }
+  }
+
+  // *模板变量.*变量
+  // 对象名.*模板变量.*变量
+  public static getTemplateVariable(template_var_id: string, var_id: string, project_name: string, object_id: string, error_info: ErrorInfo): Nullable<IVeryVar> {
+    if (project_name === '') {
+      // 场景变量暂不允许模板变量的存在
+      error_info.isRight = false;
+      error_info.message = "无法在当前项目中查找到当前模板变量：" + template_var_id + "；\n";
+      return null;
+    }
+    else {
+      if (object_id !== '')  //对象局部变量
+      {
+        let objects: VE_Objects = VE_Manager.objects(project_name);
+        if (!objects) {
+          error_info.isRight = false;
+          error_info.message += "无法在当前项目中查找到当前对象：" + object_id + "；\n";
+          return null;
+        }
+        else {
+          if (objects.isCreated(object_id)) {
+            let veryObject: VeryEngineObject = objects.getVeryObject(object_id);
+            if (veryObject.isCreatedTemplate(template_var_id)) {
+              let template: VE_Template = veryObject.getTemplate(template_var_id);
+              if (template.templateInstance === null) {
+                error_info.isRight = false;
+                error_info.message += "当前模板变量未实例化，请先实例化该模板对象，模板变量名：" + template_var_id + "；\n";
+                return null;
+              }
+              else {
+                if (template.templateInstance.isCreatedVariable(var_id)) {
+                  return template.templateInstance.getVariable(var_id);
+                }
+                else if (template.templateInstance.isCreatedExpression(var_id)) {
+                  return new VeryExpression(template.templateInstance.getExpression(var_id));
+                }
+                else if (template.templateInstance.isCreatedFsm(var_id)) {
+                  return template.templateInstance.getFsm(var_id).fsmVar;
+                }
+                else {
+                  error_info.isRight = false;
+                  error_info.message += "当前模板变量中无法查找到该变量，模板变量名：" + template_var_id + "，变量名：" + var_id + "；\n";
+                  return null;
+                }
+              }
+            }
+            else {
+              error_info.isRight = false;
+              error_info.message += "无法在当前项目中查找到当前模板变量：" + template_var_id + "；\n";
+              return null;
+            }
+          }
+          else {
+            error_info.isRight = false;
+            error_info.message += "无法在当前项目中查找到当前对象：" + object_id + "；\n";
+            return null;
+          }
+        }
+      }
+      // 全局变量
+      else {
+        let variables: VE_Variables = VE_Manager.variables(project_name);
+        if (!variables) {
+          error_info.isRight = false;
+          error_info.message += "无法在当前项目中查找到当前模板变量：" + template_var_id + "；\n";
+          return null;
+        }
+        else {
+          if (variables.isCreatedTemplate(template_var_id)) {
+            let template: VE_Template = variables.getTemplate(template_var_id);
+            if (template.templateInstance === null) {
+              error_info.isRight = false;
+              error_info.message += "当前模板变量未实例化，请先实例化该模板对象，模板变量名：" + template_var_id + "；\n";
+              return null;
+            }
+            else {
+              if (template.templateInstance.isCreatedVariable(var_id)) {
+                return template.templateInstance.getVariable(var_id);
+              }
+              else if (template.templateInstance.isCreatedExpression(var_id)) {
+                return new VeryExpression(template.templateInstance.getExpression(var_id));
+              }
+              else if (template.templateInstance.isCreatedFsm(var_id)) {
+                return template.templateInstance.getFsm(var_id).fsmVar;
+              }
+              else {
+                error_info.isRight = false;
+                error_info.message += "当前模板变量中无法查找到该变量，模板变量名：" + template_var_id + "，变量名：" + var_id + "；\n";
+                return null;
+              }
+            }
+          }
+          else {
+            error_info.isRight = false;
+            error_info.message += "无法在当前项目中查找到当前模板变量：" + template_var_id + "；\n";
+            return null;
+          }
+        }
+      }
+    }
+  }
+
+  public static getGlobalVariable(var_id: string, project_name: string, error_info: ErrorInfo): Nullable<IVeryVar> {
+    if (project_name === '') {
+      return this.getSceneVariable(var_id, error_info);
+    } else {
+      let variables: VE_Variables = VE_Manager.variables(project_name);
+      if (variables) {
+        if (variables.isCreatedVariable(var_id)) {
+          return variables.getVariable(var_id);
+        } else if (variables.isCreatedExpression(var_id)) {
+          return new VeryExpression(variables.getExpression(var_id));
+        } else {
+          return this.getSceneVariable(var_id, error_info);
+        }
+      } else {
+        return this.getSceneVariable(var_id, error_info);
+      }
+    }
+  }
 
 
+  public static getSceneVariable(var_id: string, error_info: ErrorInfo): Nullable<IVeryVar> {
+    error_info.isRight = false;
+    error_info.message = '暂时不支持场景变量！'
+    return null;
+  }
 }

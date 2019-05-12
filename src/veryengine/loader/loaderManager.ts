@@ -170,6 +170,7 @@ export class LoaderManager {
                   }
                 }
                 stateData = new VE_StateData(this._activeFsmData, stateInfo[0].trim(), false, stateIndex);
+                stateData.rowIndex = i;
                 this._activeFsmData.addState(stateData);
                 this._activeStateData = stateData;
               }
@@ -302,6 +303,7 @@ export class LoaderManager {
                     }
                   }
                   stateData = new VE_StateData(this._activeFsmData, stateInfo[0].trim(), false, stateIndex);
+                  stateData.rowIndex = i;
                   this._activeFsmData.addState(stateData);
                   this._activeStateData = stateData;
                 }
@@ -351,13 +353,14 @@ export class LoaderManager {
                     return false;
                   }
                   // 创建状态机数据
-                  this._activeObject!.dataSource.createFsm(fsmID);
+                  this._activeObject!.dataSource.createFsm(fsmID, table.pos(i, 5));
                   this._activeFsmData = this._activeObject!.dataSource.getFsmData(fsmID);
                   // 初始化状态机
                   if (VeryVarManager.hasVarType(paraArray[0])) {
                     this._activeFsmData.initFsm(paraArray[0], paraArray[1]);
                     // 创建具体状态
                     let stateData: VE_StateData = new VE_StateData(this._activeFsmData, paraArray[1], true, stateIndex);
+                    stateData.rowIndex = i;
                     this._activeFsmData.addState(stateData);
                     this._activeStateData = stateData;
                   } else {
@@ -376,13 +379,14 @@ export class LoaderManager {
                     return false;
                   }
                   // 创建状态机数据
-                  this._activeTemplate!.dataSource.createFsm(fsmID);
+                  this._activeTemplate!.dataSource.createFsm(fsmID, table.pos(i, 5));
                   this._activeFsmData = this._activeTemplate!.dataSource.getFsmData(fsmID);
                   // 初始化状态机
                   if (VeryVarManager.hasVarType(paraArray[0])) {
                     this._activeFsmData.initFsm(paraArray[0], paraArray[1]);
                     // 创建具体状态
                     let stateData: VE_StateData = new VE_StateData(this._activeFsmData, paraArray[1], true, stateIndex);
+                    stateData.rowIndex = i;
                     this._activeFsmData.addState(stateData);
                     this._activeStateData = stateData;
                   } else {
@@ -415,7 +419,7 @@ export class LoaderManager {
             }
             if (table.getData(i, 3) !== '') {
               if (!this._activeFsmData!.dataSource.isCreatedTrigger(triggerID)) {
-                this._activeFsmData!.dataSource.addTrigger(triggerID, VE_StringFormat.paraSegment(table.getData(i, 3)));
+                this._activeFsmData!.dataSource.addTrigger(triggerID, VE_StringFormat.paraSegment(table.getData(i, 3)), table.pos(i, 2));
               } else {
                 VE_ErrorManager.add(VE_Error.error(table.pos(i, 2), "触发：" + table.getData(i, 2) + "，当前触发已在该对象中定义，请勿重复定义，请检查！", table.ID))
                 return false;
@@ -424,7 +428,7 @@ export class LoaderManager {
 
             // 触发数据加入StateData中
             let triggerData: VE_StateTriggerData = new VE_StateTriggerData(triggerID);
-            this._activeStateData.addTrigger(triggerData);
+            this._activeStateData.addTrigger(triggerData, table.pos(i, 2));
 
             // 触发启动条件
             if (table.getData(i, 1) !== '') {
@@ -472,12 +476,12 @@ export class LoaderManager {
             if (tempStr.startsWith('log(') || tempStr.startsWith('log（') || tempStr.startsWith('调试（') || tempStr.startsWith('调试(')) {
               let newActionID: string = project_name + '___' + StateConst.LogCount++;
               let actionData: VE_StateActionData = new VE_StateActionData(newActionID, 'true', 'false');
-              this._activeStateData.addAction(actionData);
+              this._activeStateData.addAction(actionData, table.pos(i, 6));
               let actionPara: string = table.getData(i, 6).substring(4);
               if (tempStr.startsWith('调试')) {
                 actionPara = table.getData(i, 6).substring(3);
               }
-              this._activeFsmData.dataSource.addAction(newActionID, ['调试', '调试', actionPara.substring(0, actionPara.length - 1)], ['false', 'false']);
+              this._activeFsmData.dataSource.addAction(newActionID, ['调试', '调试', actionPara.substring(0, actionPara.length - 1)], ['false', 'false'], table.pos(i, 6));
               if (table.getData(i, 7) !== '') {
                 VE_ErrorManager.add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
               }
@@ -485,12 +489,12 @@ export class LoaderManager {
             else if (tempStr.startsWith('error(') || tempStr.startsWith('error（') || tempStr.startsWith('错误（') || tempStr.startsWith('错误(')) {
               let newActionID: string = project_name + '___' + StateConst.LogCount++;
               let actionData: VE_StateActionData = new VE_StateActionData(newActionID, 'true', 'false');
-              this._activeStateData.addAction(actionData);
+              this._activeStateData.addAction(actionData, table.pos(i, 6));
               let actionPara: string = table.getData(i, 6).substring(6);
               if (tempStr.startsWith('错误')) {
                 actionPara = table.getData(i, 6).substring(3);
               }
-              this._activeFsmData.dataSource.addAction(newActionID, ['调试', '错误', actionPara.substring(0, actionPara.length - 1)], ['false', 'false']);
+              this._activeFsmData.dataSource.addAction(newActionID, ['调试', '错误', actionPara.substring(0, actionPara.length - 1)], ['false', 'false'], table.pos(i, 6));
               if (table.getData(i, 7) !== '') {
                 VE_ErrorManager.add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
               }
@@ -498,12 +502,12 @@ export class LoaderManager {
             else if (tempStr.startsWith('warn(') || tempStr.startsWith('warn（') || tempStr.startsWith('警告（') || tempStr.startsWith('警告(')) {
               let newActionID: string = project_name + '___' + StateConst.LogCount++;
               let actionData: VE_StateActionData = new VE_StateActionData(newActionID, 'true', 'false');
-              this._activeStateData.addAction(actionData);
+              this._activeStateData.addAction(actionData, table.pos(i, 6));
               let actionPara: string = table.getData(i, 6).substring(5);
               if (tempStr.startsWith('警告')) {
                 actionPara = table.getData(i, 6).substring(3);
               }
-              this._activeFsmData.dataSource.addAction(newActionID, ['调试', '警告', actionPara.substring(0, actionPara.length - 1)], ['false', 'false']);
+              this._activeFsmData.dataSource.addAction(newActionID, ['调试', '警告', actionPara.substring(0, actionPara.length - 1)], ['false', 'false'], table.pos(i, 6));
               if (table.getData(i, 7) !== '') {
                 VE_ErrorManager.add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
               }
@@ -517,7 +521,7 @@ export class LoaderManager {
               let equalIndex: number = table.getData(i, 6).indexOf('=');
               let actionData: VE_StateActionData = new VE_StateActionData('');
               actionData.setAssignmentAction(table.getData(i, 6), table.getData(i, 6).substring(0, equalIndex).trim(), table.getData(i, 6).substring(equalIndex + 1).trim());
-              this._activeStateData.addAction(actionData);
+              this._activeStateData.addAction(actionData, table.pos(i, 6));
             }
             else {
               // 响应ID
@@ -531,7 +535,7 @@ export class LoaderManager {
                 } else {
                   actionData = new VE_StateActionData(actionArray[0], actionArray[1], actionArray[2], actionArray[3]);
                 }
-                this._activeStateData.addAction(actionData);
+                this._activeStateData.addAction(actionData, table.pos(i, 6));
               } else {
                 VE_ErrorManager.add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，响应格式不正确，应为“响应ID，启动标志（bool），每帧运行标志（bool）”的形式，请检查！", table.ID))
                 return false;
@@ -545,9 +549,9 @@ export class LoaderManager {
                 }
                 if (!this._activeFsmData.dataSource.isCreatedAction(actionArray[0])) {
                   if (actionArray.length == 2) {
-                    this._activeFsmData.dataSource.addAction(actionArray[0], VE_StringFormat.paraSegment(table.getData(i, 7)), [actionArray[1], 'false']);
+                    this._activeFsmData.dataSource.addAction(actionArray[0], VE_StringFormat.paraSegment(table.getData(i, 7)), [actionArray[1], 'false'], table.pos(i, 6));
                   } else {
-                    this._activeFsmData.dataSource.addAction(actionArray[0], VE_StringFormat.paraSegment(table.getData(i, 7)), [actionArray[1], actionArray[2]]);
+                    this._activeFsmData.dataSource.addAction(actionArray[0], VE_StringFormat.paraSegment(table.getData(i, 7)), [actionArray[1], actionArray[2]], table.pos(i, 6));
                   }
                 } else {
                   VE_ErrorManager.add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，当前响应已在该对象中定义，请勿重复定义，请检查！", table.ID))
@@ -567,7 +571,7 @@ export class LoaderManager {
               VE_ErrorManager.add(VE_Error.error(table.pos(i, 8), "关联状态：" + table.getData(i, 8) + "，当前关联状态不属于任何对象和模板对象，请检查！", table.ID))
               return false;
             }
-            this._activeStateData!.addAssociatedState(table.getData(i, 8));
+            this._activeStateData!.addAssociatedState(table.getData(i, 8), table.pos(i, 8));
           }
         }
       }

@@ -14,6 +14,8 @@ export * from './trigger/index';
 export * from './loader/index';
 
 export * from './variables/index';
+export * from './scene/index';
+
 export * from '../verytable/index';
 
 export * from './library/action/index';

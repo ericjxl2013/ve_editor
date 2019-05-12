@@ -54,6 +54,10 @@ export class VE_Template {
     this.varData.addVariable(var_id, var_paras, pos);
   }
 
+  public unload(): void {
+    //TODO: 直接删除？
+  }
+
   public clone(object_id: string, template_var_id: string): VE_Template {
     let cloneTemplate: VE_Template = new VE_Template(this._projectName, this._templateID);
     cloneTemplate._objectID = object_id;
@@ -65,13 +69,13 @@ export class VE_Template {
   }
 
   public clear(): void {
-    if(this.dataSource) {
+    if (this.dataSource) {
       this.dataSource.clear();
     }
-    if(this.varData) {
+    if (this.varData) {
       this.varData.clear();
     }
-    if(this.templateInstance) {
+    if (this.templateInstance) {
       this.templateInstance.clear();
     }
   }

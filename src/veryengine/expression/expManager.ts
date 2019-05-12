@@ -116,36 +116,34 @@ export class ExpManager {
 
 ExpManager.init();
 
-try {
-  ExpManager.createVariable('first', 'number', 1);
-  ExpManager.createVariable('second', 'number', 2);
-  ExpManager.createVariable('third', 'bool', true);
-  console.log(ExpManager.getValue('third'));
+// try {
+//   ExpManager.createVariable('first', 'number', 1);
+//   ExpManager.createVariable('second', 'number', 2);
+//   ExpManager.createVariable('third', 'bool', true);
+//   console.log(ExpManager.getValue('third'));
 
-  // ExpManager.createExpression('add', '(1 + first + second * (first + second + 3)) / 2');
-  // ExpManager.createExpression('add', 'cos(PI/2) + sin(PI/2)');
-  // console.log(ExpManager.getExpression('add')!.toString());
-  // console.log('值： ' + ExpManager.getExpression('add')!.evaluate());
+//   // ExpManager.createExpression('add', '(1 + first + second * (first + second + 3)) / 2');
+//   // ExpManager.createExpression('add', 'cos(PI/2) + sin(PI/2)');
+//   // console.log(ExpManager.getExpression('add')!.toString());
+//   // console.log('值： ' + ExpManager.getExpression('add')!.evaluate());
 
-  // ExpManager.createExpression('exp1', 'second + 2 * second + abs(-10)');
-  ExpManager.createExpression('exp1', '（first * second + second） > 10');
-  console.log('值2： ' + ExpManager.getExpression('exp1')!.evaluate());
+//   // ExpManager.createExpression('exp1', 'second + 2 * second + abs(-10)');
+//   ExpManager.createExpression('exp1', '（first * second + second） > 10');
+//   console.log('值2： ' + ExpManager.getExpression('exp1')!.evaluate());
 
-  // ExpManager.createExpression('multiply', 'x * y');
-  // ExpManager.createExpression('substract', 'x - y');
+//   // ExpManager.createExpression('multiply', 'x * y');
+//   // ExpManager.createExpression('substract', 'x - y');
 
-  // console.log(ExpManager.getExpression('add')!.evaluate());
+//   // console.log(ExpManager.getExpression('add')!.evaluate());
 
-  // console.log(ExpManager.getExpression('multiply')!.evaluate());
-  // console.log(ExpManager.getExpression('substract')!.evaluate());
+//   // console.log(ExpManager.getExpression('multiply')!.evaluate());
+//   // console.log(ExpManager.getExpression('substract')!.evaluate());
 
-}
-catch {
+// }
+// catch {
 
-}
+// }
 
-
-
-ExpManager.printError();
+// ExpManager.printError();
 
 

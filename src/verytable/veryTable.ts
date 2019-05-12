@@ -65,7 +65,8 @@ export class VeryTable {
    * @param column_index 列序号
    */
   public pos(row_index: number, column_index: number): string {
-    return "表名：" + this.ID + "，位置：（" + (row_index + 1) + "，" + this.getColumnID(column_index) + "）";
+    // return "表名：" + this.ID + "，位置：（" + (row_index + 1) + "，" + this.getColumnID(column_index) + "）";
+    return "（" + (row_index + 1) + "，" + this.getColumnID(column_index) + "，表名：" + this.ID + "）";
   }
 
   /**

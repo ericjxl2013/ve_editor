@@ -2,52 +2,77 @@ import { Dictionary } from "../utility/dictionary";
 import { VE_State } from "./state";
 import { Time } from "../global";
 import { StateConst } from "./stateConst";
+import { IVeryVar, VeryString } from "../variables";
+import { VeryEngineObject } from "../object";
 
 export class VE_Fsm {
+
+  public get projectName(): string {
+    return this._projectName;
+  }
+  private _projectName: string = '';
 
   public get ID(): string {
     return this._id;
   }
   private _id: string = '';
 
-  public get ObjectID(): string {
+  public get objectID(): string {
     return this._objectID;
   }
   private _objectID: string = '';
 
-  public get FsmID(): string {
+  public get fsmID(): string {
     return this._fsmID;
   }
   private _fsmID: string = '';
 
-  private _stateDics: Dictionary<string, VE_State> = new Dictionary<string, VE_State>();
+  public get fsmVar(): IVeryVar {
+    return this._fsmVar;
+  }
+  private _fsmVar: IVeryVar;
+
+  public get VeryObject(): VeryEngineObject {
+    return this._veryObject;
+  }
+  private _veryObject: VeryEngineObject;
+
+  private _stateDics: Dictionary<number, VE_State> = new Dictionary<number, VE_State>();
   private _states: VE_State[] = [];
+
+  public get count(): number {
+    return this._states.length;
+  }
 
   private _frameCount: number = -1;
   private _triggerIDs: string[] = [];
 
-  constructor() {
-    // this._stateDics.TryGetValue(1);
+  constructor(project_name: string, object_id: string, fsm_id: string, fsm_variable: IVeryVar, very_object: VeryEngineObject) {
+    this._projectName = project_name;
+    this._objectID = object_id;
+    this._fsmID = fsm_id;
+    this._fsmVar = fsm_variable;
+    this._veryObject = very_object;
   }
 
-  public hasState(state_value: string): boolean {
-    return this._stateDics.ContainsKey(state_value);
+  public isCreatedState(state_index: number): boolean {
+    return this._stateDics.ContainsKey(state_index);
   }
 
-  public addState(state_value: string, state: VE_State): void {
-    if (!this._stateDics.ContainsKey(state_value)) {
-      this._stateDics.Add(state_value, state);
+  public addState(state: VE_State, state_index: number): void {
+    if (!this._stateDics.ContainsKey(state_index)) {
+      this._stateDics.Add(state_index, state);
       this._states.push(state);
     }
   }
 
-  public getState(state_value: string): VE_State | null {
-    return this._stateDics.GetValue(state_value);
+  public getState(state_index: number): Nullable<VE_State> {
+    return this._stateDics.GetValue(state_index);
   }
 
-  public removeState(state_value: string): boolean {
-    if (this.hasState(state_value)) {
-      this._stateDics.Remove(state_value);
+  public removeState(state_index: number): boolean {
+    if (this.isCreatedState(state_index)) {
+      this._stateDics.Remove(state_index);
       return true;
     } else {
       return false;

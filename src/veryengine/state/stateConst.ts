@@ -5,5 +5,8 @@ export class StateConst {
   public static readonly VARIABLE_SYMBOL: string = '*';
   public static readonly STATE_INDEX: number = -1;
   public static LogCount: number = -1;
-  
+
+  public static AssignmentPrefix: string = "AssignmentFormula_";
+  public static AssignmentFormulaCount: number = 0;
+
 }

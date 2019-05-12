@@ -20,6 +20,12 @@ export enum AssignType {
   Const,
 }
 
+export enum AssignmentType {
+  Const = 0,
+  Variable,
+  Expression
+}
+
 export enum AssociatedFsmType {
   Object = 0,
   Template
@@ -36,3 +42,4 @@ export enum Severity {
   Warning,
   Error
 }
+

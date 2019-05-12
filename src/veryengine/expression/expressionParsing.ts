@@ -1,7 +1,7 @@
 import { Scope } from "./scope";
 import { Tokenizer } from "./tokenizer";
 import { ParseError, IPosition } from "./positions";
-import { IExpression, BinaryOperator, BinaryExpression, ConstantExpression } from "./expressions";
+import { IExpression, BinaryOperator, BinaryExpression, ConstantExpression, VeryTemplateExpression, VeryVarExpression } from "./expressions";
 import { ExpressionType } from "./expressionEnum";
 import { FunctionExpression } from "./functionExpression";
 import { Token } from "./token";
@@ -9,6 +9,10 @@ import { IFunction, CustomFunctions } from "./functions";
 import { Variable } from "./variable";
 import { VariableExpression } from "./variableExpression";
 import { VariableScope } from "../enum";
+import { VE_Expressions } from "./veryExpressions";
+import { VE_Objects, VeryEngineObject } from "../object";
+import { VE_Manager } from "../manager";
+import { VE_Fsm } from "../state";
 
 
 
@@ -187,7 +191,41 @@ export class VE_ExpressionParsing {
     if (this._tokenizer.current().isOperator('+') && this._tokenizer.next().isIdentifier()) {
       this._tokenizer.consume();
     }
-    // TODO：VeryVar解析，此处解析“*变量名”类型
+
+    // VeryVar解析，可以不允许引用其他对象的变量，这种方式可以通过全局变量来处理；
+    // 不允许引用模板变量中的变量，因为可能还未被创建
+    // √1、*变量（*模板变量只能判断null）；√2、对象.*变量（*模板变量只能判断null）；×3、*模板变量.*变量；×4、对象名.*模板变量.*变量
+
+    // 1.*变量模板判断（==null）；
+    // 2.对象.*变量（模板或者一般变量）；
+    if (this._tokenizer.current().isOperator("*") && this._tokenizer.next().isIdentifier())  //捕获“*”开头的VeryVar变量，创建VeryVarExpression变量
+    {
+      this._tokenizer.consume();
+      let varID: string = "*" + this._tokenizer.current().getContents();
+      let varExpression: Nullable<IExpression> = VE_Expressions.getParseExpression(this._projectName, this._objectID, varID, this._varScope);
+      if (varExpression === null) {
+        // 可能为模板对象
+        let templateExpression: Nullable<VeryTemplateExpression> = VE_Expressions.getTemplateExpression(this._projectName, this._objectID, varID, this._varScope);
+        if (templateExpression === null) {
+          this._tokenizer.addError(this._tokenizer.current(), "VeryVar变量名：" + varID + "，该VeryVar变量未定义，无法在系统中查找到，请检查！");
+          this._tokenizer.consume();
+          return ConstantExpression.Empty();
+        }
+        else {
+          //UnityEngine.Debug.LogError("模板：" + _tokenizer.current());
+          // this._tokenizer.consume();
+          // return templateExpression;
+          // TODO: 暂时不支持‘模板变量’
+          this._tokenizer.addError(this._tokenizer.current(), "VeryVar变量名：" + varID + "，公式中不支持模板变量，请检查！");
+          this._tokenizer.consume();
+          return ConstantExpression.Empty();
+        }
+      }
+      else {
+        this._tokenizer.consume();
+        return varExpression;
+      }
+    }
 
     // 括号开始
     if (this._tokenizer.current().isStartBracket()) {
@@ -230,9 +268,25 @@ export class VE_ExpressionParsing {
         let loc: IPosition = this._tokenizer.current();
         let variableID: string = this._tokenizer.consume().getContents();
         if (variableID.endsWith('.') && this._tokenizer.current().isOperator('*') && this._tokenizer.next().isIdentifier()) { // 对象.*变量
-          // TODO：解析VeryVar变量，此处解析“对象.*变量名”类型
-          console.log('TODO：解析VeryVar变量');
-          return ConstantExpression.Empty();
+          // 解析VeryVar变量，此处解析“对象.*变量名”类型
+          this._tokenizer.consume();
+          let varID: string = variableID + '*' + this._tokenizer.current().getContents();
+          let varExpression: Nullable<IExpression> = VE_Expressions.getParseExpression(this._projectName, this._objectID, varID, this._varScope);
+          if (varExpression === null) {
+            // TODO：暂时不支持‘模板变量’
+            let templateExpression: Nullable<VeryTemplateExpression> = VE_Expressions.getTemplateExpression(this._projectName, this._objectID, varID, this._varScope);
+            if (templateExpression === null) {
+              this._tokenizer.addError(loc, `VeryVar变量名：${varID}，该VeryVar变量未定义，无法在系统中查找到，请检查！`);
+            } else {
+              this._tokenizer.addError(this._tokenizer.current(), "VeryVar变量名：" + varID + "，公式中不支持模板变量，请检查！");
+            }
+            this._tokenizer.consume();
+            return ConstantExpression.Empty();
+          } else {
+            this._tokenizer.consume();
+            return varExpression;
+          }
+          // return ConstantExpression.Empty();
         } else {
           // 一般变量
           varValue = this._scope.find(variableID);
@@ -246,11 +300,40 @@ export class VE_ExpressionParsing {
         }
       }
     }
-    // 关键字处理
+    // 关键字处理，TODO：需要测试
     if (this._tokenizer.current().isKeyword()) {
       // this关键字处理，专用于处理状态当前状态变量
-      // TODO: 与平台结合
-      return ConstantExpression.Empty();
+      if (this._tokenizer.current().getContents().toLowerCase().trim() === "this") {
+        if (this._varScope === VariableScope.Fsm && this._fsmID !== "") {
+          // 提取状态变量
+          let objects: VE_Objects = VE_Manager.objects(this._projectName);
+          if (objects !== null) {
+            let veryObject: VeryEngineObject = objects.getVeryObject(this._objectID);
+            if (veryObject != null) {
+              let fsm: VE_Fsm = veryObject.getFsm(this._fsmID);
+              if (fsm != null) {
+                this._tokenizer.consume();
+                return new VeryVarExpression(fsm.fsmVar);
+              }
+            }
+          }
+        }
+        this._tokenizer.addError(this._tokenizer.current(), "关键字：this，该关键字只能使用与状态定义中的触发启动条件和状态逻辑表达式，此处超出使用范围，请检查！");
+        this._tokenizer.consume();
+        return ConstantExpression.Empty();
+      }
+      // 暂时适用于 模板变量 == null 判断
+      else if (this._tokenizer.current().getContents().toLowerCase().trim() === "null" || this._tokenizer.current().getContents().toLowerCase().trim() === "none") {
+        //UnityEngine.Debug.LogError("关键字：" + _tokenizer.current());
+        this._tokenizer.consume();
+        // TODO: 需要测试
+        return new VeryTemplateExpression();
+      }
+      else {
+        this._tokenizer.addError(this._tokenizer.current(), "关键字：" + this._tokenizer.current().getContents() + "，该关键字暂无定义，请勿使用！");
+        this._tokenizer.consume();
+        return ConstantExpression.Empty();
+      }
     }
 
     // 暂时没有

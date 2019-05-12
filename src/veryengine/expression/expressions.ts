@@ -1,5 +1,6 @@
-/////<reference path="dictionary.ts" />
 import { Dictionary } from "../utility/dictionary";
+import { IVeryVar } from "../variables";
+import { VE_Template } from "../template";
 
 export interface IExpression {
   expType: string;
@@ -409,7 +410,7 @@ export class BinaryExpression implements IExpression {
     //   return 100;
     // }
     let p: number | null = BinaryExpression._priority.GetValue(this._op);
-    if(p === null) {
+    if (p === null) {
       return 100;
     } else {
       return p;
@@ -424,10 +425,115 @@ export class BinaryExpression implements IExpression {
     //   return 100;
     // }
     let p: number | null = BinaryExpression._priority.GetValue(op);
-    if(p === null) {
+    if (p === null) {
       return 100;
     } else {
       return p;
+    }
+  }
+}
+
+export class VeryVarExpression implements IExpression {
+
+  public get expType(): string {
+    if (this._value) {
+      return this._value.varType;
+    } else {
+      return 'null';
+    }
+  }
+
+  private _value: IVeryVar;
+
+  public get className(): string {
+    return 'VeryVarExpression';
+  }
+
+  public get value(): IVeryVar {
+    return this._value;
+  }
+
+  constructor(value: IVeryVar) {
+    this._value = value;
+  }
+
+  public evaluate(): any {
+    return this._value.getValue();
+  }
+
+  public clone(): IExpression {
+    let expClone: VeryVarExpression = new VeryVarExpression(this._value.clone());
+    return expClone;
+  }
+
+  public toString(): string {
+    if (this._value) {
+      return this._value.toString();
+    } else {
+      return 'null';
+    }
+  }
+}
+
+export class VeryTemplateExpression implements IExpression {
+
+  public get expType(): string {
+    return 'bool';
+  }
+
+  private _isTemplate: boolean = false;
+  private _template: VE_Template;
+
+  public get className(): string {
+    return 'VeryTemplateExpression';
+  }
+
+  // public get value(): IVeryVar {
+  //   return this._value;
+  // }
+
+  // TODO 
+  constructor() {
+    this._template = new VE_Template('', '');
+  }
+
+  public setTemplate(template: VE_Template): void {
+    this._isTemplate = true;
+    this._template = template;
+  }
+
+  public evaluate(): any {
+    if (this._isTemplate) {
+      if (!this._template) {
+        return false;
+      }
+      else {
+        return this._template.templateInstance !== null;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  public clone(): IExpression {
+    let varExp: VeryTemplateExpression = new VeryTemplateExpression();
+    varExp._template = this._template;
+    varExp._isTemplate = this._isTemplate;
+    return varExp;
+  }
+
+  public toString(): string {
+    if (this._isTemplate) {
+      if (!this._template) {
+        return "false";
+      }
+      else {
+        return (this._template.templateInstance === null).toString();
+      }
+    }
+    else {
+      return "false";
     }
   }
 }

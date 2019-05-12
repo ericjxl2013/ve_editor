@@ -1,6 +1,9 @@
 import { VeryTable } from "../verytable/index";
 import { ShowError } from "./html/showError";
 import { LoaderManager } from "./loader/loaderManager";
+import { ErrorInfo } from "./utility";
+import { IVeryVar, VeryVarManager } from "./variables";
+import { VE_Expressions } from "./expression";
 
 // 导出entrance
 export * from "./index";
@@ -24,10 +27,25 @@ export class VeryEngine {
     // console.log(tableData);
     console.log('开始');
 
-    let manager: LoaderManager = new LoaderManager();
-    if (manager.load(projectName, tableData)) {
+    // let errorInfo: ErrorInfo = new ErrorInfo();
+    // let v1: Nullable<IVeryVar> = VeryVarManager.createVariable('a', '数字', '3.1415926', errorInfo);
+    // console.log(v1!.getValue());
+    // errorInfo.clear();
+    // let v2: Nullable<IVeryVar> = VeryVarManager.createVariable('b', '开关', '开', errorInfo);
+    // console.log(v2!.getValue());
+    // errorInfo.clear();
+    // let v3: Nullable<IVeryVar> = VeryVarManager.createVariable('c', '向量', '1,2,3', errorInfo);
+    // console.log(v3!.clone());
+    // errorInfo.clear();
+    // let v4: Nullable<IVeryVar> = VeryVarManager.createVariable('c', '向量', 'ac1,dg2,3', errorInfo);
+    // console.log(v4);
+    // console.log(errorInfo.message);
 
-    }
+
+    // let manager: LoaderManager = new LoaderManager();
+    // if (manager.load(projectName, tableData)) {
+
+    // }
 
 
 
