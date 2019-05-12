@@ -47,7 +47,17 @@ export class VeryTableRow {
     this._rowData.pop();
   }
 
-
+  public isEmpty(): boolean {
+    if(!this._rowData) {
+      return true;
+    }
+    for(let i: number = 0; i < this._rowData.length; i++) {
+      if(this._rowData[i] !== '') {
+        return false;
+      }
+    }
+    return true;
+  }
 
   // public
 

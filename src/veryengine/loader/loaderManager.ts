@@ -44,8 +44,17 @@ export class LoaderManager {
 
     // console.log(table);
     if (table) {
-      for (let i: number = 0; i < table.RowCount; i++) {
+      for (let i: number = 1; i < table.RowCount; i++) {
         // console.log(table.getRow(i));
+        // 注释行，直接跳过
+        if(table.getData(i, 0).startsWith('//')) {
+          continue;
+        }
+        // 空行
+        if(table.getRow(i)!.isEmpty()) {
+          continue;
+          // console.log('空行：' + (i + 1));
+        }
         // （1）模板对象，创建
         if (table.getData(i, 0).startsWith("模板_")) {
           this._activeFsmData = null;

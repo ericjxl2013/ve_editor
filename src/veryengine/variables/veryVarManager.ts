@@ -24,7 +24,7 @@ export class VeryVarManager {
     var_type = var_type.toLowerCase().trim();
     // 由于直接访问，所以在这里直接报错
     if (this._veryVarTypes[var_type]) {
-      ShowError.showError('VeryVar变量初始化错误，变量类型重复，当前变量名：' + var_type + '，当前变量类型：' + var_prototype);
+      ShowError.showError('VeryVar变量初始化错误，变量类型重复，当前变量名：' + var_type + '，当前变量类型：' + var_prototype.className);
     } else {
       // console.log(var_proto.VarType);
       this._veryVarTypes[var_type] = var_prototype;

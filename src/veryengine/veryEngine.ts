@@ -2,8 +2,9 @@ import { VeryTable } from "../verytable/index";
 import { ShowError } from "./html/showError";
 import { LoaderManager } from "./loader/loaderManager";
 import { ErrorInfo } from "./utility";
-import { IVeryVar, VeryVarManager } from "./variables";
+import { IVeryVar, VeryVarManager, VeryBool } from "./variables";
 import { VE_Expressions } from "./expression";
+import { VE_ErrorManager } from "./global";
 
 // 导出entrance
 export * from "./index";
@@ -27,6 +28,8 @@ export class VeryEngine {
     // console.log(tableData);
     console.log('开始');
 
+    VeryVarManager.addVarType('bool', new VeryBool());
+
     // let errorInfo: ErrorInfo = new ErrorInfo();
     // let v1: Nullable<IVeryVar> = VeryVarManager.createVariable('a', '数字', '3.1415926', errorInfo);
     // console.log(v1!.getValue());
@@ -42,10 +45,12 @@ export class VeryEngine {
     // console.log(errorInfo.message);
 
 
-    // let manager: LoaderManager = new LoaderManager();
-    // if (manager.load(projectName, tableData)) {
-
-    // }
+    let manager: LoaderManager = new LoaderManager();
+    let result: boolean = manager.load(projectName, tableData);
+    console.log(result);
+    if(!result) {
+      VE_ErrorManager.print();
+    }
 
 
 

@@ -4,13 +4,12 @@ import { VeryVarManager } from "./veryVarManager";
 import { IExpression, ConstantExpression } from "../expression";
 
 export class VeryBool implements IVeryVar {
-
   public get varType(): string {
-    return 'bool|开关';
+    return "bool|开关";
   }
 
   public get className(): string {
-    return 'VeryBool';
+    return "VeryBool";
   }
 
   public get Value(): boolean {
@@ -35,16 +34,24 @@ export class VeryBool implements IVeryVar {
 
   public initValue(value_str: string, error_info: ErrorInfo): any {
     value_str = value_str.trim();
-    if (value_str.toLowerCase() === 'false' || value_str === '关') {
+    if (value_str.toLowerCase() === "false" || value_str === "关") {
       return false;
-    } else if (value_str.toLowerCase() === 'true' || value_str === '开') {
+    } else if (value_str.toLowerCase() === "true" || value_str === "开") {
       return true;
-    }
-    else if (value_str === '' || value_str.toLowerCase() === 'null' || value_str.toLowerCase() === 'none') {
+    } else if (
+      value_str === "" ||
+      value_str.toLowerCase() === "null" ||
+      value_str.toLowerCase() === "none"
+    ) {
       return false;
     } else {
       error_info.isRight = false;
-      error_info.message = '类型: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message =
+        "类型: " +
+        this.varType +
+        "，值：" +
+        value_str +
+        "，该变量值和类型不匹配，转化错误，请检查！";
       return null;
     }
   }
@@ -54,17 +61,15 @@ export class VeryBool implements IVeryVar {
     varClone.setValue(this._value);
     return varClone;
   }
-
 }
 
 export class VeryInt implements IVeryVar {
-
   public get varType(): string {
-    return 'int|整数';
+    return "int|整数";
   }
 
   public get className(): string {
-    return 'VeryInt';
+    return "VeryInt";
   }
 
   public get Value(): number {
@@ -95,7 +100,12 @@ export class VeryInt implements IVeryVar {
       return Math.round(newFloat);
     } else {
       error_info.isRight = false;
-      error_info.message = '类型: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message =
+        "类型: " +
+        this.varType +
+        "，值：" +
+        value_str +
+        "，该变量值和类型不匹配，转化错误，请检查！";
       return null;
     }
   }
@@ -105,17 +115,15 @@ export class VeryInt implements IVeryVar {
     varClone.setValue(this._value);
     return varClone;
   }
-
 }
 
 export class VeryFloat implements IVeryVar {
-
   public get varType(): string {
-    return 'float|浮点数';
+    return "float|浮点数";
   }
 
   public get className(): string {
-    return 'VeryFloat';
+    return "VeryFloat";
   }
 
   public get Value(): number {
@@ -145,7 +153,12 @@ export class VeryFloat implements IVeryVar {
       return newVal;
     } else {
       error_info.isRight = false;
-      error_info.message = '类型: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message =
+        "类型: " +
+        this.varType +
+        "，值：" +
+        value_str +
+        "，该变量值和类型不匹配，转化错误，请检查！";
       return null;
     }
   }
@@ -158,13 +171,12 @@ export class VeryFloat implements IVeryVar {
 }
 
 export class VeryNumber implements IVeryVar {
-
   public get varType(): string {
-    return 'number|数字';
+    return "number|数字";
   }
 
   public get className(): string {
-    return 'VeryNumber';
+    return "VeryNumber";
   }
 
   public get Value(): number {
@@ -194,7 +206,12 @@ export class VeryNumber implements IVeryVar {
       return newVal;
     } else {
       error_info.isRight = false;
-      error_info.message = '类型: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message =
+        "类型: " +
+        this.varType +
+        "，值：" +
+        value_str +
+        "，该变量值和类型不匹配，转化错误，请检查！";
       return null;
     }
   }
@@ -207,13 +224,12 @@ export class VeryNumber implements IVeryVar {
 }
 
 export class VeryString implements IVeryVar {
-
   public get varType(): string {
-    return 'string|字符串';
+    return "string|字符串";
   }
 
   public get className(): string {
-    return 'VeryString';
+    return "VeryString";
   }
 
   public get Value(): string {
@@ -222,10 +238,10 @@ export class VeryString implements IVeryVar {
   public set Value(val: string) {
     this._value = val;
   }
-  private _value: string = '';
+  private _value: string = "";
 
   constructor() {
-    this._value = '';
+    this._value = "";
   }
 
   public getValue(): any {
@@ -238,7 +254,12 @@ export class VeryString implements IVeryVar {
 
   public initValue(value_str: string, error_info: ErrorInfo): any {
     let rValue: string;
-    if (value_str.startsWith('\'') || value_str.startsWith('"') || value_str.startsWith('“') || value_str.startsWith('‘')) {
+    if (
+      value_str.startsWith("'") ||
+      value_str.startsWith('"') ||
+      value_str.startsWith("“") ||
+      value_str.startsWith("‘")
+    ) {
       rValue = value_str.substring(1, value_str.length - 2);
     } else {
       rValue = value_str;
@@ -254,13 +275,12 @@ export class VeryString implements IVeryVar {
 }
 
 export class VeryVector3 implements IVeryVar {
-
   public get varType(): string {
-    return 'vector3|向量';
+    return "vector3|向量";
   }
 
   public get className(): string {
-    return 'VeryVector3';
+    return "VeryVector3";
   }
 
   public get Value(): BABYLON.Vector3 {
@@ -271,7 +291,6 @@ export class VeryVector3 implements IVeryVar {
     this._value = val;
   }
   private _value: BABYLON.Vector3 = BABYLON.Vector3.Zero();
-
 
   constructor() {
     this._value = BABYLON.Vector3.Zero();
@@ -287,13 +306,18 @@ export class VeryVector3 implements IVeryVar {
 
   public initValue(value_str: string, error_info: ErrorInfo): any {
     let rValue: BABYLON.Vector3 = BABYLON.Vector3.Zero();
-    if (value_str === 'none' || value_str === 'null' || value_str === '') {
+    if (value_str === "none" || value_str === "null" || value_str === "") {
       return rValue;
     } else {
       let vec3Str: string[] = value_str.split(/,|，/);
       if (vec3Str.length !== 3) {
         error_info.isRight = false;
-        error_info.message = "类型: " + this.varType + ", 值: " + value_str + "，Vector3|向量类型值格式错误，转化错误！";
+        error_info.message =
+          "类型: " +
+          this.varType +
+          ", 值: " +
+          value_str +
+          "，Vector3|向量类型值格式错误，转化错误！";
         return null;
       } else {
         let n1: number = parseFloat(vec3Str[0]);
@@ -301,7 +325,12 @@ export class VeryVector3 implements IVeryVar {
         let n3: number = parseFloat(vec3Str[2]);
         if (isNaN(n1) || isNaN(n2) || isNaN(n3)) {
           error_info.isRight = false;
-          error_info.message = "类型: " + this.varType + ", 值: " + value_str + "，Vector3|向量类型值格式错误，转化错误！";
+          error_info.message =
+            "类型: " +
+            this.varType +
+            ", 值: " +
+            value_str +
+            "，Vector3|向量类型值格式错误，转化错误！";
           return null;
         } else {
           rValue = new BABYLON.Vector3(n1, n2, n3);
@@ -313,20 +342,23 @@ export class VeryVector3 implements IVeryVar {
 
   public clone(): IVeryVar {
     let varClone: VeryVector3 = new VeryVector3();
-    let r: BABYLON.Vector3 = new BABYLON.Vector3(this._value.x, this._value.y, this._value.z);
+    let r: BABYLON.Vector3 = new BABYLON.Vector3(
+      this._value.x,
+      this._value.y,
+      this._value.z
+    );
     varClone.setValue(r);
     return varClone;
   }
 }
 
 export class VeryExpression implements IVeryVar {
-
   public get varType(): string {
     return this._value.expType;
   }
 
   public get className(): string {
-    return 'VeryExpression';
+    return "VeryExpression";
   }
 
   public get Value(): IExpression {
@@ -356,7 +388,12 @@ export class VeryExpression implements IVeryVar {
       return newVal;
     } else {
       error_info.isRight = false;
-      error_info.message = '类型: ' + this.varType + '，值：' + value_str + '，该变量值和类型不匹配，转化错误，请检查！'
+      error_info.message =
+        "类型: " +
+        this.varType +
+        "，值：" +
+        value_str +
+        "，该变量值和类型不匹配，转化错误，请检查！";
       return null;
     }
   }
@@ -366,18 +403,18 @@ export class VeryExpression implements IVeryVar {
   }
 }
 
-VeryVarManager.addVarType('bool', new VeryBool());
+VeryVarManager.addVarType("bool", new VeryBool());
 VeryVarManager.addVarType('开关', new VeryBool());
 
-VeryVarManager.addVarType('int', new VeryInt());
-VeryVarManager.addVarType('float', new VeryFloat());
+// VeryVarManager.addVarType('int', new VeryInt());
+// VeryVarManager.addVarType('float', new VeryFloat());
 
-VeryVarManager.addVarType('number', new VeryNumber());
-VeryVarManager.addVarType('数字', new VeryNumber());
+// VeryVarManager.addVarType('number', new VeryNumber());
+// VeryVarManager.addVarType('数字', new VeryNumber());
 
-VeryVarManager.addVarType('string', new VeryString());
-VeryVarManager.addVarType('字符串', new VeryString());
-VeryVarManager.addVarType('vector3', new VeryVector3());
-VeryVarManager.addVarType('向量', new VeryVector3());
+// VeryVarManager.addVarType('string', new VeryString());
+// VeryVarManager.addVarType('字符串', new VeryString());
+// VeryVarManager.addVarType('vector3', new VeryVector3());
+// VeryVarManager.addVarType('向量', new VeryVector3());
 
-console.log('XXX');
+console.log("XXX");
