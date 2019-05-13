@@ -7,6 +7,10 @@ export class VE_SequenceActions {
   }
   private _sequenceState: SequenceActionState = SequenceActionState.Initial;
 
+  private _activeActionIndex: number = -1;
 
+
+
+  
   
 }

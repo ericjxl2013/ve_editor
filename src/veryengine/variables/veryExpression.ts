@@ -19,6 +19,10 @@ export class VeryExpression implements IVeryVar {
   }
   private _value: IExpression = ConstantExpression.Empty();
 
+  public get isNull(): boolean {
+    return this._value === null;
+  }
+
   constructor(val: IExpression) {
     this._value = val;
   }

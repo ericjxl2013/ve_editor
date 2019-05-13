@@ -174,16 +174,16 @@ const loadData2 = () => {
 };
 
 var saveFlag;
-// 保存数据，延迟2秒
+// 保存数据，延迟1.5秒
 const saveData = () => {
   if (saveFlag) {
     clearTimeout(saveFlag);
   }
-  saveFlag = setTimeout(saveImmediate, 2000);
+  saveFlag = setTimeout(saveImmediate, 1500);
 };
 
 const saveImmediate = () => {
-  console.log("saved now");
+  // console.log("saved now");
   // 格式化数据
   // 转化成json格式
   let data = { table: hot1.getData() };

@@ -6,26 +6,25 @@ import { IVeryVar, VeryString } from "../variables";
 import { VeryEngineObject } from "../object";
 
 export class VE_Fsm {
-
   public get projectName(): string {
     return this._projectName;
   }
-  private _projectName: string = '';
+  private _projectName: string = "";
 
   public get ID(): string {
     return this._id;
   }
-  private _id: string = '';
+  private _id: string = "";
 
   public get objectID(): string {
     return this._objectID;
   }
-  private _objectID: string = '';
+  private _objectID: string = "";
 
   public get fsmID(): string {
     return this._fsmID;
   }
-  private _fsmID: string = '';
+  private _fsmID: string = "";
 
   public get fsmVar(): IVeryVar {
     return this._fsmVar;
@@ -37,7 +36,10 @@ export class VE_Fsm {
   }
   private _veryObject: VeryEngineObject;
 
-  private _stateDics: Dictionary<number, VE_State> = new Dictionary<number, VE_State>();
+  private _stateDics: Dictionary<number, VE_State> = new Dictionary<
+    number,
+    VE_State
+  >();
   private _states: VE_State[] = [];
 
   public get count(): number {
@@ -47,7 +49,13 @@ export class VE_Fsm {
   private _frameCount: number = -1;
   private _triggerIDs: string[] = [];
 
-  constructor(project_name: string, object_id: string, fsm_id: string, fsm_variable: IVeryVar, very_object: VeryEngineObject) {
+  constructor(
+    project_name: string,
+    object_id: string,
+    fsm_id: string,
+    fsm_variable: IVeryVar,
+    very_object: VeryEngineObject
+  ) {
     this._projectName = project_name;
     this._objectID = object_id;
     this._fsmID = fsm_id;
@@ -100,4 +108,7 @@ export class VE_Fsm {
     }
   }
 
+  public setValue(value: any): void {
+    this._fsmVar.setValue(value);
+  }
 }
