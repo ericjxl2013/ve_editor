@@ -29,6 +29,15 @@ function toggleDebug(): void {
   }
 }
 
+function init(): void {
+  // 等待表格数据加载完成
+  if(dataLoaded) {
+    initGame();
+  } else {
+    setTimeout(init, 500);
+  }
+}
+
 // 关联按钮
 document.getElementById("runButton")!.addEventListener("click", runBtn);
 
@@ -37,12 +46,14 @@ document.getElementById("debugButton")!.addEventListener("click", toggleDebug);
 
 // 启动引擎
 // 第一次启动时，先异步加载数据后再初始化，后期可以直接点击按钮进行加载；
-initGame();
+init();
 // loadData2()
 //   .then(function (hot: HandTable) {
 //     console.log(hot.getData());
 //   }
 //   );
+
+
 
 
 

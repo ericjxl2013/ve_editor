@@ -12,3 +12,5 @@ declare var projectName: string;
 declare function loadData2(): any ;
 
 declare type Nullable<T> = T | null;
+
+declare var dataLoaded: boolean;

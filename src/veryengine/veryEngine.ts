@@ -4,7 +4,8 @@ import { LoaderManager } from "./loader/loaderManager";
 import { ErrorInfo } from "./utility";
 import { IVeryVar, VeryVarManager, VeryBool } from "./variables";
 import { VE_Expressions } from "./expression";
-import { VE_ErrorManager } from "./global";
+import { VE_ErrorManager, GameGlobal } from "./global";
+import { VE_Reset } from "./manager";
 
 // 导出entrance
 export * from "./index";
@@ -22,13 +23,17 @@ export class VeryEngine {
 
 
   public init(data: Array<Array<string>>, project_name: string): void {
+
+    // 重新加载平台，需要将之前的相关参数全部清除，记录的所有触发、响应、变量、对象等；
+    VE_Reset.dispose();
+
     // TODO: 之后可能s会变成多个Table，暂时未1个
     let tableData: VeryTable = new VeryTable(data, 'VeRyEngine');
     // console.log(tableData.pos(7, 5));
     // console.log(tableData);
-    console.log('开始');
+    // console.log('开始解析表格');
 
-    VeryVarManager.addVarType('bool', new VeryBool());
+    // VeryVarManager.addVarType('bool', new VeryBool());
 
     // let errorInfo: ErrorInfo = new ErrorInfo();
     // let v1: Nullable<IVeryVar> = VeryVarManager.createVariable('a', '数字', '3.1415926', errorInfo);
@@ -47,10 +52,13 @@ export class VeryEngine {
 
     let manager: LoaderManager = new LoaderManager();
     let result: boolean = manager.load(projectName, tableData);
-    console.log(result);
+    console.log(`表格解析结果：${result}`);
     if(!result) {
       VE_ErrorManager.print();
     }
+
+    // 平台第一次加载，响应类型、触发类型、变量类型初始化
+    GameGlobal.PlatformLoaded = true;
 
 
 

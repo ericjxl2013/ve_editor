@@ -3,19 +3,23 @@ import { ShowError } from "../html";
 import { VeryEngineObject, VE_Objects } from "../object";
 import { StateConst } from "../state";
 import { VE_Manager } from "../manager";
+import { GameGlobal } from "../global";
 
 export class VE_Triggers {
 
   private static _triggerDics: { [key: string]: VE_TriggerBehaviour } = {};
 
   public static addTrigger(trigger: VE_TriggerBehaviour): void {
-    let ids: string[] = trigger.ID.split('|');
-    for (let i: number = 0; i < ids.length; i++) {
-      let id: string = ids[i].trim().toLowerCase();
-      if (this._triggerDics[id]) {
-        ShowError.showError(`触发初始化错误，触发ID重复，当前触发ID：${id}，请为当前触发重新分配触发ID！`);
-      } else {
-        this._triggerDics[id] = trigger;
+    // 平台只加载一次，避免重复加载
+    if (!GameGlobal.PlatformLoaded) {
+      let ids: string[] = trigger.ID.split('|');
+      for (let i: number = 0; i < ids.length; i++) {
+        let id: string = ids[i].trim().toLowerCase();
+        if (this._triggerDics[id]) {
+          ShowError.showError(`触发初始化错误，触发ID重复，当前触发ID：${id}，请为当前触发重新分配触发ID！`);
+        } else {
+          this._triggerDics[id] = trigger;
+        }
       }
     }
   }
@@ -63,6 +67,10 @@ export class VE_Triggers {
         return null;
       }
     }
+  }
+
+  public static dispose(): void {
+    VE_Triggers._triggerDics = {};
   }
 
 }

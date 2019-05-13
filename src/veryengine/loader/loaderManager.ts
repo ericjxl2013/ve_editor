@@ -35,7 +35,7 @@ export class LoaderManager {
     this._projectName = project_name;
     this._table = table;
 
-    //初始化项目存储结构
+    // 初始化项目存储结构
     VE_Manager.createProject(project_name);
 
     let templates: VE_Templates = VE_Manager.templates(project_name);
@@ -45,7 +45,7 @@ export class LoaderManager {
     // console.log(table);
     if (table) {
       for (let i: number = 1; i < table.RowCount; i++) {
-        // console.log(table.getRow(i));
+        // console.log(`行号：${i+1}，内容：${table.getData(i, 0)}`);
         // 注释行，直接跳过
         if(table.getData(i, 0).startsWith('//')) {
           continue;

@@ -3,19 +3,23 @@ import { ShowError } from "../html";
 import { VeryEngineObject, VE_Objects } from "../object";
 import { StateConst } from "../state";
 import { VE_Manager } from "../manager";
+import { GameGlobal } from "../global";
 
 export class VE_Actions {
 
   private static _actionDics: { [key: string]: VE_ActionBehaviour } = {};
 
   public static addAction(action: VE_ActionBehaviour): void {
-    let ids: string[] = action.ID.split('|');
-    for (let i: number = 0; i < ids.length; i++) {
-      let id: string = ids[i].trim().toLowerCase();
-      if (this._actionDics[id]) {
-        ShowError.showError(`响应初始化错误，响应ID重复，当前响应ID：${id}，请为当前响应重新分配响应ID！`);
-      } else {
-        this._actionDics[id] = action;
+    // 平台只加载一次，避免重复加载
+    if (!GameGlobal.PlatformLoaded) {
+      let ids: string[] = action.ID.split('|');
+      for (let i: number = 0; i < ids.length; i++) {
+        let id: string = ids[i].trim().toLowerCase();
+        if (this._actionDics[id]) {
+          ShowError.showError(`响应初始化错误，响应ID重复，当前响应ID：${id}，请为当前响应重新分配响应ID！`);
+        } else {
+          this._actionDics[id] = action;
+        }
       }
     }
   }
@@ -66,5 +70,10 @@ export class VE_Actions {
         return null;
       }
     }
+  }
+
+
+  public static dispose(): void {
+    VE_Actions._actionDics = {};
   }
 }

@@ -59,11 +59,12 @@ export class VE_Manager {
   }
 
   public static clear(): void {
+    VE_Manager.projects.clear()
     this._projects = null;
   }
 
   public static clearProject(project_name: string): void {
-    VE_Manager.clearProject(project_name);
+    VE_Manager.projects.clearProject(project_name);
   }
 
 

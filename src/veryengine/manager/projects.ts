@@ -83,7 +83,7 @@ export class VE_Projects {
     this._variables = {};
   }
 
-  public clearPorject(project_name: string): void {
+  public clearProject(project_name: string): void {
     delete this._objects[project_name];
     delete this._templates[project_name];
     delete this._variables[project_name];

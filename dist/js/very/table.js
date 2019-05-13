@@ -11,7 +11,9 @@
   //showError('当前浏览器不支持WebGL，请更换其他浏览器使用本引擎！', null);
 })();
 
-var projectName = "VeryProj";
+// 全局变量
+var dataLoaded = false;
+var projectName = "VeRyEngine";
 var example = document.getElementById("VeryTable");
 var hot1 = new Handsontable(example, {
   data: Handsontable.helper.createEmptySpreadsheetData(300, 9),
@@ -130,6 +132,7 @@ const loadData = () => {
         tempData = escape2Html(tempData);
         // 转化为json后，赋值给表格
         hot1.loadData(JSON.parse(tempData).table);
+        dataLoaded = true;
       } else {
         // Do nothing
         console.log("load not right: " + data.message);
@@ -171,12 +174,12 @@ const loadData2 = () => {
 };
 
 var saveFlag;
-// 保存数据，延迟5秒
+// 保存数据，延迟2秒
 const saveData = () => {
   if (saveFlag) {
     clearTimeout(saveFlag);
   }
-  saveFlag = setTimeout(saveImmediate, 5000);
+  saveFlag = setTimeout(saveImmediate, 2000);
 };
 
 const saveImmediate = () => {
@@ -186,9 +189,13 @@ const saveImmediate = () => {
   let data = { table: hot1.getData() };
   // 转成json字符串
   let table = JSON.stringify(data);
+  // 插入行默认为null，将null替换为空字符
+  table = table.replace(/null/g, '""');
+  // 当前表格内容也同时更新
+  hot1.loadData(JSON.parse(table).table);
   // 将字符串中的转义字符及html相关格式文本进行转化
   table = html2Escape(table);
-  // console.log(table);
+
   axios
     .post("/data/table/commit", JSON.parse(table))
     .then(function(response) {

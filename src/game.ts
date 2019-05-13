@@ -49,7 +49,7 @@ export default class Game {
 		// 加载过度动画开
 		engine.displayLoadingUI();
 
-		// 加载scene.babylon场景文件
+		// TODO: 加载scene.babylon场景文件，当前为默认
 		BABYLON.SceneLoader.Append("./scene/", "scene.babylon", this._scene, function (scene) {
 				// do something with the scene
 				// 加载过度动画关
@@ -74,7 +74,7 @@ export default class Game {
 		// 表格加载测试
 		// console.log(hot1.getData());
 		let entrance: VeryEngine = new VeryEngine();
-		// console.log(`空行数：${hot1.countEmptyRows()}`);
+		console.log(`空行数：${hot1.countEmptyRows()}`);
 		entrance.init(hot1.getData(), projectName);
 
 		// 全局渲染帧循环
