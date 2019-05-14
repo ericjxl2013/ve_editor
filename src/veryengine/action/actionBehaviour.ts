@@ -1,8 +1,15 @@
 import { ActionType, SequenceActionState } from "../enum";
+import { VeryEngine } from "../veryEngine";
+import { GameObject } from "../variables";
+import { VeryEngineObject } from "../object";
 
 export abstract class VE_ActionBehaviour {
 
   public abstract get ID(): string;
+
+  public get scene(): BABYLON.Scene {
+    return VeryEngine.Scene;
+  }
 
   public get enabled(): boolean {
     return this._enabled;
@@ -17,8 +24,8 @@ export abstract class VE_ActionBehaviour {
   };
   private _projectName: string = '';
 
-  // protected GameObject ObjectInstance = null;
-  // protected veryObject: VeryObject = null;
+  protected gameObject: Nullable<GameObject> = null;
+  protected veryObject: Nullable<VeryEngineObject> = null;
 
   public get objectID(): string {
     return this._objectID;
@@ -62,12 +69,12 @@ export abstract class VE_ActionBehaviour {
     this._actionID = action_id;
   }
 
-  // SetVeryObject(): void {}
-
-  public paraParser(para_array: string[]): boolean {
-    if (para_array) { }
-    return true;
+  public setVeryObject(very_object: VeryEngineObject): void {
+    this.veryObject = very_object;
+    this.gameObject = very_object.gameObject;
   }
+
+  public abstract paraParser(para_array: string[]): boolean;
 
   public action(action_val: boolean, every_frame: boolean): void {
     this._enabled = action_val;
@@ -84,7 +91,7 @@ export abstract class VE_ActionBehaviour {
 
 
   public update(): void {
-    if(this._enabled && this._erveryFrame) {
+    if (this._enabled && this._erveryFrame) {
       this.onUpdate();
     }
   }

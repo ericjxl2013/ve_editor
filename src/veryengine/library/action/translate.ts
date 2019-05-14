@@ -9,6 +9,7 @@ export class Action_Translate extends VE_ActionBehaviour {
   private _refType: BABYLON.Space = BABYLON.Space.LOCAL;
 
   
+  
   public active(): void {
     
   }
@@ -18,12 +19,18 @@ export class Action_Translate extends VE_ActionBehaviour {
     
   }
 
+  public paraParser(para_array: string[]): boolean {
+    if(para_array) {
 
+    }
+    return true;
+  }
 
   public destroy(): void {
     // 
   }
 
+  
 
 }
 

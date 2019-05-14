@@ -93,11 +93,11 @@ var hot1 = new Handsontable(example, {
 
 hot1.setDataAtCell(0, 0, "对象/模板对象");
 hot1.setDataAtCell(0, 1, "触发激活条件");
-hot1.setDataAtCell(0, 2, "触发ID");
+hot1.setDataAtCell(0, 2, "触发名");
 hot1.setDataAtCell(0, 3, "触发参数");
 hot1.setDataAtCell(0, 4, "逻辑条件");
 hot1.setDataAtCell(0, 5, "变量定义/状态定义和赋值");
-hot1.setDataAtCell(0, 6, "响应ID/变量赋值");
+hot1.setDataAtCell(0, 6, "响应名/变量赋值");
 hot1.setDataAtCell(0, 7, "响应参数");
 hot1.setDataAtCell(0, 8, "关联状态");
 
@@ -189,10 +189,11 @@ const saveImmediate = () => {
   let data = { table: hot1.getData() };
   // 转成json字符串
   let table = JSON.stringify(data);
-  // 插入行默认为null，将null替换为空字符
-  table = table.replace(/null/g, '""');
-  // 当前表格内容也同时更新
-  hot1.loadData(JSON.parse(table).table);
+  // // 插入行默认为null，将null替换为空字符（在BlueTable中处理）
+  // table = table.replace(/null/g, '""');
+  // // 当前表格内容也同时更新
+  // console.log(table);
+  // hot1.loadData(JSON.parse(table).table);
   // 将字符串中的转义字符及html相关格式文本进行转化
   table = html2Escape(table);
 

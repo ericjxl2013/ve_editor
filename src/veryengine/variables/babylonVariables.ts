@@ -3,6 +3,8 @@
 
 export class GameObject {
 
+  
+
   public get gameObject(): GameObject {
     return this;
   }
@@ -10,7 +12,7 @@ export class GameObject {
   public get transform(): Transform {
     return this._transform;
   }
-  private _transform: Transform = new Transform();
+  private _transform: Transform;
 
   public name: string;
 
@@ -18,6 +20,9 @@ export class GameObject {
 
   constructor(name: string) {
     this.name = name;
+    this._transform = new Transform();
+
+
     // VeryEngine.Scene.getMeshByName()
   }
 
@@ -26,14 +31,31 @@ export class GameObject {
     return new GameObject(name);
   }
 
+
+  // public static empty(name: string): GameObject {
+
+  // }
+
 }
 
 
 export class Transform {
 
+  // public get gameObject(): GameObject {
+  //   return this._gameObject;
+  // }
+  // private _gameObject: GameObject;
 
   private _transformNode: BABYLON.Nullable<BABYLON.TransformNode> = null;
   private _mesh: BABYLON.Nullable<BABYLON.Mesh> = null;
+
+  public get isMesh(): boolean {
+    if(this._mesh) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   public localPosition: BABYLON.Vector3 = BABYLON.Vector3.Zero();
   public position: BABYLON.Vector3 = BABYLON.Vector3.Zero();
@@ -57,8 +79,10 @@ export class Transform {
 
 
   constructor() {
-
+    
   }
+
+
 
 
 

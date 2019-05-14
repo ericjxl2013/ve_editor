@@ -11,6 +11,12 @@ export class VeryTableRow {
   private _rowData: string[] = [];
 
   constructor(row_data: string[]) {
+    // null或者undefined数据转为""
+    row_data.forEach((val, index, array) => {
+      if(!array[index]) {
+        array[index] = "";
+      }
+    });
     this._rowData = row_data;
   }
 
@@ -52,7 +58,7 @@ export class VeryTableRow {
       return true;
     }
     for(let i: number = 0; i < this._rowData.length; i++) {
-      if(this._rowData[i] !== '') {
+      if(!this._rowData[i] && this._rowData[i] !== '') {
         return false;
       }
     }

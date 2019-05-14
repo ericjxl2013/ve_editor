@@ -2,7 +2,7 @@ import { GameObject, IVeryVar } from "../variables";
 import { IExpression } from "../expression";
 import { VE_ActionBehaviour } from "../action";
 import { VE_TriggerBehaviour } from "../trigger";
-import { VE_Fsm, VE_State } from "../state";
+import { VE_Fsm } from "../state";
 import { VE_Template } from "../template";
 import { VE_DataSource, VE_VariableData } from "../dataSource";
 
