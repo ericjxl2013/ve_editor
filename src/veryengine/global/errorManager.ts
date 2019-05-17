@@ -81,7 +81,7 @@ export class VE_ErrorManager {
   /// <summary>
   /// 当前错误个数；
   /// </summary>
-  public static get count() {
+  public static get Count() {
     return this._errorList.length;
   }
 
@@ -89,7 +89,7 @@ export class VE_ErrorManager {
   /// 添加报错信息；
   /// </summary>
   /// <param name="error">具体报错信息数据结构；</param>
-  public static add(error: VE_Error): void {
+  public static Add(error: VE_Error): void {
     this._errorList.push(error);
   }
 
@@ -98,7 +98,7 @@ export class VE_ErrorManager {
   /// </summary>
   /// <param name="index">报错信息索引；</param>
   /// <returns>具体报错信息数据结构；</returns>
-  public static getError(index: number): VE_Error {
+  public static GetError(index: number): VE_Error {
     return this._errorList[index];
   }
 
@@ -106,7 +106,7 @@ export class VE_ErrorManager {
   /// TODO: 所有报错打印，打印完删除相关信息；
   /// </summary>
   /// <param name="prefix">报错信息前缀；</param>
-  public static print(prefix?: string): void {
+  public static Print(prefix?: string): void {
     if (prefix) {
       for (let i: number = 0; i < this._errorList.length; i++) {
         if (this._errorList[i].getSeverity() === Severity.Error) {
@@ -140,7 +140,7 @@ export class VE_ErrorManager {
   /// 所有报警打印，打印完删除相关信息；
   /// </summary>
   /// <param name="prefix">报警信息前缀；</param>
-  public static printWarnning(prefix?: string): void {
+  public static PrintWarnning(prefix?: string): void {
     if (prefix) {
       for (let i: number = 0; i < this._errorList.length; i++) {
         if (this._errorList[i].getSeverity() === Severity.Warning) {
@@ -164,7 +164,7 @@ export class VE_ErrorManager {
   /// 所有错误打印，打印完删除相关信息；
   /// </summary>
   /// <param name="prefix">报错信息前缀；</param>
-  public static printError(prefix: string): void {
+  public static PrintError(prefix: string): void {
     if (prefix) {
       for (let i: number = 0; i < this._errorList.length; i++) {
         if (this._errorList[i].getSeverity() === Severity.Error) {

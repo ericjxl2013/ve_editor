@@ -3,11 +3,12 @@ import { VE_Template, VE_Templates } from '../template';
 import { VeryEngineObject, VE_Objects } from '../object';
 import { VE_FsmData, VE_StateData, VE_StateTriggerData, VE_StateActionData } from '../dataSource';
 import { VE_Manager } from '../manager';
-import { VE_Variables, GameObject, VeryVarManager } from '../variables';
+import { VE_Variables, VeryVarManager } from '../variables';
 import { VE_StringFormat } from '../utility';
 import { VE_ErrorManager, VE_Error } from '../global';
 import { StateConst } from '../state';
 import { CreateInstance } from './createInstance';
+import { GameObject } from '../babylon';
 
 
 export enum AnalisysType { Global, Object, Template }
@@ -66,7 +67,7 @@ export class LoaderManager {
 
           } else {
             if (!VE_StringFormat.isIDLegal(templateID)) {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 0), "模板对象名：" + table.getData(i, 0) + "，当前模板对象名不合法，包含非法字符，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 0), "模板对象名：" + table.getData(i, 0) + "，当前模板对象名不合法，包含非法字符，请检查！", table.ID))
               return false;
             }
             if (!templates.isCreatedTemplate(templateID)) {
@@ -74,7 +75,7 @@ export class LoaderManager {
               templates.addTemplate(templateID, template);
               this._activeTemplate = template;
             } else {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 0), "模板对象名：" + table.getData(i, 0) + "，当前模板已创建，请勿使用重复的模板对象名！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 0), "模板对象名：" + table.getData(i, 0) + "，当前模板已创建，请勿使用重复的模板对象名！", table.ID))
               return false;
             }
           }
@@ -92,12 +93,12 @@ export class LoaderManager {
               objectID = nameArray[0].trim();
               objName = nameArray[1].trim();
             } else {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 0), "对象名：" + table.getData(i, 0) + "，当前对象名格式错误，应为“对象名”或者“对象名=场景物体名”的形式，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 0), "对象名：" + table.getData(i, 0) + "，当前对象名格式错误，应为“对象名”或者“对象名=场景物体名”的形式，请检查！", table.ID))
               return false;
             }
           }
           if (!VE_StringFormat.isIDLegal(objectID)) {
-            VE_ErrorManager.add(VE_Error.error(table.pos(i, 0), "对象名：" + table.getData(i, 0) + "，当前对象名不合法，包含非法字符，请检查！", table.ID))
+            VE_ErrorManager.Add(VE_Error.error(table.pos(i, 0), "对象名：" + table.getData(i, 0) + "，当前对象名不合法，包含非法字符，请检查！", table.ID))
             return false;
           }
           // 创建实际GameObject
@@ -105,9 +106,9 @@ export class LoaderManager {
           if (objName === '') {
             activeGameObject = new GameObject(`__${objectID}_Empty`);
           } else {
-            activeGameObject = GameObject.find(objName);
+            activeGameObject = GameObject.Find(objName);
             if (activeGameObject === null) {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 0), "对象名：" + objName + "，当前对象在场景中不存在，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 0), "对象名：" + objName + "，当前对象在场景中不存在，请检查！", table.ID))
               return false;
             }
           }
@@ -117,7 +118,7 @@ export class LoaderManager {
             objects.add(objectID, tempObject);
             this._activeObject = tempObject;
           } else {
-            VE_ErrorManager.add(VE_Error.error(table.pos(i, 0), "对象名：" + table.getData(i, 0) + "，当前对象已创建，请勿使用重复的对象名！", table.ID))
+            VE_ErrorManager.Add(VE_Error.error(table.pos(i, 0), "对象名：" + table.getData(i, 0) + "，当前对象已创建，请勿使用重复的对象名！", table.ID))
             return false;
           }
         }
@@ -131,7 +132,7 @@ export class LoaderManager {
             if (varArray.length === 2 || varArray.length === 3) {
               let varID: string = varArray[0].trim();
               if (!VE_StringFormat.isIDLegal(varID)) {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "全局变量：" + table.getData(i, 5) + "，当前变量名不合法，包含非法字符，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "全局变量：" + table.getData(i, 5) + "，当前变量名不合法，包含非法字符，请检查！", table.ID))
                 return false;
               }
               let paraArray: string[] = [varArray[1].trim()];
@@ -143,11 +144,11 @@ export class LoaderManager {
               if (!globalVars.varData.isCreatedVariable(varID)) {
                 globalVars.varData.addVariable(varID, paraArray, table.pos(i, 5));
               } else {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "全局变量：" + table.getData(i, 5) + "，当前全局变量名已创建，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "全局变量：" + table.getData(i, 5) + "，当前全局变量名已创建，请检查！", table.ID))
                 return false;
               }
             } else {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "全局变量：" + table.getData(i, 5) + "，当前全局变量格式不正确，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "全局变量：" + table.getData(i, 5) + "，当前全局变量格式不正确，请检查！", table.ID))
               return false;
             }
           }
@@ -158,7 +159,7 @@ export class LoaderManager {
             // 目前暂不考虑赋值公式中有等号的情况，赋值公式后面只能是常量或者已创建的变量
             if (paraArray.length === 2 && paraArray[0].trim() === this._lastFsmID) {
               if (this._activeFsmData === null) {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，当前状态不属于任何对象和模板对象，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，当前状态不属于任何对象和模板对象，请检查！", table.ID))
                 return false;
               } else {
                 let stateInfo: string[] = paraArray[1].trim().split(/,|，/);
@@ -170,11 +171,11 @@ export class LoaderManager {
                   if (stateInfo[1].startsWith('#')) {
                     stateIndex = parseInt(stateInfo[1].substring(1));
                     if (stateIndex === NaN) {
-                      VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，当前整数转化错误！", table.ID))
+                      VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，当前整数转化错误！", table.ID))
                       return false;
                     }
                   } else {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，请检查！", table.ID))
                     return false;
                   }
                 }
@@ -190,41 +191,41 @@ export class LoaderManager {
               if (varArray.length === 3) {
                 let varID: string = varArray[0].trim();
                 if (!VE_StringFormat.isIDLegal(varID)) {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "变量：" + table.getData(i, 5) + "，当前变量名不合法，包含非法字符，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "变量：" + table.getData(i, 5) + "，当前变量名不合法，包含非法字符，请检查！", table.ID))
                   return false;
                 }
                 let para2Array: string[] = [varArray[1].trim(), varArray[2].trim()];
                 // 判断是模板变量，还是对象变量，注意：局部变量名与状态名也不能重合
                 if (this._currentType === AnalisysType.Object) {
                   if (this._activeObject!.varData.isCreatedVariable(varID)) {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，局部变量：" + table.getData(i, 5) + "，当前局部变量名已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，局部变量：" + table.getData(i, 5) + "，当前局部变量名已创建，请检查！", table.ID))
                     return false;
                   }
                   // 状态重复判断，应该是判断未初始化的原始数据
                   if (this._activeObject!.dataSource.isCreatedFsm(varID)) {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，局部变量：" + table.getData(i, 5) + "，局部变量名不能与状态名相同，当前状态已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，局部变量：" + table.getData(i, 5) + "，局部变量名不能与状态名相同，当前状态已创建，请检查！", table.ID))
                     return false;
                   }
                   this._activeObject!.varData.addVariable(varID, para2Array, table.pos(i, 5));
                 }
                 else if (this._currentType === AnalisysType.Template) {
                   if (this._activeTemplate!.varData.isCreatedVariable(varID)) {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，局部变量：" + table.getData(i, 5) + "，当前局部变量名已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，局部变量：" + table.getData(i, 5) + "，当前局部变量名已创建，请检查！", table.ID))
                     return false;
                   }
                   // 状态重复判断，应该是判断未初始化的原始数据
                   if (this._activeTemplate!.dataSource.isCreatedFsm(varID)) {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "模板对象名：" + table.getData(i, 5) + "，当前局部变量所属未知，格式错误，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + table.getData(i, 5) + "，当前局部变量所属未知，格式错误，请检查！", table.ID))
                     return false;
                   }
                   this._activeTemplate!.varData.addVariable(varID, para2Array, table.pos(i, 5));
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "局部变量：" + table.getData(i, 5) + "，当前局部变量所属未知，格式错误，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "局部变量：" + table.getData(i, 5) + "，当前局部变量所属未知，格式错误，请检查！", table.ID))
                   return false;
                 }
               } else {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "局部公式变量：" + table.getData(i, 5) + "，当前局部公式变量格式不正确，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "局部公式变量：" + table.getData(i, 5) + "，当前局部公式变量格式不正确，请检查！", table.ID))
                 return false;
               }
             }
@@ -235,7 +236,7 @@ export class LoaderManager {
             if (varArray.length === 2 || varArray.length === 3) {
               let varID: string = varArray[0].trim();
               if (!VE_StringFormat.isIDLegal(varID)) {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "变量：" + table.getData(i, 5) + "，当前变量名不合法，包含非法字符，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "变量：" + table.getData(i, 5) + "，当前变量名不合法，包含非法字符，请检查！", table.ID))
                 return false;
               }
               let paraArray: string[] = [varArray[1].trim()];
@@ -247,34 +248,34 @@ export class LoaderManager {
               // 判断是模板变量，还是对象变量，注意：局部变量名与状态名也不能重合
               if (this._currentType === AnalisysType.Object) {
                 if (this._activeObject!.varData.isCreatedVariable(varID)) {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，局部变量：" + table.getData(i, 5) + "，当前局部变量名已创建，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，局部变量：" + table.getData(i, 5) + "，当前局部变量名已创建，请检查！", table.ID))
                   return false;
                 }
                 // 状态重复判断，应该是判断未初始化的原始数据
                 if (this._activeObject!.dataSource.isCreatedFsm(varID)) {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，局部变量：" + table.getData(i, 5) + "，局部变量名不能与状态名相同，当前状态已创建，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，局部变量：" + table.getData(i, 5) + "，局部变量名不能与状态名相同，当前状态已创建，请检查！", table.ID))
                   return false;
                 }
                 this._activeObject!.varData.addVariable(varID, paraArray, table.pos(i, 5));
               }
               else if (this._currentType === AnalisysType.Template) {
                 if (this._activeTemplate!.varData.isCreatedVariable(varID)) {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，局部变量：" + table.getData(i, 5) + "，当前局部变量名已创建，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，局部变量：" + table.getData(i, 5) + "，当前局部变量名已创建，请检查！", table.ID))
                   return false;
                 }
                 // 状态重复判断，应该是判断未初始化的原始数据
                 if (this._activeTemplate!.dataSource.isCreatedFsm(varID)) {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，局部变量：" + table.getData(i, 5) + "，局部变量名不能与状态名相同，当前状态已创建，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，局部变量：" + table.getData(i, 5) + "，局部变量名不能与状态名相同，当前状态已创建，请检查！", table.ID))
                   return false;
                 }
                 this._activeTemplate!.varData.addVariable(varID, paraArray, table.pos(i, 5));
               }
               else {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "局部变量：" + table.getData(i, 5) + "，当前局部变量所属未知，格式错误，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "局部变量：" + table.getData(i, 5) + "，当前局部变量所属未知，格式错误，请检查！", table.ID))
                 return false;
               }
             } else {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "局部变量：" + table.getData(i, 5) + "，当前局部变量格式不正确，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "局部变量：" + table.getData(i, 5) + "，当前局部变量格式不正确，请检查！", table.ID))
               return false;
             }
           }
@@ -291,7 +292,7 @@ export class LoaderManager {
               // 目前暂不考虑赋值公式中有等号的情况，赋值公式后面只能是常量或者已创建的变量
               if (stateArray.length === 2 && fsmID === this._lastFsmID) {
                 if (this._activeFsmData === null) {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，当前状态不属于任何对象和模板对象，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，当前状态不属于任何对象和模板对象，请检查！", table.ID))
                   return false;
                 } else {
                   let stateInfo: string[] = stateArray[1].trim().split(/,|，/);
@@ -303,11 +304,11 @@ export class LoaderManager {
                     if (stateInfo[1].startsWith('#')) {
                       stateIndex = parseInt(stateInfo[1].substring(1));
                       if (stateIndex === NaN) {
-                        VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，当前整数转化错误！", table.ID))
+                        VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，当前整数转化错误！", table.ID))
                         return false;
                       }
                     } else {
-                      VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，请检查！", table.ID))
+                      VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，请检查！", table.ID))
                       return false;
                     }
                   }
@@ -317,7 +318,7 @@ export class LoaderManager {
                   this._activeStateData = stateData;
                 }
               } else {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态名：" + fsmID + "，当前状态未定义，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态名：" + fsmID + "，当前状态未定义，请检查！", table.ID))
                 return false;
               }
             }
@@ -327,7 +328,7 @@ export class LoaderManager {
               if (varArray.length === 2 || varArray.length === 3 || varArray.length === 4) {
                 let fsmID: string = varArray[0].trim();
                 if (!VE_StringFormat.isIDLegal(fsmID)) {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态名：" + table.getData(i, 5) + "，当前状态名不合法，包含非法字符，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态名：" + table.getData(i, 5) + "，当前状态名不合法，包含非法字符，请检查！", table.ID))
                   return false;
                 }
                 this._lastFsmID = fsmID;
@@ -342,23 +343,23 @@ export class LoaderManager {
                   if (varArray[3].startsWith('#')) {
                     stateIndex = parseInt(varArray[3].substring(1));
                     if (stateIndex === NaN) {
-                      VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态赋值：" + varArray[3] + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID，变量类型，变量值，#整数ID”，当前整数转化错误！", table.ID))
+                      VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + varArray[3] + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID，变量类型，变量值，#整数ID”，当前整数转化错误！", table.ID))
                       return false;
                     }
                   } else {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态赋值：" + varArray[3] + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID，变量类型，变量值，#整数ID”，当前整数转化错误！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + varArray[3] + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID，变量类型，变量值，#整数ID”，当前整数转化错误！", table.ID))
                     return false;
                   }
                 }
                 // 判断是模板状态，还是对象状态，注意：局部变量名与状态名也不能重合
                 if (this._currentType === AnalisysType.Object) {
                   if (this._activeObject!.varData.isCreatedVariable(fsmID)) {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，状态名：" + fsmID + "，状态名与局部变量名不能相同，当前局部变量已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，状态名：" + fsmID + "，状态名与局部变量名不能相同，当前局部变量已创建，请检查！", table.ID))
                     return false;
                   }
                   // 状态重复判断，应该是判断未初始化的原始数据
                   if (this._activeObject!.dataSource.isCreatedFsm(fsmID)) {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，状态名：" + fsmID + "，当前状态已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，状态名：" + fsmID + "，当前状态已创建，请检查！", table.ID))
                     return false;
                   }
                   // 创建状态机数据
@@ -373,18 +374,18 @@ export class LoaderManager {
                     this._activeFsmData.addState(stateData);
                     this._activeStateData = stateData;
                   } else {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，状态名：" + fsmID + "，类型：" + paraArray[0] + "，状态类型错误，当前状态变量类型在系统中不存在，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，状态名：" + fsmID + "，类型：" + paraArray[0] + "，状态类型错误，当前状态变量类型在系统中不存在，请检查！", table.ID))
                     return false;
                   }
                 }
                 else if (this._currentType === AnalisysType.Template) {
                   if (this._activeTemplate!.varData.isCreatedVariable(fsmID)) {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，状态名：" + fsmID + "，状态名与局部变量名不能相同，当前局部变量已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，状态名：" + fsmID + "，状态名与局部变量名不能相同，当前局部变量已创建，请检查！", table.ID))
                     return false;
                   }
                   // 状态重复判断，应该是判断未初始化的原始数据
                   if (this._activeTemplate!.dataSource.isCreatedFsm(fsmID)) {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，状态名：" + fsmID + "，当前状态已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，状态名：" + fsmID + "，当前状态已创建，请检查！", table.ID))
                     return false;
                   }
                   // 创建状态机数据
@@ -399,16 +400,16 @@ export class LoaderManager {
                     this._activeFsmData.addState(stateData);
                     this._activeStateData = stateData;
                   } else {
-                    VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.objectID + "，状态名：" + fsmID + "，类型：" + paraArray[0] + "，状态类型错误，当前状态变量类型在系统中不存在，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.objectID + "，状态名：" + fsmID + "，类型：" + paraArray[0] + "，状态类型错误，当前状态变量类型在系统中不存在，请检查！", table.ID))
                     return false;
                   }
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "局部变量：" + table.getData(i, 5) + "，当前局部变量所属未知，格式错误，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "局部变量：" + table.getData(i, 5) + "，当前局部变量所属未知，格式错误，请检查！", table.ID))
                   return false;
                 }
               } else {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 5), "状态：" + table.getData(i, 5) + "，当前状态格式不正确，应为“状态名，类型，初始值”的形式，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态：" + table.getData(i, 5) + "，当前状态格式不正确，应为“状态名，类型，初始值”的形式，请检查！", table.ID))
                 return false;
               }
             }
@@ -417,20 +418,20 @@ export class LoaderManager {
           // 触发解析
           if (table.getData(i, 2) !== '') {
             if (this._activeFsmData === null || this._activeStateData === null) {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 2), "触发：" + table.getData(i, 2) + "，当前触发不属于任何对象和模板对象，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 2), "触发：" + table.getData(i, 2) + "，当前触发不属于任何对象和模板对象，请检查！", table.ID))
               return false;
             }
             // 触发定义不为空，则加入到DataSource中，并且判断重复性
             let triggerID: string = table.getData(i, 2);
             if (!VE_StringFormat.isIDLegal(triggerID)) {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 2), "触发名：" + table.getData(i, 2) + "，当前触发名不合法，包含非法字符，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 2), "触发名：" + table.getData(i, 2) + "，当前触发名不合法，包含非法字符，请检查！", table.ID))
               return false;
             }
             if (table.getData(i, 3) !== '') {
               if (!this._activeFsmData!.dataSource.isCreatedTrigger(triggerID)) {
                 this._activeFsmData!.dataSource.addTrigger(triggerID, VE_StringFormat.paraSegment(table.getData(i, 3)), table.pos(i, 2));
               } else {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 2), "触发：" + table.getData(i, 2) + "，当前触发已在该对象中定义，请勿重复定义，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 2), "触发：" + table.getData(i, 2) + "，当前触发已在该对象中定义，请勿重复定义，请检查！", table.ID))
                 return false;
               }
             }
@@ -451,18 +452,18 @@ export class LoaderManager {
           } else {
             // 触发启动条件
             if (table.getData(i, 1) !== '') {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 1), "触发启动条件：" + table.getData(i, 1) + "，当前无触发，请勿定义触发启动条件，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 1), "触发启动条件：" + table.getData(i, 1) + "，当前无触发，请勿定义触发启动条件，请检查！", table.ID))
               return false;
             }
 
             // 关联状态逻辑条件
             if (table.getData(i, 4) !== '') {
               if (this._activeFsmData === null || this._activeStateData === null) {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 4), "状态逻辑条件：" + table.getData(i, 4) + "，当前状态逻辑条件不属于任何对象和模板对象，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 4), "状态逻辑条件：" + table.getData(i, 4) + "，当前状态逻辑条件不属于任何对象和模板对象，请检查！", table.ID))
                 return false;
               }
               if (this._activeStateData.logicalExp !== '') {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 4), "状态逻辑条件：" + table.getData(i, 4) + "，在状态的某个值中，无触发的状态逻辑条件只能填写1个，作为关联状态的逻辑条件，此处为第2个，不符合规则，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 4), "状态逻辑条件：" + table.getData(i, 4) + "，在状态的某个值中，无触发的状态逻辑条件只能填写1个，作为关联状态的逻辑条件，此处为第2个，不符合规则，请检查！", table.ID))
                 return false;
               } else {
                 this._activeStateData.logicalExp = table.getData(i, 4);
@@ -470,14 +471,14 @@ export class LoaderManager {
             }
 
             if (table.getData(i, 3) !== '') {
-              VE_ErrorManager.add(VE_Error.warning(table.pos(i, 3), "触发参数：" + table.getData(i, 3) + "，该处无触发定义，但是填写了触发参数，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 3), "触发参数：" + table.getData(i, 3) + "，该处无触发定义，但是填写了触发参数，请检查！", table.ID))
             }
           }
 
           // 响应解析
           if (table.getData(i, 6) !== '') {
             if (this._activeFsmData === null || this._activeStateData === null) {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，当前响应不属于任何对象和模板对象，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，当前响应不属于任何对象和模板对象，请检查！", table.ID))
               return false;
             }
             // 特殊调试响应
@@ -492,7 +493,7 @@ export class LoaderManager {
               }
               this._activeFsmData.dataSource.addAction(newActionID, ['调试', '调试', actionPara.substring(0, actionPara.length - 1)], ['false', 'false'], table.pos(i, 6));
               if (table.getData(i, 7) !== '') {
-                VE_ErrorManager.add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
               }
             }
             else if (tempStr.startsWith('error(') || tempStr.startsWith('error（') || tempStr.startsWith('错误（') || tempStr.startsWith('错误(')) {
@@ -505,7 +506,7 @@ export class LoaderManager {
               }
               this._activeFsmData.dataSource.addAction(newActionID, ['调试', '错误', actionPara.substring(0, actionPara.length - 1)], ['false', 'false'], table.pos(i, 6));
               if (table.getData(i, 7) !== '') {
-                VE_ErrorManager.add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
               }
             }
             else if (tempStr.startsWith('warn(') || tempStr.startsWith('warn（') || tempStr.startsWith('警告（') || tempStr.startsWith('警告(')) {
@@ -518,12 +519,12 @@ export class LoaderManager {
               }
               this._activeFsmData.dataSource.addAction(newActionID, ['调试', '警告', actionPara.substring(0, actionPara.length - 1)], ['false', 'false'], table.pos(i, 6));
               if (table.getData(i, 7) !== '') {
-                VE_ErrorManager.add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
               }
             }
             else if (table.getData(i, 6).indexOf('=') > -1) {
               if (table.getData(i, 7) !== '') {
-                VE_ErrorManager.add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
               }
 
               // 允许“=”后面直接赋值 公式
@@ -546,14 +547,14 @@ export class LoaderManager {
                 }
                 this._activeStateData.addAction(actionData, table.pos(i, 6));
               } else {
-                VE_ErrorManager.add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，响应格式不正确，应为“响应ID，启动标志（bool），每帧运行标志（bool）”的形式，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，响应格式不正确，应为“响应ID，启动标志（bool），每帧运行标志（bool）”的形式，请检查！", table.ID))
                 return false;
               }
 
               // 响应定义
               if (table.getData(i, 7) !== '') {
                 if (!VE_StringFormat.isIDLegal(actionArray[0])) {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 6), "响应名：" + table.getData(i, 6) + "，当前响应名不合法，包含非法字符，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应名：" + table.getData(i, 6) + "，当前响应名不合法，包含非法字符，请检查！", table.ID))
                   return false;
                 }
                 if (!this._activeFsmData.dataSource.isCreatedAction(actionArray[0])) {
@@ -563,21 +564,21 @@ export class LoaderManager {
                     this._activeFsmData.dataSource.addAction(actionArray[0], VE_StringFormat.paraSegment(table.getData(i, 7)), [actionArray[1], actionArray[2]], table.pos(i, 6));
                   }
                 } else {
-                  VE_ErrorManager.add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，当前响应已在该对象中定义，请勿重复定义，请检查！", table.ID))
+                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，当前响应已在该对象中定义，请勿重复定义，请检查！", table.ID))
                   return false;
                 }
               }
             }
           } else {
             if (table.getData(i, 7) !== '') {
-              VE_ErrorManager.add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处无响应定义，但是填写了响应参数，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处无响应定义，但是填写了响应参数，请检查！", table.ID))
             }
           }
 
           // 关联状态解析
           if (table.getData(i, 8) !== '') {
             if (this._activeFsmData === null || this._activeStateData === null) {
-              VE_ErrorManager.add(VE_Error.error(table.pos(i, 8), "关联状态：" + table.getData(i, 8) + "，当前关联状态不属于任何对象和模板对象，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 8), "关联状态：" + table.getData(i, 8) + "，当前关联状态不属于任何对象和模板对象，请检查！", table.ID))
               return false;
             }
             this._activeStateData!.addAssociatedState(table.getData(i, 8), table.pos(i, 8));
@@ -587,7 +588,7 @@ export class LoaderManager {
 
       return CreateInstance.createProject(project_name);
     } else {
-      VE_ErrorManager.add(VE_Error.error('', '表格内容不存在，引擎无法启动！', 'null'));
+      VE_ErrorManager.Add(VE_Error.error('', '表格内容不存在，引擎无法启动！', 'null'));
       return false;
     }
 

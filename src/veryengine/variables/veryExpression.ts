@@ -11,10 +11,10 @@ export class VeryExpression implements IVeryVar {
     return "VeryExpression";
   }
 
-  public get Value(): IExpression {
+  public get value(): IExpression {
     return this._value;
   }
-  public set Value(val: IExpression) {
+  public set value(val: IExpression) {
     this._value = val;
   }
   private _value: IExpression = ConstantExpression.Empty();

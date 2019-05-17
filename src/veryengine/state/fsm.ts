@@ -1,6 +1,6 @@
 import { Dictionary } from "../utility/dictionary";
 import { VE_State } from "./state";
-import { Time } from "../global";
+import { Time } from "../babylon";
 import { StateConst } from "./stateConst";
 import { IVeryVar, VeryString } from "../variables";
 import { VeryEngineObject } from "../object";

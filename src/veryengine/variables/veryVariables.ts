@@ -1,6 +1,8 @@
 import { IVeryVar } from "./IVeryVar";
 import { ErrorInfo } from "../utility/errorInfo";
 import { VeryVarManager } from "./veryVarManager";
+import { GameObject } from "../babylon/babylonVariables";
+import { VeryExpression } from "./veryExpression";
 
 export class VeryBool implements IVeryVar {
   public get varType(): string {
@@ -11,10 +13,16 @@ export class VeryBool implements IVeryVar {
     return "VeryBool";
   }
 
-  public get Value(): boolean {
+  private _isExpression: boolean = false;
+  private _expression: Nullable<VeryExpression> = null;
+
+  public get value(): boolean {
+    if (this._isExpression) {
+      return this._expression!.value.evaluate();
+    }
     return this._value;
   }
-  public set Value(val: boolean) {
+  public set value(val: boolean) {
     this._value = val;
   }
   private _value: boolean = false;
@@ -28,7 +36,15 @@ export class VeryBool implements IVeryVar {
   }
 
   public getValue(): any {
+    if (this._isExpression) {
+      return this._expression!.value.evaluate();
+    }
     return this._value;
+  }
+
+  public setExpression(expression: VeryExpression): void {
+    this._expression = expression;
+    this._isExpression = true;
   }
 
   public initValue(value_str: string, error_info: ErrorInfo): any {
@@ -71,10 +87,10 @@ export class VeryInt implements IVeryVar {
     return "VeryInt";
   }
 
-  public get Value(): number {
+  public get value(): number {
     return Math.round(this._value);
   }
-  public set Value(val: number) {
+  public set value(val: number) {
     this._value = Math.round(val);
   }
   private _value: number = 0;
@@ -84,11 +100,11 @@ export class VeryInt implements IVeryVar {
   }
 
   public getValue(): any {
-    return this.Value;
+    return this.value;
   }
 
   public setValue(val: any): void {
-    this.Value = val;
+    this.value = val;
   }
 
   public initValue(value_str: string, error_info: ErrorInfo): any {
@@ -125,10 +141,10 @@ export class VeryFloat implements IVeryVar {
     return "VeryFloat";
   }
 
-  public get Value(): number {
+  public get value(): number {
     return this._value;
   }
-  public set Value(val: number) {
+  public set value(val: number) {
     this._value = val;
   }
   private _value: number = 0;
@@ -178,10 +194,16 @@ export class VeryNumber implements IVeryVar {
     return "VeryNumber";
   }
 
-  public get Value(): number {
+  private _isExpression: boolean = false;
+  private _expression: Nullable<VeryExpression> = null;
+
+  public get value(): number {
+    if (this._isExpression && this._expression) {
+      return this._expression.value.evaluate();
+    }
     return this._value;
   }
-  public set Value(val: number) {
+  public set value(val: number) {
     this._value = val;
   }
   private _value: number = 0;
@@ -190,12 +212,19 @@ export class VeryNumber implements IVeryVar {
     this._value = 0;
   }
 
-  public setValue(val: number) {
+  public setValue(val: number): void {
     this._value = val;
   }
 
-  // 之后可能会有公式的情况
+  public setExpression(expression: VeryExpression): void {
+    this._expression = expression;
+    this._isExpression = true;
+  }
+
   public getValue(): any {
+    if (this._isExpression && this._expression) {
+      return this._expression.value.evaluate();
+    }
     return this._value;
   }
 
@@ -231,10 +260,16 @@ export class VeryString implements IVeryVar {
     return "VeryString";
   }
 
-  public get Value(): string {
+  private _isExpression: boolean = false;
+  private _expression: Nullable<VeryExpression> = null;
+
+  public get value(): string {
+    if (this._isExpression) {
+      return this._expression!.value.evaluate().toString();
+    }
     return this._value;
   }
-  public set Value(val: string) {
+  public set value(val: string) {
     this._value = val;
   }
   private _value: string = "";
@@ -244,6 +279,9 @@ export class VeryString implements IVeryVar {
   }
 
   public getValue(): any {
+    if (this._isExpression) {
+      return this._expression!.value.evaluate().toString();
+    }
     return this._value;
   }
 
@@ -271,6 +309,11 @@ export class VeryString implements IVeryVar {
     varClone.setValue(this._value);
     return varClone;
   }
+
+  public setExpression(expression: VeryExpression): void {
+    this._isExpression = true;
+    this._expression = expression;
+  }
 }
 
 export class VeryVector3 implements IVeryVar {
@@ -282,11 +325,16 @@ export class VeryVector3 implements IVeryVar {
     return "VeryVector3";
   }
 
-  public get Value(): BABYLON.Vector3 {
-    //let a: BABYLON.Vector3 = new BABYLON.Vector3 (1,1,1);
+  private _isExpression: boolean = false;
+  private _expression: Nullable<VeryExpression> = null;
+
+  public get value(): BABYLON.Vector3 {
+    if (this._isExpression && this._expression) {
+      return this._expression.value.evaluate();
+    }
     return this._value;
   }
-  public set Value(val: BABYLON.Vector3) {
+  public set value(val: BABYLON.Vector3) {
     this._value = val;
   }
   private _value: BABYLON.Vector3 = BABYLON.Vector3.Zero();
@@ -296,11 +344,19 @@ export class VeryVector3 implements IVeryVar {
   }
 
   public getValue(): any {
+    if (this._isExpression && this._expression) {
+      return this._expression.value.evaluate();
+    }
     return this._value;
   }
 
   public setValue(val: any) {
     this._value = val;
+  }
+
+  public setExpression(expression: VeryExpression): void {
+    this._isExpression = true;
+    this._expression = expression;
   }
 
   public initValue(value_str: string, error_info: ErrorInfo): any {
@@ -351,6 +407,62 @@ export class VeryVector3 implements IVeryVar {
   }
 }
 
+export class VeryGameObject implements IVeryVar {
+  public get varType(): string {
+    return "GameObject|对象";
+  }
+
+  public get className(): string {
+    return "VeryGameObject";
+  }
+
+  public get value(): Nullable<GameObject> {
+    return this._value;
+  }
+  public set value(val: Nullable<GameObject>) {
+    this._value = val;
+  }
+  private _value: Nullable<GameObject> = null;
+
+  constructor() {
+
+  }
+
+  public setValue(val: any) {
+    this._value = val;
+  }
+
+  // 之后可能会有公式的情况
+  public getValue(): any {
+    return this._value;
+  }
+
+  public initValue(value_str: string, error_info: ErrorInfo): any {
+
+    if (value_str === '' || value_str.toLowerCase() === 'null' || value_str.toLowerCase() === 'none') {
+      return null;
+    } else {
+      let rValue: Nullable<GameObject> = GameObject.Find(value_str);
+      if (rValue === null) {
+        error_info.isRight = false;
+        error_info.message =
+          "类型: " +
+          this.varType +
+          "，值：" +
+          value_str +
+          "，在场景中找不到指定对象，请检查！";
+      }
+      return rValue;
+    }
+  }
+
+  public clone(): IVeryVar {
+    let varClone: VeryGameObject = new VeryGameObject();
+    varClone.setValue(this._value);
+    return varClone;
+  }
+}
+
 
 VeryVarManager.addVarType("bool", new VeryBool());
 VeryVarManager.addVarType('开关', new VeryBool());
@@ -363,6 +475,9 @@ VeryVarManager.addVarType('数字', new VeryNumber());
 
 VeryVarManager.addVarType('string', new VeryString());
 VeryVarManager.addVarType('字符串', new VeryString());
-VeryVarManager.addVarType('vector3', new VeryVector3());
+
+VeryVarManager.addVarType('Vector3', new VeryVector3());
 VeryVarManager.addVarType('向量', new VeryVector3());
+VeryVarManager.addVarType('GameObject', new VeryGameObject());
+VeryVarManager.addVarType('对象', new VeryGameObject());
 

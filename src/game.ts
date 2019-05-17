@@ -1,6 +1,8 @@
 /// <reference path="./dts/babylon.d.ts"/>
 
-import { VeryEngine, Time } from "./veryengine/veryEngine";
+import { VeryEngine } from "./veryengine/veryEngine";
+
+import { Time, BabylonEngine, GameObject } from "./veryengine/babylon";
 
 export default class Game {
 	private _canvas: HTMLCanvasElement;
@@ -13,7 +15,7 @@ export default class Game {
 
 	constructor(canvasElement: HTMLCanvasElement, fps: HTMLElement) {
 		this._canvas = canvasElement;
-		VeryEngine.Canvas = this._canvas;
+		BabylonEngine.Canvas = this._canvas;
 		this._fps = fps;
 		// this._engine = new BABYLON.Engine(this._canvas, true);
 		this._table = document.getElementById("VeryTable")!;
@@ -28,7 +30,7 @@ export default class Game {
 			this._engine.dispose();
 		}
 		this._engine = new BABYLON.Engine(this._canvas, true);
-		VeryEngine.Engine = this._engine;
+		BabylonEngine.Engine = this._engine;
 		// Resize
 		let engine = this._engine;
 		window.addEventListener("resize", function () {
@@ -36,7 +38,7 @@ export default class Game {
 		});
 
 		this._scene = new BABYLON.Scene(this._engine);
-		VeryEngine.Scene = this._scene;
+		BabylonEngine.Scene = this._scene;
 
 		// 设定相机
 		var camera = new BABYLON.ArcRotateCamera("MainCamera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0), this._scene);
@@ -73,16 +75,16 @@ export default class Game {
 			scene.onBeforeRenderObservable.add(() => {
 
 				if (inputMap["w"] || inputMap["ArrowUp"]) {
-					blue.position.z -= 100*engine.getDeltaTime() / 1000;
+					blue.position.z -= 100 * engine.getDeltaTime() / 1000;
 				}
 				if (inputMap["a"] || inputMap["ArrowLeft"]) {
-					blue.position.x += 100*engine.getDeltaTime() / 1000;
+					blue.position.x += 100 * engine.getDeltaTime() / 1000;
 				}
 				if (inputMap["s"] || inputMap["ArrowDown"]) {
-					blue.position.z += 100*engine.getDeltaTime() / 1000;
+					blue.position.z += 100 * engine.getDeltaTime() / 1000;
 				}
 				if (inputMap["d"] || inputMap["ArrowRight"]) {
-					blue.position.x -= 100*engine.getDeltaTime() / 1000;
+					blue.position.x -= 100 * engine.getDeltaTime() / 1000;
 				}
 			})
 
@@ -94,9 +96,37 @@ export default class Game {
 				{ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: blue },
 				sphere, "scaling", new BABYLON.Vector3(2, 2, 2)));
 
-				sphere.actionManager.registerAction(new BABYLON.SetValueAction(
+			sphere.actionManager.registerAction(new BABYLON.SetValueAction(
 				{ trigger: BABYLON.ActionManager.OnIntersectionExitTrigger, parameter: blue }
 				, sphere, "scaling", new BABYLON.Vector3(1, 1, 1)));
+
+
+			// let blueObj: GameObject = GameObject.Find('blue')!;
+			
+			// console.log(blueObj.transform.transformNode);
+			// console.log(blueObj.transform.localPosition);
+			// let emptyNode: GameObject = new GameObject('abc');
+
+			// blueObj.transform.transformNode!.setParent(emptyNode.transform.transformNode);
+
+			// emptyNode.transform.eulerAngles = new BABYLON.Vector3(0, 45, 0);
+
+			// blueObj.transform.localPosition = new BABYLON.Vector3(45, 0, 0);
+			
+			// blueObj.transform.localEulerAngles = new BABYLON.Vector3(0, 45, 0);
+
+			// console.log(blueObj.transform.eulerAngles);
+			// console.log(blueObj.transform.rotation);
+			// blueObj.transform.rotation = BABYLON.Vector3.Zero();
+			// console.log(blueObj.transform.rotation);
+			// console.log(blueObj.transform.localRotation);
+
+			// blueObj.transform.eulerAngles = new BABYLON.Vector3(80, 80, 80);
+
+			// console.log(blueObj.transform.localRotation);
+			// blueObj.transform.transformNode!.setParent(null);
+			// blueObj.transform.position = new BABYLON.Vector3(100, 0, 0);
+
 
 		});
 

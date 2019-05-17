@@ -43,3 +43,8 @@ export enum Severity {
   Error
 }
 
+export enum ParaType {
+  Action = 0,
+  Trigger
+}
+

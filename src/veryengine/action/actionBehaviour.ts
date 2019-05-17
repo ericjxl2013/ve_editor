@@ -1,6 +1,5 @@
 import { ActionType, SequenceActionState } from "../enum";
-import { VeryEngine } from "../veryEngine";
-import { GameObject } from "../variables";
+import { GameObject, BabylonEngine } from "../babylon";
 import { VeryEngineObject } from "../object";
 
 export abstract class VE_ActionBehaviour {
@@ -8,7 +7,7 @@ export abstract class VE_ActionBehaviour {
   public abstract get ID(): string;
 
   public get scene(): BABYLON.Scene {
-    return VeryEngine.Scene;
+    return BabylonEngine.Scene;
   }
 
   public get enabled(): boolean {

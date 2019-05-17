@@ -12,9 +12,7 @@ export * from "./index";
 
 export class VeryEngine {
 
-  public static Canvas: HTMLCanvasElement;
-  public static Engine: BABYLON.Engine;
-  public static Scene: BABYLON.Scene;
+  
 
 
   constructor() {
@@ -54,7 +52,7 @@ export class VeryEngine {
     let result: boolean = manager.load(projectName, tableData);
     console.log(`表格解析结果：${result}`);
     if(!result) {
-      VE_ErrorManager.print();
+      VE_ErrorManager.Print();
     }
 
     // 平台第一次加载，响应类型、触发类型、变量类型初始化

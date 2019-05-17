@@ -41,7 +41,7 @@ export class CreateInstance {
         let newVar: Nullable<IVeryVar> = VeryVarManager.createVariable(varID, varPara[0], varPara[1], errorInfo);
         // TODO: List或者Dictionary处理
         if (!errorInfo.isRight || newVar === null) {
-          VE_ErrorManager.add(VE_Error.error(globalVars.varData.getPos(varID), "项目：" + project_name + "，全局变量：" + varID + "，" + varPara[0] + "，" + varPara[1] + "，全局变量创建失败，失败原因：" + errorInfo.message + "，请检查！", ''));
+          VE_ErrorManager.Add(VE_Error.error(globalVars.varData.getPos(varID), "项目：" + project_name + "，全局变量：" + varID + "，" + varPara[0] + "，" + varPara[1] + "，全局变量创建失败，失败原因：" + errorInfo.message + "，请检查！", ''));
           return false;
         } else {
           globalVars.addVariable(varID, newVar);
@@ -53,7 +53,7 @@ export class CreateInstance {
       }
       // 未知错误
       else {
-        VE_ErrorManager.add(VE_Error.error(globalVars.varData.getPos(varID), "项目：" + project_name + "，全局变量：" + varID + "，" + varPara[0] + "，" + varPara[1] + "，全局变量创建失败，当前变量不存在，请检查！", ''));
+        VE_ErrorManager.Add(VE_Error.error(globalVars.varData.getPos(varID), "项目：" + project_name + "，全局变量：" + varID + "，" + varPara[0] + "，" + varPara[1] + "，全局变量创建失败，当前变量不存在，请检查！", ''));
         return false;
       }
     }
@@ -69,7 +69,7 @@ export class CreateInstance {
         let errorInfo: ErrorInfo = new ErrorInfo();
         let globalExp: IExpression = VE_Expressions.createGlobalExpression(varID, varPara[1], project_name, errorInfo);
         if (!errorInfo.isRight || !globalExp) {
-          VE_ErrorManager.add(VE_Error.error(globalVars.varData.getPos(varID), "项目：" + project_name + "，全局变量：" + varID + "," + varPara[0] + "," + varPara[1] + "，全局变量创建失败，公式创建错误：\n" + errorInfo.message, ""));
+          VE_ErrorManager.Add(VE_Error.error(globalVars.varData.getPos(varID), "项目：" + project_name + "，全局变量：" + varID + "," + varPara[0] + "," + varPara[1] + "，全局变量创建失败，公式创建错误：\n" + errorInfo.message, ""));
           return false;
         }
         globalVars.addExpression(varID, globalExp);
@@ -99,7 +99,7 @@ export class CreateInstance {
           let newVar: Nullable<IVeryVar> = VeryVarManager.createVariable(varID, varPara[0], varPara[1], errorInfo);
           // TODO: List或者Dictionary处理
           if (newVar === null || !errorInfo.isRight) {
-            VE_ErrorManager.add(VE_Error.error(veryObject.varData.getPos(varID), "项目：" + project_name + "，全局变量：" + varID + "，" + varPara[0] + "，" + varPara[1] + "，全局变量创建失败，失败原因：" + errorInfo.message + "，请检查！", ''));
+            VE_ErrorManager.Add(VE_Error.error(veryObject.varData.getPos(varID), "项目：" + project_name + "，全局变量：" + varID + "，" + varPara[0] + "，" + varPara[1] + "，全局变量创建失败，失败原因：" + errorInfo.message + "，请检查！", ''));
             return false;
           } else {
             globalVars.addVariable(varID, newVar);
@@ -111,7 +111,7 @@ export class CreateInstance {
         }
         // 未知错误
         else {
-          VE_ErrorManager.add(VE_Error.error(veryObject.varData.getPos(varID), "项目：" + project_name + "，对象：" + objectID + "，局部变量：" + varID + "," + varPara[0] + "," + varPara[1] + "，局部变量创建失败，当前变量不存在，请检查！", ""));
+          VE_ErrorManager.Add(VE_Error.error(veryObject.varData.getPos(varID), "项目：" + project_name + "，对象：" + objectID + "，局部变量：" + varID + "," + varPara[0] + "," + varPara[1] + "，局部变量创建失败，当前变量不存在，请检查！", ""));
           return false;
         }
       }
@@ -129,7 +129,7 @@ export class CreateInstance {
         let newVar: Nullable<IVeryVar> = VeryVarManager.createVariable(fsmID, fsmData.fsmType, fsmData.initialValStr, errorInfo);
         // TODO: List或者Dictionary处理
         if (newVar === null || !errorInfo.isRight) {
-          VE_ErrorManager.add(VE_Error.error(veryObject.dataSource.getFsmPos(fsmID), "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态变量初始值创建错误，错误原因：" + errorInfo.message + "，请检查！", ''));
+          VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getFsmPos(fsmID), "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态变量初始值创建错误，错误原因：" + errorInfo.message + "，请检查！", ''));
           return false;
         }
         // 状态机
@@ -154,7 +154,7 @@ export class CreateInstance {
           let errorInfo: ErrorInfo = new ErrorInfo();
           let newVar: IExpression = VE_Expressions.createLocalExpression(varID, varPara[1], project_name, objectID, errorInfo);
           if (!errorInfo.isRight || !newVar) {
-            VE_ErrorManager.add(VE_Error.error(veryObject.varData.getPos(varID), "项目：" + project_name + "，对象：" + objectID + "，局部变量：" + varID + "," + varPara[0] + "," + varPara[1] + "，局部变量创建失败，公式创建错误：\n" + errorInfo.message, ''));
+            VE_ErrorManager.Add(VE_Error.error(veryObject.varData.getPos(varID), "项目：" + project_name + "，对象：" + objectID + "，局部变量：" + varID + "," + varPara[0] + "," + varPara[1] + "，局部变量创建失败，公式创建错误：\n" + errorInfo.message, ''));
             return false;
           }
           veryObject.addExpression(varID, newVar);
@@ -177,7 +177,7 @@ export class CreateInstance {
         let triggerPara: string[] = veryObject.dataSource.getTriggerPara(triggerID);
 
         if (!VE_Triggers.hasTrigger(triggerPara[0])) {
-          VE_ErrorManager.add(VE_Error.error(veryObject.dataSource.getTriggerPos(triggerID), "项目：" + project_name + "，对象：" + objectID + "，触发：" + triggerID + "，触发类型：" + triggerPara[0] + "，当前系统中不存在该触发类型，请检查！", ""));
+          VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getTriggerPos(triggerID), "项目：" + project_name + "，对象：" + objectID + "，触发：" + triggerID + "，触发类型：" + triggerPara[0] + "，当前系统中不存在该触发类型，请检查！", ""));
           return false;
         } else {
           // TODO: 初始化Trigger
@@ -196,7 +196,7 @@ export class CreateInstance {
         let actionPara: string[] = veryObject.dataSource.getActionPara(actionID);
 
         if (!VE_Actions.hasAction(actionPara[0])) {
-          VE_ErrorManager.add(VE_Error.error(veryObject.dataSource.getActionPos(actionID), "项目：" + project_name + "，对象：" + objectID + "，响应：" + actionID + "，响应类型：" + actionPara[0] + "，当前系统中不存在该响应类型，请检查！", ""));
+          VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getActionPos(actionID), "项目：" + project_name + "，对象：" + objectID + "，响应：" + actionID + "，响应类型：" + actionPara[0] + "，当前系统中不存在该响应类型，请检查！", ""));
           return false;
         } else {
           // TODO: 初始化Action
@@ -240,7 +240,7 @@ export class CreateInstance {
             let errorInfo: ErrorInfo = new ErrorInfo();
             let logicalExp: IExpression = VE_Expressions.createFsmExpression('', stateData.logicalExp, project_name, objectID, fsmID, errorInfo);
             if (!errorInfo.isRight || !logicalExp) {
-              VE_ErrorManager.add(VE_Error.error("（" + stateData.rowIndex.toString() + "，E）", "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态逻辑表达式：" + stateData.logicalExp + "，逻辑表达式创建失败，公式创建错误：\n" + errorInfo.message, ""));
+              VE_ErrorManager.Add(VE_Error.error("（" + stateData.rowIndex.toString() + "，E）", "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态逻辑表达式：" + stateData.logicalExp + "，逻辑表达式创建失败，公式创建错误：\n" + errorInfo.message, ""));
               return false;
             }
             state.logicalAssociated = logicalExp;
@@ -253,7 +253,7 @@ export class CreateInstance {
             // 可能为当前对象，也可能是其他对象上的触发
             let trigger: Nullable<VE_TriggerBehaviour> = VE_Triggers.findTrigger(veryObject, triggerData.triggerID);
             if (trigger === null) {
-              VE_ErrorManager.add(VE_Error.error(triggerPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，触发：" + triggerData.triggerID + "，当前触发无法在系统中查找到，请检查！", ""));
+              VE_ErrorManager.Add(VE_Error.error(triggerPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，触发：" + triggerData.triggerID + "，当前触发无法在系统中查找到，请检查！", ""));
               return false;
             }
             // 逻辑条件
@@ -265,7 +265,7 @@ export class CreateInstance {
               logicalExp = VE_Expressions.createFsmExpression('', triggerData.logicalExp, project_name, objectID, fsmID, errorInfo);
               // Debug.LogWarning(logicalExp);
               if (!errorInfo.isRight || logicalExp === null) {
-                VE_ErrorManager.add(VE_Error.error(triggerPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态逻辑表达式：" + triggerData.logicalExp + "，逻辑表达式创建失败，公式创建错误：\n" + errorInfo.message, ""));
+                VE_ErrorManager.Add(VE_Error.error(triggerPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态逻辑表达式：" + triggerData.logicalExp + "，逻辑表达式创建失败，公式创建错误：\n" + errorInfo.message, ""));
                 return false;
               }
             }
@@ -276,7 +276,7 @@ export class CreateInstance {
               let errorInfo: ErrorInfo = new ErrorInfo();
               let logicalSwitch: IExpression = VE_Expressions.createFsmExpression('', triggerData.logicalSwitch, project_name, objectID, fsmID, errorInfo);
               if (!errorInfo.isRight || logicalSwitch === null) {
-                VE_ErrorManager.add(VE_Error.error(triggerPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，触发启动条件：" + triggerData.logicalSwitch + "，触发启动条件创建失败，公式创建错误：\n" + errorInfo.message, ""));
+                VE_ErrorManager.Add(VE_Error.error(triggerPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，触发启动条件：" + triggerData.logicalSwitch + "，触发启动条件创建失败，公式创建错误：\n" + errorInfo.message, ""));
                 return false;
               }
               trigger.addLogicalSwitch(logicalSwitch);
@@ -292,7 +292,7 @@ export class CreateInstance {
               // 可能为当前对象，也可能是其他对象上的响应
               let action: Nullable<VE_ActionBehaviour> = VE_Actions.findAction(veryObject, actionData.actionID);
               if (action === null) {
-                VE_ErrorManager.add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，当前响应无法在系统中查找到，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，当前响应无法在系统中查找到，请检查！", ""));
                 return false;
               }
               // 响应参数，目前默认只支持常量（两个bool值理论上可以为常量或者变量和公式值引用）
@@ -300,20 +300,20 @@ export class CreateInstance {
               let errorInfo: ErrorInfo = new ErrorInfo();
               let enabledFlag: boolean = VE_TypeConvert.boolConvert(actionData.enabled, errorInfo);
               if (!errorInfo.isRight) {
-                VE_ErrorManager.add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应启动参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应启动参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
                 return false;
               }
 
               // 每帧运行
               let everyFrameFlag = VE_TypeConvert.boolConvert(actionData.everyFrame, errorInfo);
               if (!errorInfo.isRight) {
-                VE_ErrorManager.add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应每帧运行参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应每帧运行参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
                 return false;
               }
               // 顺序运行
               let isSequence = VE_TypeConvert.boolConvert(actionData.everyFrame, errorInfo);
               if (!errorInfo.isRight) {
-                VE_ErrorManager.add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应动画顺序运行参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应动画顺序运行参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
                 return false;
               }
               let stateAction: VE_StateAction = new VE_StateAction();
@@ -331,7 +331,7 @@ export class CreateInstance {
 
           // 关联状态
           if (fsm.isCreatedState(stateData.stateIndex)) {
-            VE_ErrorManager.add(VE_Error.error("（" + stateData.rowIndex.toString() + "，I）", "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态赋值：" + stateData.ValStr + "，当前关联ID已创建，请勿重复创建！", ""));
+            VE_ErrorManager.Add(VE_Error.error("（" + stateData.rowIndex.toString() + "，I）", "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态赋值：" + stateData.ValStr + "，当前关联ID已创建，请勿重复创建！", ""));
             return false;
           }
           else {
@@ -373,12 +373,12 @@ export class CreateInstance {
                 let errorInfo: ErrorInfo = new ErrorInfo();
                 stateIndex = VE_TypeConvert.intConvert(strArray[1].trim(), errorInfo);
                 if (!errorInfo.isRight) {
-                  VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态格式错误，应为“状态名=子状态ID（整数）”的形式，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态格式错误，应为“状态名=子状态ID（整数）”的形式，请检查！", ""));
                   return false;
                 }
               }
               else {
-                VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态格式错误，应为“状态名=子状态ID（整数）”的形式，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态格式错误，应为“状态名=子状态ID（整数）”的形式，请检查！", ""));
                 return false;
               }
 
@@ -407,22 +407,22 @@ export class CreateInstance {
                           // state.AddAssociatedState(associatedState);
                         }
                         else {
-                          VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.*模板变量.状态名”，在当前对象的该模板变量中无法查找到对应状态名，请检查！", ""));
+                          VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.*模板变量.状态名”，在当前对象的该模板变量中无法查找到对应状态名，请检查！", ""));
                           return false;
                         }
                       }
                       else {
-                        VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.*模板变量.状态名”，在当前对象中无法查找到该模板变量，请检查！", ""));
+                        VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.*模板变量.状态名”，在当前对象中无法查找到该模板变量，请检查！", ""));
                         return false;
                       }
                     }
                     else {
-                      VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.*模板变量.状态名”，模板变量填写格式不正确，请检查！", ""));
+                      VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.*模板变量.状态名”，模板变量填写格式不正确，请检查！", ""));
                       return false;
                     }
                   }
                   else {
-                    VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.*模板变量.状态名”，无法查找到该对象，请检查！", ""));
+                    VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.*模板变量.状态名”，无法查找到该对象，请检查！", ""));
                     return false;
                   }
                 }
@@ -440,7 +440,7 @@ export class CreateInstance {
                         // state.AddAssociatedState(associatedState);
                       }
                       else {
-                        VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“*模板变量.状态名”，在当前模板变量中无法查找到对应状态名，请检查！", ""));
+                        VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“*模板变量.状态名”，在当前模板变量中无法查找到对应状态名，请检查！", ""));
                         return false;
                       }
                     }
@@ -453,12 +453,12 @@ export class CreateInstance {
                           // state.AddAssociatedState(associatedState);
                         }
                         else {
-                          VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“*模板变量.状态名”，在当前模板变量中无法查找到对应状态名，请检查！", ""));
+                          VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“*模板变量.状态名”，在当前模板变量中无法查找到对应状态名，请检查！", ""));
                           return false;
                         }
                       }
                       else {
-                        VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“*模板变量.状态名”，在当前系统中无法查找到该模板变量，请检查！", ""));
+                        VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“*模板变量.状态名”，在当前系统中无法查找到该模板变量，请检查！", ""));
                         return false;
                       }
                     }
@@ -467,17 +467,17 @@ export class CreateInstance {
                   else {
                     let aObject: VeryEngineObject = objects.getVeryObject(aObjectID);
                     if (aObject === null) {
-                      VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.状态名”，当前系统中无法查找到该对象名，请检查！", ""));
+                      VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.状态名”，当前系统中无法查找到该对象名，请检查！", ""));
                       return false;
                     }
                     let aFsm: VE_Fsm = aObject.getFsm(aFsmID);
                     if (aFsm === null) {
-                      VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.状态名”，当前对象名所对应的对象中无法查找到该状态名，请检查！", ""));
+                      VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.状态名”，当前对象名所对应的对象中无法查找到该状态名，请检查！", ""));
                       return false;
                     }
                     let toState: Nullable<VE_State> = aFsm.getState(stateIndex);
                     if (toState === null) {
-                      VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.状态名”，当前关联状态序号超出对应状态序号范围，请检查！", ""));
+                      VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.状态名”，当前关联状态序号超出对应状态序号范围，请检查！", ""));
                       return false;
                     }
                     associatedState.add(toState, stateIndex);
@@ -486,7 +486,7 @@ export class CreateInstance {
                   }
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，无法查找到对应状态，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，无法查找到对应状态，请检查！", ""));
                   return false;
                 }
               }
@@ -494,13 +494,13 @@ export class CreateInstance {
               else {
                 let aFsm: VE_Fsm = veryObject.getFsm(aFsmID);
                 if (aFsm === null) {
-                  VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，可以查找到对象，但是对象上无法查找到该状态，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，可以查找到对象，但是对象上无法查找到该状态，请检查！", ""));
                   return false;
                 }
 
                 let toState: Nullable<VE_State> = aFsm.getState(stateIndex);
                 if (toState === null) {
-                  VE_ErrorManager.add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，可以查找到对象和状态，但是状态序号超出范围，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，可以查找到对象和状态，但是状态序号超出范围，请检查！", ""));
                   return false;
                 }
                 associatedState.add(toState, stateIndex);
@@ -536,7 +536,7 @@ export class CreateInstance {
         }
         if (valArray.length === 2) {
           if (!valArray[1].startsWith(StateConst.VARIABLE_SYMBOL)) {
-            VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
             return false;
           }
           else {
@@ -550,7 +550,7 @@ export class CreateInstance {
                   state.setTemplateInfo(template, varID, assignStr);
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
                   return false;
                 }
               }
@@ -561,12 +561,12 @@ export class CreateInstance {
                     state.setTemplateInfo(template, varID, assignStr);
                   }
                   else {
-                    VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
+                    VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
                     return false;
                   }
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*模板变量.*变量”，当前“*模板变量”无法在系统中查找到，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*模板变量.*变量”，当前“*模板变量”无法在系统中查找到，请检查！", ""));
                   return false;
                 }
               }
@@ -574,14 +574,14 @@ export class CreateInstance {
             // 对象名.*变量
             else {
               if (valArray[0] === object_id && valArray[1].substring(1) === fsm_id) {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*变量”，状态变量赋值不能自己赋值给自己，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*变量”，状态变量赋值不能自己赋值给自己，请检查！", ""));
                 return false;
               }
               let errorInfo: ErrorInfo = new ErrorInfo();
 
               let veryVar: Nullable<IVeryVar> = VeryVarManager.getVariable(valArray[1].substring(1), project_name, valArray[0], errorInfo);
               if (!errorInfo.isRight || veryVar === null) {
-                VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*变量”，*变量：" + valArray[1] + "无法在系统中查找到，错误信息：" + errorInfo, ""));
+                VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*变量”，*变量：" + valArray[1] + "无法在系统中查找到，错误信息：" + errorInfo, ""));
                 return false;
               }
               else {
@@ -590,7 +590,7 @@ export class CreateInstance {
                   state.setStateVariable(veryVar);
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*变量”，变量类型与状态类型不匹配，不能赋值，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*变量”，变量类型与状态类型不匹配，不能赋值，请检查！", ""));
                   return false;
                 }
               }
@@ -600,7 +600,7 @@ export class CreateInstance {
         else if (valArray.length === 3) {
           // 对象名.*模板变量.*变量，当前未实例化，只做前期语法检测，然后记录参数到状态，状态使用时，动态读取
           if (valArray[0].startsWith(StateConst.STATE_SEPARATOR) || !valArray[1].startsWith(StateConst.STATE_SEPARATOR) || !valArray[2].startsWith(StateConst.STATE_SEPARATOR)) {
-            VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
             return false;
           }
           else {
@@ -614,23 +614,23 @@ export class CreateInstance {
                   state.setTemplateInfo(template, varID, assignStr);
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*模板变量.*变量”，当前“对象名.*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*模板变量.*变量”，当前“对象名.*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
                   return false;
                 }
               }
               else {
-                VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*模板变量.*变量”，当前“对象名”的对象中无法查找到该“*模板变量”，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*模板变量.*变量”，当前“对象名”的对象中无法查找到该“*模板变量”，请检查！", ""));
                 return false;
               }
             }
             else {
-              VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*模板变量.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
+              VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*模板变量.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
               return false;
             }
           }
         }
         else {
-          VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
+          VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
           return false;
         }
       }
@@ -638,13 +638,13 @@ export class CreateInstance {
         // *变量
         let varID: string = assignStr.substring(1);
         if (varID == fsm_id) {
-          VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*变量”，状态变量赋值不能自己赋值给自己，请检查！", ""));
+          VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*变量”，状态变量赋值不能自己赋值给自己，请检查！", ""));
           return false;
         }
         let errorInfo: ErrorInfo = new ErrorInfo();
         let stateVar: Nullable<IVeryVar> = VeryVarManager.getVariable(varID, project_name, object_id, errorInfo);
         if (stateVar === null) {
-          VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量无法在当前系统中查找到，错误信息：" + errorInfo, ""));
+          VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量无法在当前系统中查找到，错误信息：" + errorInfo, ""));
           return false;
         }
         else {
@@ -653,7 +653,7 @@ export class CreateInstance {
             state.setStateVariable(stateVar);
           }
           else {
-            VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*变量”，变量类型与状态类型不匹配，不能赋值，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“*变量”，变量类型与状态类型不匹配，不能赋值，请检查！", ""));
             return false;
           }
         }
@@ -664,7 +664,7 @@ export class CreateInstance {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let val: any = fsm.fsmVar.initValue(assignStr, errorInfo);
       if (!errorInfo.isRight) {
-        VE_ErrorManager.add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值常量转化错误，请检查！", ""));
+        VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值常量转化错误，请检查！", ""));
         return false;
       }
       state.setConstValue(val);
@@ -697,7 +697,7 @@ export class CreateInstance {
               if (template.varData.isCreatedVariable(varID)) {
                 let varPara: string[] = template.varData.getVariableParas(varID);
                 if (varPara[1].toLowerCase() === "expression" || varPara[1].toLowerCase() === "公式") {
-                  VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，该变量不能为“公式”，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，该变量不能为“公式”，请检查！", ""));
                   return false;
                 }
                 else {
@@ -708,7 +708,7 @@ export class CreateInstance {
                 assignment.setLeftTemplateVar(template, varID);
               }
               else {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
                 return false;
               }
             }
@@ -718,7 +718,7 @@ export class CreateInstance {
                 if (template.varData.isCreatedVariable(varID)) {
                   let varPara: string[] = template.varData.getVariableParas(varID);
                   if (varPara[1].toLowerCase() === "expression" || varPara[1].toLowerCase() === "公式") {
-                    VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，该变量不能为“公式”，请检查！", ""));
+                    VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，该变量不能为“公式”，请检查！", ""));
                     return false;
                   }
                   else {
@@ -729,12 +729,12 @@ export class CreateInstance {
                   assignment.setLeftTemplateVar(template, varID);
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
                   return false;
                 }
               }
               else {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，当前“*模板变量”无法在系统中查找到，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*模板变量.*变量”，当前“*模板变量”无法在系统中查找到，请检查！", ""));
                 return false;
               }
             }
@@ -745,7 +745,7 @@ export class CreateInstance {
               let aObject: VeryEngineObject = objects.getVeryObject(valArray[0]);
               varID = varID.substring(1);
               if (aObject.isCreatedExpression(varID)) {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“对象名.*变量”，该变量不能为“公式”，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“对象名.*变量”，该变量不能为“公式”，请检查！", ""));
                 return false;
               }
               else if (aObject.isCreatedFsm(varID)) {
@@ -761,12 +761,12 @@ export class CreateInstance {
                 assignment.setLeftTemplate(template);
               }
               else {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“对象名.*变量”，无法在当前对象名中查找到该变量，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“对象名.*变量”，无法在当前对象名中查找到该变量，请检查！", ""));
                 return false;
               }
             }
             else {
-              VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
+              VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
               return false;
             }
           }
@@ -775,7 +775,7 @@ export class CreateInstance {
         {
           // 对象名.*模板变量.*变量，当前未实例化，只做前期语法检测，然后记录参数到状态，状态使用时，动态读取
           if (valArray[0].startsWith(StateConst.STATE_SEPARATOR) || !valArray[1].startsWith(StateConst.STATE_SEPARATOR) || !valArray[2].startsWith(StateConst.STATE_SEPARATOR)) {
-            VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
             return false;
           }
           else {
@@ -791,7 +791,7 @@ export class CreateInstance {
                 else if (template.varData.isCreatedVariable(varID)) {
                   let varParas: string[] = template.varData.getVariableParas(varID);
                   if (varParas[1].toLowerCase() === "expression" || varParas[1].toLowerCase() === "公式") {
-                    VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*模板变量.*变量”，当前“对象名.*模板变量.*变量”为公式变量，公式变量不可直接赋值，请检查！", ""));
+                    VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*模板变量.*变量”，当前“对象名.*模板变量.*变量”为公式变量，公式变量不可直接赋值，请检查！", ""));
                     return false;
                   }
                   else {
@@ -799,23 +799,23 @@ export class CreateInstance {
                   }
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*模板变量.*变量”，当前“对象名.*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*模板变量.*变量”，当前“对象名.*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
                   return false;
                 }
               }
               else {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*模板变量.*变量”，当前“对象名”的对象中无法查找到该“*模板变量”，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*模板变量.*变量”，当前“对象名”的对象中无法查找到该“*模板变量”，请检查！", ""));
                 return false;
               }
             }
             else {
-              VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*模板变量.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
+              VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式“对象名.*模板变量.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
               return false;
             }
           }
         }
         else {
-          VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
+          VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左侧变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
           return false;
         }
       }
@@ -823,7 +823,7 @@ export class CreateInstance {
       {
         varID = varID.substring(1);
         if (very_object.isCreatedExpression(varID)) {
-          VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*变量”，该变量不能为“公式”，请检查！", ""));
+          VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*变量”，该变量不能为“公式”，请检查！", ""));
           return false;
         }
         else if (very_object.isCreatedFsm(varID)) {
@@ -841,7 +841,7 @@ export class CreateInstance {
         else {
           // 全局变量
           if (global_vars.isCreatedExpression(varID)) {
-            VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*变量”，该变量不能为“公式”，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*变量”，该变量不能为“公式”，请检查！", ""));
             return false;
           }
           else if (global_vars.isCreatedVariable(varID)) {
@@ -866,14 +866,14 @@ export class CreateInstance {
             //   VE_ErrorManager.Add(VE_Error.Error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.TotalString + "，当前赋值响应等号左侧格式“*变量”，无法在当前系统中查找到该变量，请检查！", ""));
             //   return false;
             // }
-            VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*变量”，无法在当前系统中查找到该变量，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧格式“*变量”，无法在当前系统中查找到该变量，请检查！", ""));
             return false;
           }
         }
       }
     }
     else {
-      VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左边必须为变量，请检查！", ""));
+      VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号左边必须为变量，请检查！", ""));
       return false;
     }
 
@@ -894,7 +894,7 @@ export class CreateInstance {
       if (!errorInfo.isRight || !localExp) {
         // errorInfo = "模板对象实例化失败：局部变量创建失败，公式创建错误：\n" + errorInfo + "，请检查！" + errorPos;
         // return null;
-        VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“公式”，公式解析错误，请检查！错误信息：" + errorInfo, ""));
+        VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“公式”，公式解析错误，请检查！错误信息：" + errorInfo, ""));
         return false;
       }
       assignment.setRightVariable(new VeryExpression(localExp));
@@ -920,7 +920,7 @@ export class CreateInstance {
                   assignment.setRightTemplateVariable(template, varID);
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
                   return false;
                 }
               }
@@ -932,12 +932,12 @@ export class CreateInstance {
                     assignment.setRightTemplateVariable(template, varID);
                   }
                   else {
-                    VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
+                    VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“*模板变量.*变量”，当前“*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
                     return false;
                   }
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“*模板变量.*变量”，当前“*模板变量”无法在系统中查找到，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“*模板变量.*变量”，当前“*模板变量”无法在系统中查找到，请检查！", ""));
                   return false;
                 }
               }
@@ -962,13 +962,13 @@ export class CreateInstance {
                   rightTemplate = aObject.getTemplate(varID);
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“对象名.*变量”，无法在当前系统中查找到该变量，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“对象名.*变量”，无法在当前系统中查找到该变量，请检查！", ""));
                   return false;
                 }
                 // 赋值合理性判断
                 if (rightVar !== null) {
                   if (assignment.leftType === AssignType.Template) {
-                    VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为“模板变量”类型，右侧为“普通变量”类型，无法赋值，请检查！", ""));
+                    VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为“模板变量”类型，右侧为“普通变量”类型，无法赋值，请检查！", ""));
                     return false;
                   }
                   else if (assignment.leftType === AssignType.Variable) {
@@ -976,7 +976,7 @@ export class CreateInstance {
                       assignment.setRightVariable(rightVar);
                     }
                     else {
-                      VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧和右侧类型不匹配，无法赋值，请检查！", ""));
+                      VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧和右侧类型不匹配，无法赋值，请检查！", ""));
                       return false;
                     }
                   }
@@ -990,17 +990,17 @@ export class CreateInstance {
                     assignment.setRightTemplate(rightTemplate);
                   }
                   else {
-                    VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为“模板变量”，右侧为“普通变量”，无法赋值，请检查！", ""));
+                    VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为“模板变量”，右侧为“普通变量”，无法赋值，请检查！", ""));
                     return false;
                   }
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧数据无法识别，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧数据无法识别，请检查！", ""));
                   return false;
                 }
               }
               else {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式“对象名.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式“对象名.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
                 return false;
               }
             }
@@ -1009,7 +1009,7 @@ export class CreateInstance {
           {
             // 对象名.*模板变量.*变量，当前未实例化，只做前期语法检测，然后记录参数到状态，状态使用时，动态读取
             if (valArray[0].startsWith(StateConst.STATE_SEPARATOR) || !valArray[1].startsWith(StateConst.STATE_SEPARATOR) || !valArray[2].startsWith(StateConst.STATE_SEPARATOR)) {
-              VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
+              VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
               return false;
             }
             else {
@@ -1025,23 +1025,23 @@ export class CreateInstance {
                     assignment.setRightTemplateVariable(template, varID);
                   }
                   else {
-                    VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式“对象名.*模板变量.*变量”，当前“对象名.*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
+                    VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式“对象名.*模板变量.*变量”，当前“对象名.*模板变量”可以查找到，但是无法查到对应“*变量”，请检查！", ""));
                     return false;
                   }
                 }
                 else {
-                  VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式“对象名.*模板变量.*变量”，当前“对象名”的对象中无法查找到该“*模板变量”，请检查！", ""));
+                  VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式“对象名.*模板变量.*变量”，当前“对象名”的对象中无法查找到该“*模板变量”，请检查！", ""));
                   return false;
                 }
               }
               else {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式“对象名.*模板变量.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式“对象名.*模板变量.*变量”，当前“对象名”无法在系统中查找到，请检查！", ""));
                 return false;
               }
             }
           }
           else {
-            VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，赋值响应等号右侧变量格式错误，应为“（1）*变量；（2）对象名.*变量；（3）*模板变量.*变量；（4）对象名.*模板变量.*变量”几种形式，当前不符合，无法解析，请检查！", ""));
             return false;
           }
         }
@@ -1082,7 +1082,7 @@ export class CreateInstance {
                 rightVar = VerySceneVariables.Variables.getVariable(varID);
               }
               else {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“*变量”，无法在当前系统中查找到该变量，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“*变量”，无法在当前系统中查找到该变量，请检查！", ""));
                 return false;
               }
             }
@@ -1090,7 +1090,7 @@ export class CreateInstance {
           // 赋值合理性判断
           if (rightVar != null) {
             if (assignment.leftType === AssignType.Template) {
-              VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为“模板变量”类型，右侧为“普通变量”类型，无法赋值，请检查！", ""));
+              VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为“模板变量”类型，右侧为“普通变量”类型，无法赋值，请检查！", ""));
               return false;
             }
             else if (assignment.leftType === AssignType.Variable) {
@@ -1098,7 +1098,7 @@ export class CreateInstance {
                 assignment.setRightVariable(rightVar);
               }
               else {
-                VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧和右侧类型不匹配，无法赋值，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧和右侧类型不匹配，无法赋值，请检查！", ""));
                 return false;
               }
             }
@@ -1112,12 +1112,12 @@ export class CreateInstance {
               assignment.setRightTemplate(rightTemplate);
             }
             else {
-              VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为“模板变量”，右侧为“普通变量”，无法赋值，请检查！", ""));
+              VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为“模板变量”，右侧为“普通变量”，无法赋值，请检查！", ""));
               return false;
             }
           }
           else {
-            VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧数据无法识别，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧数据无法识别，请检查！", ""));
             return false;
           }
         }
@@ -1129,7 +1129,7 @@ export class CreateInstance {
             assignment.setRightNull();
           }
           else {
-            VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为模板变量，右侧赋值为常量时只能填“null”，表示销毁模板变量，当前格式错误，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧为模板变量，右侧赋值为常量时只能填“null”，表示销毁模板变量，当前格式错误，请检查！", ""));
             return false;
           }
         }
@@ -1141,7 +1141,7 @@ export class CreateInstance {
             let errorInfo: ErrorInfo = new ErrorInfo();
             let newValue: any = assignment.leftVariable.initValue(varID, errorInfo);
             if (!errorInfo.isRight || !newValue) {
-              VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧变量类型与右侧常量值不匹配，错误信息：" + errorInfo + "，请检查！", ""));
+              VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧变量类型与右侧常量值不匹配，错误信息：" + errorInfo + "，请检查！", ""));
               return false;
             }
             else {
@@ -1149,7 +1149,7 @@ export class CreateInstance {
             }
           }
           else {
-            VE_ErrorManager.add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧变量获取为空，请检查！", ""));
+            VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧变量获取为空，请检查！", ""));
             return false;
           }
         }

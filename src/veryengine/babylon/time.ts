@@ -1,4 +1,4 @@
-import { VeryEngine } from "../veryEngine";
+import { BabylonEngine } from "./engine";
 
 export class Time {
   
@@ -10,7 +10,7 @@ export class Time {
 
   public static get deltaTime(): number {
     // return 1.0 / GameGlobal.Engine.getFps();
-    return VeryEngine.Engine.getDeltaTime() / 1000;
+    return BabylonEngine.Engine.getDeltaTime() * 0.001;
   }
 
   public static _sum(): void {
