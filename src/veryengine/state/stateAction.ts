@@ -39,10 +39,12 @@ export class VE_StateAction {
     this._enabled = enabled;
     this._everyFrame = every_frame;
     this._action.isSequence = sequence;
+    this._type = StateActionType.Action; 
   }
 
   public setAssignment(assignment: VE_Assignment): void {
     this._assignment = assignment;
+    this._type = StateActionType.Assignment; 
   }
 
 

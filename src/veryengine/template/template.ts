@@ -23,7 +23,7 @@ export class VE_Template {
   }
   private _objectID: string = '';
 
-  public templateInstance: VeryEngineObject | null = null;
+  public templateInstance: Nullable<VeryEngineObject> = null;
 
   public dataSource: VE_DataSource;
 

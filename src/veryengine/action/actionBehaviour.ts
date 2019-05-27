@@ -1,14 +1,14 @@
 import { ActionType, SequenceActionState } from "../enum";
-import { GameObject, BabylonEngine } from "../babylon";
+import { GameObject } from "../babylon";
 import { VeryEngineObject } from "../object";
 
 export abstract class VE_ActionBehaviour {
 
   public abstract get ID(): string;
 
-  public get scene(): BABYLON.Scene {
-    return BabylonEngine.Scene;
-  }
+  public abstract get className(): string;
+
+  protected scene!: BABYLON.Scene;
 
   public get enabled(): boolean {
     return this._enabled;
@@ -58,12 +58,16 @@ export abstract class VE_ActionBehaviour {
 
   // private VE_SequenceActions _sequenceAction = null;
 
+  public set(scene: BABYLON.Scene): void {
+    this.scene = scene;
+  }
 
   public setEveryFrame(is_every_frame: boolean): void {
     this._erveryFrame = is_every_frame;
   }
 
-  public setActionID(object_id: string, action_id: string): void {
+  public setActionID(project_name: string, object_id: string, action_id: string): void {
+    this._projectName = project_name;
     this._objectID = object_id;
     this._actionID = action_id;
   }

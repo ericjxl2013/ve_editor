@@ -53,8 +53,8 @@ export class LoaderManager {
         }
         // 空行
         if(table.getRow(i)!.isEmpty()) {
-          continue;
           // console.log('空行：' + (i + 1));
+          continue;
         }
         // （1）模板对象，创建
         if (table.getData(i, 0).startsWith("模板_")) {
@@ -97,6 +97,7 @@ export class LoaderManager {
               return false;
             }
           }
+          
           if (!VE_StringFormat.isIDLegal(objectID)) {
             VE_ErrorManager.Add(VE_Error.error(table.pos(i, 0), "对象名：" + table.getData(i, 0) + "，当前对象名不合法，包含非法字符，请检查！", table.ID))
             return false;

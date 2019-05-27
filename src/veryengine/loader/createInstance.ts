@@ -116,7 +116,6 @@ export class CreateInstance {
         }
       }
     }
-
     // 3. 状态机 —— 状态机创建
     for (let i: number = 0; i < objects.count; i++) {
       let objectID: string = objects.getObjectID(i);
@@ -137,7 +136,6 @@ export class CreateInstance {
         veryObject.addFsm(fsmID, fsm);
       }
     }
-
     // 公式放在状态机创建之后，因为可以引用状态变量
     // 4. 对象局部变量再初始化公式
     for (let i: number = 0; i < objects.count; i++) {
@@ -180,9 +178,16 @@ export class CreateInstance {
           VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getTriggerPos(triggerID), "项目：" + project_name + "，对象：" + objectID + "，触发：" + triggerID + "，触发类型：" + triggerPara[0] + "，当前系统中不存在该触发类型，请检查！", ""));
           return false;
         } else {
-          // TODO: 初始化Trigger
-          let trigger: VE_TriggerBehaviour = VE_Triggers.createTrigger(triggerPara[0]);
-          veryObject.addTrigger(triggerID, trigger);
+          // 初始化Trigger
+          let errorInfo: ErrorInfo = new ErrorInfo();
+          let trigger: Nullable<VE_TriggerBehaviour> = VE_Triggers.createTrigger(veryObject, triggerID, triggerPara[0], triggerPara.slice(1), errorInfo);
+
+          if (!errorInfo.isRight || !trigger) {
+            VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getTriggerPos(triggerID), "项目：" + project_name + "，对象：" + objectID + "，触发：" + triggerID + "，触发创建错误，原因：" + errorInfo.message + "，请检查！", ""));
+            return false;
+          }
+
+          veryObject.addTrigger(triggerID, trigger!);
         }
       }
     }
@@ -199,9 +204,16 @@ export class CreateInstance {
           VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getActionPos(actionID), "项目：" + project_name + "，对象：" + objectID + "，响应：" + actionID + "，响应类型：" + actionPara[0] + "，当前系统中不存在该响应类型，请检查！", ""));
           return false;
         } else {
-          // TODO: 初始化Action
-          let action: VE_ActionBehaviour = VE_Actions.createAction(actionPara[0]);
-          veryObject.addAction(actionID, action);
+          // 初始化Action
+          let errorInfo: ErrorInfo = new ErrorInfo();
+          let action: Nullable<VE_ActionBehaviour> = VE_Actions.createAction(veryObject, actionID, actionPara[0], actionPara.slice(1), veryObject.dataSource.getActionInitVal(actionID), errorInfo);
+
+          if (!errorInfo.isRight || !action) {
+            VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getActionPos(actionID), "项目：" + project_name + "，对象：" + objectID + "，响应：" + actionID + "，响应创建错误，原因：" + errorInfo.message + "，请检查！", ""));
+            return false;
+          }
+
+          veryObject.addAction(actionID, action!);
         }
       }
     }
@@ -269,6 +281,8 @@ export class CreateInstance {
                 return false;
               }
             }
+            // console.log(state);
+            // console.log(trigger);
             trigger.addTriggerTarget(logicalExp!, state);
             // 触发启动条件
             if (triggerData.logicalSwitch !== '') {
@@ -311,13 +325,14 @@ export class CreateInstance {
                 return false;
               }
               // 顺序运行
-              let isSequence = VE_TypeConvert.boolConvert(actionData.everyFrame, errorInfo);
+              let isSequence = VE_TypeConvert.boolConvert(actionData.isSequence, errorInfo);
               if (!errorInfo.isRight) {
                 VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应动画顺序运行参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
                 return false;
               }
               let stateAction: VE_StateAction = new VE_StateAction();
-              stateAction.setAction(action)
+              // console.log(`isSequence: ${isSequence}`);
+              stateAction.setAction(action, enabledFlag, everyFrameFlag, isSequence);
               state.addAction(stateAction);
             }
             //赋值
@@ -353,15 +368,13 @@ export class CreateInstance {
         // 状态信息关联：触发激活条件，触发，逻辑表达式，状态值计算公式，响应，关联状态
         for (let p: number = 0; p < fsmData.count; p++) {
           let stateData: VE_StateData = fsmData.getStateData(p);
-          let state: Nullable<VE_State> = fsm.getState(p);
-
+          let state: Nullable<VE_State> = fsm.getStateInSequence(p);
           // 关联状态信息关联
           for (let s: number = 0; s < stateData.associatedStateCount; s++) {
             let associatedStateInfo: string = stateData.getAssociatedState(s);
             let associatedPos: string = stateData.getAssociatedStatePos(s);
             let associatedState: VE_AssociatedState = new VE_AssociatedState(state!);
             let multipleAssociatedState: string[] = associatedStateInfo.split(/,|，/);
-
             for (let www: number = 0; www < multipleAssociatedState.length; www++) {
               associatedStateInfo = multipleAssociatedState[www].trim();
               let stateIndex: number = StateConst.STATE_INDEX;
@@ -381,7 +394,6 @@ export class CreateInstance {
                 VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态格式错误，应为“状态名=子状态ID（整数）”的形式，请检查！", ""));
                 return false;
               }
-
               // 1. 状态名
               // 2. 对象名.状态名
               // 3. *模板变量.状态名
@@ -402,7 +414,7 @@ export class CreateInstance {
                       if (aObject.isCreatedTemplate(varID)) {
                         let template: VE_Template = aObject.getTemplate(varID);
                         if (template.dataSource.isCreatedFsm(stateArray[2])) {
-                          associatedState.addTemplate(template, stateArray[2], stateIndex);
+                          associatedState.addTemplate(template, stateArray[2], stateIndex, associatedPos);
                           // VE_AssociatedState associatedState = new VE_AssociatedState(state, template, stateArray[2], stateIndex);
                           // state.AddAssociatedState(associatedState);
                         }
@@ -435,7 +447,7 @@ export class CreateInstance {
                     if (veryObject.isCreatedTemplate(aObjectID)) {
                       let template: VE_Template = veryObject.getTemplate(aObjectID);
                       if (template.dataSource.isCreatedFsm(stateArray[1])) {
-                        associatedState.addTemplate(template, stateArray[1], stateIndex);
+                        associatedState.addTemplate(template, stateArray[1], stateIndex, associatedPos);
                         // VE_AssociatedState associatedState = new VE_AssociatedState(state, template, stateArray[1], stateIndex);
                         // state.AddAssociatedState(associatedState);
                       }
@@ -448,7 +460,7 @@ export class CreateInstance {
                       if (globalVars.isCreatedTemplate(aObjectID)) {
                         let template: VE_Template = globalVars.getTemplate(aObjectID);
                         if (template.dataSource.isCreatedFsm(stateArray[1])) {
-                          associatedState.addTemplate(template, stateArray[1], stateIndex);
+                          associatedState.addTemplate(template, stateArray[1], stateIndex, associatedPos);
                           // VE_AssociatedState associatedState = new VE_AssociatedState(state, template, stateArray[1], stateIndex);
                           // state.AddAssociatedState(associatedState);
                         }
@@ -480,7 +492,7 @@ export class CreateInstance {
                       VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.状态名”，当前关联状态序号超出对应状态序号范围，请检查！", ""));
                       return false;
                     }
-                    associatedState.add(toState, stateIndex);
+                    associatedState.add(toState, stateIndex, associatedPos);
                     // VE_AssociatedState associatedState = new VE_AssociatedState(state, toState);
                     // state.AddAssociatedState(associatedState);
                   }
@@ -497,18 +509,19 @@ export class CreateInstance {
                   VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，可以查找到对象，但是对象上无法查找到该状态，请检查！", ""));
                   return false;
                 }
-
                 let toState: Nullable<VE_State> = aFsm.getState(stateIndex);
                 if (toState === null) {
                   VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，可以查找到对象和状态，但是状态序号超出范围，请检查！", ""));
                   return false;
                 }
-                associatedState.add(toState, stateIndex);
+
+                associatedState.add(toState, stateIndex, associatedPos);
                 //VE_AssociatedState associatedState = new VE_AssociatedState(state, toState);
                 //state.AddAssociatedState(associatedState);
               }
             }
             state!.addAssociatedState(associatedState);
+
           }
 
         }

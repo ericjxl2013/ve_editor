@@ -173,22 +173,22 @@ export class VE_State {
         ) {
           if (
             this._stateActions[i]!.action!.SequenceState ===
-              SequenceActionState.Prepared ||
+            SequenceActionState.Prepared ||
             this._stateActions[i]!.action!.SequenceState ===
-              SequenceActionState.Running
+            SequenceActionState.Running
           ) {
             console.log(
               "（项目：" +
-                this._fsm.projectName +
-                "，对象：" +
-                this._fsm.objectID +
-                "，状态：" +
-                this._fsm.fsmID +
-                "，ID：" +
-                this._index +
-                "），当前状态中的响应：" +
-                this._stateActions[i]!.action!.actionID +
-                "，该响应处于“动画”运行状态，运行结束前不允许再次启动！"
+              this._fsm.projectName +
+              "，对象：" +
+              this._fsm.objectID +
+              "，状态：" +
+              this._fsm.fsmID +
+              "，ID：" +
+              this._index +
+              "），当前状态中的响应：" +
+              this._stateActions[i]!.action!.actionID +
+              "，该响应处于“动画”运行状态，运行结束前不允许再次启动！"
             );
             return;
           } else if (
@@ -197,16 +197,16 @@ export class VE_State {
           ) {
             console.log(
               "（项目：" +
-                this._fsm.projectName +
-                "，对象：" +
-                this._fsm.objectID +
-                "，状态：" +
-                this._fsm.fsmID +
-                "，ID：" +
-                this._index +
-                "），当前状态中的响应：" +
-                this._stateActions[i]!.action!.actionID +
-                "，该响应处于“动画”运行状态（暂停中），运行结束前不允许再次启动！"
+              this._fsm.projectName +
+              "，对象：" +
+              this._fsm.objectID +
+              "，状态：" +
+              this._fsm.fsmID +
+              "，ID：" +
+              this._index +
+              "），当前状态中的响应：" +
+              this._stateActions[i]!.action!.actionID +
+              "，该响应处于“动画”运行状态（暂停中），运行结束前不允许再次启动！"
             );
             return;
           }
@@ -216,6 +216,7 @@ export class VE_State {
       //状态响应顺序运行, TODO: 动画响应表格逻辑被修改，以下逻辑有冗余
       if (this._isSequence) {
         // TODO: 这里
+        console.log('顺序运行状态');
         // this._sequenceActions = this._fsm.VeryObject.gameObject.AddComponent<
         //   VE_SequenceActions
         // >();
@@ -256,14 +257,14 @@ export class VE_State {
     if (this._template!.templateInstance === null) {
       console.log(
         "项目：" +
-          this._fsm.projectName +
-          "，对象：" +
-          this._fsm.objectID +
-          "，状态：" +
-          this._fsm.fsmID +
-          "，状态赋值：" +
-          this._assignmentStr +
-          "，当前赋值模板对象未实例化，赋值前，请先启动对应响应实例化该模板对象！"
+        this._fsm.projectName +
+        "，对象：" +
+        this._fsm.objectID +
+        "，状态：" +
+        this._fsm.fsmID +
+        "，状态赋值：" +
+        this._assignmentStr +
+        "，当前赋值模板对象未实例化，赋值前，请先启动对应响应实例化该模板对象！"
       );
       this._templateVar = null;
       return;
@@ -285,16 +286,16 @@ export class VE_State {
       } else {
         console.log(
           "项目：" +
-            this._fsm.projectName +
-            "，对象：" +
-            this._fsm.objectID +
-            "，状态：" +
-            this._fsm.fsmID +
-            "，状态赋值：" +
-            this._assignmentStr +
-            "，在模板变量对象中无法查找到该变量：" +
-            this._varID +
-            "，请检查！"
+          this._fsm.projectName +
+          "，对象：" +
+          this._fsm.objectID +
+          "，状态：" +
+          this._fsm.fsmID +
+          "，状态赋值：" +
+          this._assignmentStr +
+          "，在模板变量对象中无法查找到该变量：" +
+          this._varID +
+          "，请检查！"
         );
         this._templateVar = null;
         return;

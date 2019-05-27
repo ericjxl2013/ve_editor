@@ -5,54 +5,77 @@ import { VE_Variables } from "./variables";
 import { VE_Manager } from "../manager";
 import { VE_Objects, VeryEngineObject } from "../object";
 import { VE_Template } from "../template";
-import { GameGlobal } from "../global";
+import { GameGlobal, VE_ErrorManager, VE_Error } from "../global";
 import { VeryExpression } from "./veryExpression";
+import { Severity } from "../enum";
 
 export class VeryVarManager {
 
-  private static _veryVarTypes: { [key: string]: IVeryVar } = {};
+  // private static _veryVarTypes: { [key: string]: IVeryVar } = {};
+
+  private static _veryVarFunctions: { [key: string]: Function } = {};
 
   public static hasVarType(var_type: string): boolean {
     var_type = var_type.toLowerCase();
-    if (this._veryVarTypes[var_type]) {
+    if (this._veryVarFunctions[var_type]) {
       return true;
     } else {
       return false;
     }
   }
 
-  public static addVarType(var_type: string, var_prototype: IVeryVar): void {
+  // public static addVarType(var_type: string, var_prototype: IVeryVar): void {
+  //   // 平台只加载一次，避免重复加载
+  //   if (!GameGlobal.PlatformLoaded) {
+  //     var_type = var_type.toLowerCase().trim();
+  //     // 由于直接访问，所以在这里直接报错
+  //     if (this._veryVarTypes[var_type]) {
+  //       ShowError.showError('VeryVar变量初始化错误，变量类型重复，当前变量名：' + var_type + '，当前变量类型：' + var_prototype.className);
+  //     } else {
+  //       // console.log(var_proto.VarType);
+  //       this._veryVarTypes[var_type] = var_prototype;
+  //       // let a = Object.create(this.GetVarType(var_type));
+  //       // console.log(a.Value);
+  //       // a.Value = true;
+  //       // console.log(a.Value);
+  //       // a.Value = 1234;
+  //       // console.log(a.getValue());
+  //       // console.log(this.GetVarType(var_type).__proto__);
+  //     }
+  //   }
+  // }
+
+  public static addVarType(var_function: Function): void {
     // 平台只加载一次，避免重复加载
     if (!GameGlobal.PlatformLoaded) {
-      var_type = var_type.toLowerCase().trim();
-      // 由于直接访问，所以在这里直接报错
-      if (this._veryVarTypes[var_type]) {
-        ShowError.showError('VeryVar变量初始化错误，变量类型重复，当前变量名：' + var_type + '，当前变量类型：' + var_prototype.className);
-      } else {
-        // console.log(var_proto.VarType);
-        this._veryVarTypes[var_type] = var_prototype;
-        // let a = Object.create(this.GetVarType(var_type));
-        // console.log(a.Value);
-        // a.Value = true;
-        // console.log(a.Value);
-        // a.Value = 1234;
-        // console.log(a.getValue());
-        // console.log(this.GetVarType(var_type).__proto__);
+      let tempVar: any = new var_function.prototype.constructor();
+      // console.log(`变量ID：  ${tempVar.ID}， 变量名： ${tempVar.className} `);
+      let ids: string[] = tempVar.ID.split('|');
+      for (let i: number = 0; i < ids.length; i++) {
+        let id: string = ids[i].trim().toLowerCase();
+        if (this._veryVarFunctions[id]) {
+          VE_ErrorManager.Add(new VE_Error('', `变量类型重复，当前变量类型：${id}，重复变量：${tempVar.className}，请为当前变量重新分配变量类型！`, '', Severity.Error));
+        } else {
+          this._veryVarFunctions[id] = var_function;
+        }
       }
     }
   }
 
-  // TODO
-  public static createVar(var_type: string): IVeryVar {
-    var_type = var_type.toLowerCase();
-    return Object.create(this.getVarType(var_type));
-  }
-
   public static createVariable(var_id: string, var_type: string, value: string, error_info: ErrorInfo): Nullable<IVeryVar> {
     var_type = var_type.toLowerCase();
+    if (!this._veryVarFunctions[var_type]) {
+      error_info.isRight = false;
+      error_info.message = `变量创建错误：当前变量类型在平台中不存在，请检查！变量类型：` + var_type;
+      return null;
+    }
+
     let variable: any;
     try {
-      variable = Object.create(this.getVarType(var_type));
+      // variable = Object.create(this.getVarType(var_type));
+      // new方式创建响应，Object.create方式创建因为prototype的关系，引用变量是唯一的，所有创建的响应共享，不合适
+      variable = new this._veryVarFunctions[var_type].prototype.constructor();
+
       if (!variable) {
         error_info.isRight = false;
         error_info.message = '变量创建错误：当前类型在平台中不存在，请检查！类型名：' + var_type;
@@ -66,7 +89,7 @@ export class VeryVarManager {
         return null;
       }
     } catch (error) {
-      console.log(error.message);
+      console.log(`变量创建错误：${error.message}`);
       error_info.isRight = false;
       error_info.message = '变量创建错误：当前类型在平台中不存在，请检查！类型名：' + var_type + '，错误原因：' + error.message;
       return null;
@@ -75,8 +98,8 @@ export class VeryVarManager {
 
   public static getVarType(var_type: string): any {
     var_type = var_type.toLowerCase();
-    if (this._veryVarTypes && this._veryVarTypes[var_type]) {
-      return this._veryVarTypes[var_type];
+    if (this._veryVarFunctions && this._veryVarFunctions[var_type]) {
+      return this._veryVarFunctions[var_type];
     }
     return null;
   }
@@ -84,7 +107,7 @@ export class VeryVarManager {
 
   public static remove(var_type: string): void {
     var_type = var_type.toLowerCase();
-    delete this._veryVarTypes[var_type];
+    delete this._veryVarFunctions[var_type];
   }
 
   // *变量
@@ -245,6 +268,6 @@ export class VeryVarManager {
   }
 
   public static dispose(): void {
-    VeryVarManager._veryVarTypes = {};
+    VeryVarManager._veryVarFunctions = {};
   }
 }

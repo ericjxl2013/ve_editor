@@ -1,6 +1,6 @@
 import { ParaType, Severity } from "../enum";
 import { VE_ErrorManager, VE_Error } from "../global";
-import { VeryGameObject, VeryVarManager, VarTools, IVeryVar, VeryString, VeryExpression, VeryNumber, VeryBool } from "../variables";
+import { VeryGameObject, VeryVarManager, VarTools, IVeryVar, VeryString, VeryExpression, VeryNumber, VeryBool, VeryVector3 } from "../variables";
 import { ErrorInfo } from "./errorInfo";
 import { VE_Template } from "../template";
 import { VE_Manager } from "../manager";
@@ -401,7 +401,7 @@ export class ParaParserUtility {
         return true;
       }
       else if (veryVar.className === 'VeryExpression') {
-        if (veryVar.varType == 'bool') {
+        if (veryVar.varType === 'bool') {
           very_var = new VeryBool();
           very_var.setExpression(<VeryExpression>veryVar);
           return true;
@@ -463,8 +463,135 @@ export class ParaParserUtility {
     }
   }
 
-  
 
+  public static Vector3Para(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryVector3, var_str: string, log: boolean = true): boolean {
+    if (VarTools.IsVarID(var_str)) {
+      let errorInfo: ErrorInfo = new ErrorInfo();
+      let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVar(project_name, object_id, var_str, errorInfo);
+      if (veryVar === null) {
+        if (log) {
+          VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，${errorInfo.message}`, '', Severity.Error));
+        }
+        return false;
+      }
+      else if (veryVar.className === 'VeryVector3') {
+        very_var = <VeryVector3>veryVar;
+        return true;
+      }
+      else {
+        if (log) {
+          VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为Vector3向量变量，请检查！`, '', Severity.Error));
+        }
+        return false;
+      }
+    }
+    else {
+      if (log) {
+        VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为Vector3向量变量，当前为常量字符串，请检查！`, '', Severity.Error));
+      }
+      return false;
+    }
+  }
+
+  public static Vector3OrNumberPara(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryVector3, x: VeryNumber, y: VeryNumber, z: VeryNumber, is_vec: boolean[], var_str: string, log: boolean = true): boolean {
+    if (var_str.indexOf(",") > -1 || var_str.indexOf("，") > -1) {
+      is_vec[0] = false;
+      let floatsArray: string[] = var_str.split(/,|，/);
+      if (floatsArray.length === 3) {
+        if (!this.NumberPara(project_name, object_id, id, para_type, x, floatsArray[0].trim(), log)) {
+          return false;
+        }
+        if (!this.NumberPara(project_name, object_id, id, para_type, y, floatsArray[1].trim(), log)) {
+          return false;
+        }
+        if (!this.NumberPara(project_name, object_id, id, para_type, z, floatsArray[2].trim(), log)) {
+          return false;
+        }
+        return true;
+      }
+      else {
+        if (log) {
+          VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为“（数字1, 数字2, 数字3）”格式的数字number变量，当前参数个数不符合，请检查！`, '', Severity.Error));
+        }
+        return false;
+      }
+    }
+    else {
+      is_vec[0] = true;
+      return this.Vector3Para(project_name, object_id, id, para_type, very_var, var_str, log);
+    }
+  }
+
+
+  public static Vector3ParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryVector3, var_str: string, log: boolean = true): boolean {
+    if (VarTools.IsVarID(var_str)) {
+      let errorInfo: ErrorInfo = new ErrorInfo();
+      let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVarWithExpression(project_name, object_id, var_str, errorInfo);
+      if (veryVar === null) {
+        if (log) {
+          VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，${errorInfo.message}`, '', Severity.Error));
+        }
+        return false;
+      }
+      else if (veryVar.className === 'VeryVector3') {
+        very_var = <VeryVector3>veryVar;
+        return true;
+      }
+      else if (veryVar.className === 'VeryExpression') {
+        if (veryVar.varType === 'Vector3') {
+          very_var.setExpression(<VeryExpression>veryVar);
+          return true;
+        }
+        else {
+          if (log) {
+            VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，该公式变量计算结果不为Vector3，请检查！`, '', Severity.Error));
+          }
+          return false;
+        }
+      }
+      else {
+        if (log) {
+          VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为Vector3变量，请检查！`, '', Severity.Error));
+        }
+        return false;
+      }
+    }
+    else {
+      if (log) {
+        VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为Vector3变量，当前为常量字符串，请检查！`, '', Severity.Error));
+      }
+      return false;
+    }
+  }
+
+  public static Vector3OrNumberParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryVector3, x: VeryNumber, y: VeryNumber, z: VeryNumber, is_vec: boolean[], var_str: string, log: boolean = true): boolean {
+    if (var_str.indexOf(",") > -1 || var_str.indexOf("，") > -1) {
+      is_vec[0] = false;
+      let floatsArray: string[] = var_str.split(/,|，/);
+      if (floatsArray.length === 3) {
+        if (!this.NumberParaWithExpression(project_name, object_id, id, para_type, x, floatsArray[0].trim(), log)) {
+          return false;
+        }
+        if (!this.NumberParaWithExpression(project_name, object_id, id, para_type, y, floatsArray[1].trim(), log)) {
+          return false;
+        }
+        if (!this.NumberParaWithExpression(project_name, object_id, id, para_type, z, floatsArray[2].trim(), log)) {
+          return false;
+        }
+        return true;
+      }
+      else {
+        if (log) {
+          VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为“（数字1, 数字2, 数字3）”格式的Vector3变量，当前参数个数不符合，请检查！`, '', Severity.Error));
+        }
+        return false;
+      }
+    }
+    else {
+      is_vec[0] = true;
+      return this.Vector3ParaWithExpression(project_name, object_id, id, para_type, very_var, var_str, log);
+    }
+  }
 
 
 }

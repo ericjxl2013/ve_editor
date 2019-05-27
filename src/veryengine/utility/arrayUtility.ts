@@ -10,5 +10,11 @@ export class ArrayUtility {
     arr = [];
   }
 
+  // public static T[] RemoveAt<T>(T[] array, int index) {
+  //   List < T > list = new List<T>(array);
+  //   list.RemoveAt(index);
+  //   return list.ToArray();
+  // }
+
 }
 

@@ -108,9 +108,9 @@ export class VeryEngineObject {
 
   public isCreatedExpression(exp_id: string): boolean {
     if (this._expressions[exp_id]) {
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
     }
   }
 
@@ -155,6 +155,18 @@ export class VeryEngineObject {
   // setUnloadCallback(callback): void {}
 
 
+  public update(): void {
+    // trigger update
+    Object.keys(this._triggers).forEach( key => {
+      this._triggers[key].update();
+    })
+    // action update
+    Object.keys(this._actions).forEach( key => {
+      this._actions[key].update();
+    })
+    // TODO: template
+    
+  }
 
 
   public clear(): void {

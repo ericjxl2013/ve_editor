@@ -1,8 +1,8 @@
-/// <reference path="./dts/babylon.d.ts"/>
+///// <reference path="./dts/babylon.d.ts"/>
 
-import { VeryEngine } from "./veryengine/veryEngine";
+import { VeryEngine, VE_Objects, VE_Manager } from "./veryengine/veryEngine";
 
-import { Time, BabylonEngine, GameObject } from "./veryengine/babylon";
+import { BabylonEngine } from "./veryengine/babylon";
 
 export default class Game {
 	private _canvas: HTMLCanvasElement;
@@ -27,6 +27,7 @@ export default class Game {
 	createScene(): Game {
 		// 假设有运行中的engine，先停止，重新初始化
 		if (this._engine) {
+			// TODO: 对象中相关数据dispose
 			this._engine.dispose();
 		}
 		this._engine = new BABYLON.Engine(this._canvas, true);
@@ -60,73 +61,69 @@ export default class Game {
 			engine.hideLoadingUI();
 
 			// Keyboard events
-			var blue = scene.getMeshByName('blue')!;
+			// var blue = scene.getMeshByName('blue')!;
 
-			scene.actionManager = new BABYLON.ActionManager(scene);
-			scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
-				inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
-			}));
-			scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
-				inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
-			}));
+			// scene.actionManager = new BABYLON.ActionManager(scene);
+			// scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
+			// 	inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
+			// }));
+			// scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, function (evt) {
+			// 	inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
+			// }));
 
 
-			// Game/Render loop
+			// // Game/Render loop
+			// scene.onBeforeRenderObservable.add(() => {
+
+			// 	if (inputMap["w"] || inputMap["ArrowUp"]) {
+			// 		blue.position.z -= 100 * engine.getDeltaTime() / 1000;
+			// 	}
+			// 	if (inputMap["a"] || inputMap["ArrowLeft"]) {
+			// 		blue.position.x += 100 * engine.getDeltaTime() / 1000;
+			// 	}
+			// 	if (inputMap["s"] || inputMap["ArrowDown"]) {
+			// 		blue.position.z += 100 * engine.getDeltaTime() / 1000;
+			// 	}
+			// 	if (inputMap["d"] || inputMap["ArrowRight"]) {
+			// 		blue.position.x -= 100 * engine.getDeltaTime() / 1000;
+			// 	}
+			// })
+
+			// // sphere
+			// var sphere = scene.getMeshByName('sphere')!;
+			// sphere.actionManager = new BABYLON.ActionManager(scene);
+
+			// sphere.actionManager.registerAction(new BABYLON.SetValueAction(
+			// 	{ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: blue },
+			// 	sphere, "scaling", new BABYLON.Vector3(2, 2, 2)));
+
+			// sphere.actionManager.registerAction(new BABYLON.SetValueAction(
+			// 	{ trigger: BABYLON.ActionManager.OnIntersectionExitTrigger, parameter: blue }
+			// 	, sphere, "scaling", new BABYLON.Vector3(1, 1, 1)));
+
+			// TODO: 表格加载测试，应在所有模型加载完以后再初始化引擎
+			// console.log(hot1.getData());
+			let entrance: VeryEngine = new VeryEngine();
+			console.log(`空行数：${hot1.countEmptyRows()}`);
+			try {
+				entrance.init(hot1.getData(), projectName);
+			} catch (e) { // TODO: 可能会影响效率
+				console.log(e);
+			}
+
+			let objects: VE_Objects = VE_Manager.objects(projectName);
+			// 全局渲染帧循环
 			scene.onBeforeRenderObservable.add(() => {
+				// 添加帧函数
+				// Time._sum();
 
-				if (inputMap["w"] || inputMap["ArrowUp"]) {
-					blue.position.z -= 100 * engine.getDeltaTime() / 1000;
+				// 触发响应循环
+				for (let i: number = 0; i < objects.count; i++) {
+					let objectID: string = objects.getObjectID(i);
+					objects.getVeryObject(objectID).update();
 				}
-				if (inputMap["a"] || inputMap["ArrowLeft"]) {
-					blue.position.x += 100 * engine.getDeltaTime() / 1000;
-				}
-				if (inputMap["s"] || inputMap["ArrowDown"]) {
-					blue.position.z += 100 * engine.getDeltaTime() / 1000;
-				}
-				if (inputMap["d"] || inputMap["ArrowRight"]) {
-					blue.position.x -= 100 * engine.getDeltaTime() / 1000;
-				}
+
 			})
-
-			// sphere
-			var sphere = scene.getMeshByName('sphere')!;
-			sphere.actionManager = new BABYLON.ActionManager(scene);
-
-			sphere.actionManager.registerAction(new BABYLON.SetValueAction(
-				{ trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, parameter: blue },
-				sphere, "scaling", new BABYLON.Vector3(2, 2, 2)));
-
-			sphere.actionManager.registerAction(new BABYLON.SetValueAction(
-				{ trigger: BABYLON.ActionManager.OnIntersectionExitTrigger, parameter: blue }
-				, sphere, "scaling", new BABYLON.Vector3(1, 1, 1)));
-
-
-			// let blueObj: GameObject = GameObject.Find('blue')!;
-			
-			// console.log(blueObj.transform.transformNode);
-			// console.log(blueObj.transform.localPosition);
-			// let emptyNode: GameObject = new GameObject('abc');
-
-			// blueObj.transform.transformNode!.setParent(emptyNode.transform.transformNode);
-
-			// emptyNode.transform.eulerAngles = new BABYLON.Vector3(0, 45, 0);
-
-			// blueObj.transform.localPosition = new BABYLON.Vector3(45, 0, 0);
-			
-			// blueObj.transform.localEulerAngles = new BABYLON.Vector3(0, 45, 0);
-
-			// console.log(blueObj.transform.eulerAngles);
-			// console.log(blueObj.transform.rotation);
-			// blueObj.transform.rotation = BABYLON.Vector3.Zero();
-			// console.log(blueObj.transform.rotation);
-			// console.log(blueObj.transform.localRotation);
-
-			// blueObj.transform.eulerAngles = new BABYLON.Vector3(80, 80, 80);
-
-			// console.log(blueObj.transform.localRotation);
-			// blueObj.transform.transformNode!.setParent(null);
-			// blueObj.transform.position = new BABYLON.Vector3(100, 0, 0);
-
 
 		});
 
@@ -147,17 +144,7 @@ export default class Game {
 
 
 
-		// 表格加载测试
-		// console.log(hot1.getData());
-		let entrance: VeryEngine = new VeryEngine();
-		console.log(`空行数：${hot1.countEmptyRows()}`);
-		entrance.init(hot1.getData(), projectName);
 
-		// 全局渲染帧循环
-		this._scene.onBeforeRenderObservable.add(() => {
-			// 添加帧函数
-			Time._sum();
-		})
 		return this;
 	}
 

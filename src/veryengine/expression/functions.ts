@@ -1,5 +1,7 @@
 import { IExpression } from "./expressions";
 import { ShowError } from "../html";
+import { VE_ErrorManager, VE_Error } from "../global";
+import { Severity } from "../enum";
 
 export interface IFunction {
   expType: string;
@@ -337,49 +339,62 @@ export class ATan implements IFunction {
 
 
 export class CustomFunctions {
-  private static _functions: {[key:string]: IFunction} = {};
+
+  // private static _functions: {[key:string]: IFunction} = {};
+
+  private static _functionsDic: { [key: string]: Function } = {};
 
   public static hasFunction(func_name: string): boolean {
     func_name = func_name.toLowerCase();
-    if(this._functions[func_name]) {
+    if (this._functionsDic[func_name]) {
       return true;
     } else {
       return false;
     }
   }
 
-  public static addFunction(func: IFunction): void {
-    let funcName: string = func.className.toLowerCase();
-    if(this._functions[funcName]) {
-      ShowError.showError(`自定义函数初始化错误，函数ID重复，当前函数ID：${funcName}，请为当前自定义函数重新分配ID！`);
+  // public static addFunction(func: IFunction): void {
+  //   let funcName: string = func.className.toLowerCase();
+  //   if(this._functions[funcName]) {
+  //     ShowError.showError(`自定义函数初始化错误，函数ID重复，当前函数ID：${funcName}，请为当前自定义函数重新分配ID！`);
+  //   } else {
+  //     this._functions[funcName] = func;
+  //   }
+  // }
+
+  public static addFunction(func: Function): void {
+    let tempFunc: any = new func.prototype.constructor();
+    let funcName: string = tempFunc.className.toLowerCase();
+    if (this._functionsDic[funcName]) {
+      VE_ErrorManager.Add(new VE_Error('', `自定义函数初始化错误，函数ID重复，当前函数ID：${tempFunc.className}，请为当前自定义函数重新分配ID！`, '', Severity.Error));
     } else {
-      this._functions[funcName] = func;
+      this._functionsDic[funcName] = func;
     }
   }
 
   public static createFunction(func_name: string): IFunction {
-    func_name = func_name.toLowerCase();
-    return Object.create(this._functions[func_name]);
+    let tempFunc: any = new this._functionsDic[func_name.trim().toLowerCase()].prototype.constructor();
+    return <IFunction>tempFunc;
   }
 
   public static remove(func_name: string): void {
     func_name = func_name.toLowerCase();
-    delete this._functions[func_name];
+    delete this._functionsDic[func_name];
   }
 }
 
 
-CustomFunctions.addFunction(new Pow());
-CustomFunctions.addFunction(new Ln());
-CustomFunctions.addFunction(new Lg());
-CustomFunctions.addFunction(new Sqrt());
-CustomFunctions.addFunction(new Abs());
-CustomFunctions.addFunction(new Random());
-CustomFunctions.addFunction(new Round());
-CustomFunctions.addFunction(new Sin());
-CustomFunctions.addFunction(new ASin());
-CustomFunctions.addFunction(new Cos());
-CustomFunctions.addFunction(new ACos());
-CustomFunctions.addFunction(new Tan());
-CustomFunctions.addFunction(new ATan());
+CustomFunctions.addFunction(Pow);
+CustomFunctions.addFunction(Ln);
+CustomFunctions.addFunction(Lg);
+CustomFunctions.addFunction(Sqrt);
+CustomFunctions.addFunction(Abs);
+CustomFunctions.addFunction(Random);
+CustomFunctions.addFunction(Round);
+CustomFunctions.addFunction(Sin);
+CustomFunctions.addFunction(ASin);
+CustomFunctions.addFunction(Cos);
+CustomFunctions.addFunction(ACos);
+CustomFunctions.addFunction(Tan);
+CustomFunctions.addFunction(ATan);
 

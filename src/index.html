@@ -98,7 +98,7 @@
   <div class="wrapper">
     <!-- <div id="jsEditor"></div> -->
     <div class="split" id="VeryTable"></div>
-    <div class="split" id="canvasZone">
+    <div class="split" id="canvasZone" onclick="deselectTable()">
       <canvas touch-action="none" id="renderCanvas"></canvas>
     </div>
   </div>
@@ -121,11 +121,16 @@
       </div>
     </div>
   </div>
-
   <script src="js/very/table.js"></script>
   <!-- <script src="js/very/very2.js"></script> -->
   <script src="veryengine.js"></script>
   <!-- <script src="test.js"></script> -->
+  <script>
+    // deselect table
+    function deselectTable() {
+      hot1.deselectCell()
+    }
+  </script>
 </body>
 
 </html>

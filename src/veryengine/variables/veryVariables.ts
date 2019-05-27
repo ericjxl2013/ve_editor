@@ -6,11 +6,15 @@ import { VeryExpression } from "./veryExpression";
 
 export class VeryBool implements IVeryVar {
   public get varType(): string {
-    return "bool|开关";
+    return "bool";
   }
 
   public get className(): string {
     return "VeryBool";
+  }
+
+  public get ID(): string {
+    return 'bool|开关';
   }
 
   private _isExpression: boolean = false;
@@ -78,120 +82,17 @@ export class VeryBool implements IVeryVar {
   }
 }
 
-export class VeryInt implements IVeryVar {
-  public get varType(): string {
-    return "int|整数";
-  }
-
-  public get className(): string {
-    return "VeryInt";
-  }
-
-  public get value(): number {
-    return Math.round(this._value);
-  }
-  public set value(val: number) {
-    this._value = Math.round(val);
-  }
-  private _value: number = 0;
-
-  constructor() {
-    this._value = 0;
-  }
-
-  public getValue(): any {
-    return this.value;
-  }
-
-  public setValue(val: any): void {
-    this.value = val;
-  }
-
-  public initValue(value_str: string, error_info: ErrorInfo): any {
-    // 先转化为float，直接使用parseInt没有四舍五入的效果
-    let newFloat = parseFloat(value_str);
-    if (!isNaN(newFloat)) {
-      // 可对float进行四舍五入
-      return Math.round(newFloat);
-    } else {
-      error_info.isRight = false;
-      error_info.message =
-        "类型: " +
-        this.varType +
-        "，值：" +
-        value_str +
-        "，该变量值和类型不匹配，转化错误，请检查！";
-      return null;
-    }
-  }
-
-  public clone(): IVeryVar {
-    let varClone: VeryInt = new VeryInt();
-    varClone.setValue(this._value);
-    return varClone;
-  }
-}
-
-export class VeryFloat implements IVeryVar {
-  public get varType(): string {
-    return "float|浮点数";
-  }
-
-  public get className(): string {
-    return "VeryFloat";
-  }
-
-  public get value(): number {
-    return this._value;
-  }
-  public set value(val: number) {
-    this._value = val;
-  }
-  private _value: number = 0;
-
-  constructor() {
-    this._value = 0;
-  }
-
-  public setValue(val: number) {
-    this._value = val;
-  }
-
-  // 之后可能会有公式的情况
-  public getValue(): any {
-    return this._value;
-  }
-
-  public initValue(value_str: string, error_info: ErrorInfo): any {
-    let newVal = parseFloat(value_str);
-    if (!isNaN(newVal)) {
-      return newVal;
-    } else {
-      error_info.isRight = false;
-      error_info.message =
-        "类型: " +
-        this.varType +
-        "，值：" +
-        value_str +
-        "，该变量值和类型不匹配，转化错误，请检查！";
-      return null;
-    }
-  }
-
-  public clone(): IVeryVar {
-    let varClone: VeryFloat = new VeryFloat();
-    varClone.setValue(this._value);
-    return varClone;
-  }
-}
-
 export class VeryNumber implements IVeryVar {
   public get varType(): string {
-    return "number|数字";
+    return "number";
   }
 
   public get className(): string {
     return "VeryNumber";
+  }
+
+  public get ID(): string {
+    return 'number|数字';
   }
 
   private _isExpression: boolean = false;
@@ -253,11 +154,15 @@ export class VeryNumber implements IVeryVar {
 
 export class VeryString implements IVeryVar {
   public get varType(): string {
-    return "string|字符串";
+    return "string";
   }
 
   public get className(): string {
     return "VeryString";
+  }
+
+  public get ID(): string {
+    return 'string|字符串';
   }
 
   private _isExpression: boolean = false;
@@ -318,11 +223,15 @@ export class VeryString implements IVeryVar {
 
 export class VeryVector3 implements IVeryVar {
   public get varType(): string {
-    return "vector3|向量";
+    return "Vector3";
   }
 
   public get className(): string {
     return "VeryVector3";
+  }
+
+  public get ID(): string {
+    return 'Vector3|向量';
   }
 
   private _isExpression: boolean = false;
@@ -409,11 +318,15 @@ export class VeryVector3 implements IVeryVar {
 
 export class VeryGameObject implements IVeryVar {
   public get varType(): string {
-    return "GameObject|对象";
+    return "GameObject";
   }
 
   public get className(): string {
     return "VeryGameObject";
+  }
+
+  public get ID(): string {
+    return 'GameObject|对象';
   }
 
   public get value(): Nullable<GameObject> {
@@ -464,20 +377,9 @@ export class VeryGameObject implements IVeryVar {
 }
 
 
-VeryVarManager.addVarType("bool", new VeryBool());
-VeryVarManager.addVarType('开关', new VeryBool());
-
-VeryVarManager.addVarType('int', new VeryInt());
-VeryVarManager.addVarType('float', new VeryFloat());
-
-VeryVarManager.addVarType('number', new VeryNumber());
-VeryVarManager.addVarType('数字', new VeryNumber());
-
-VeryVarManager.addVarType('string', new VeryString());
-VeryVarManager.addVarType('字符串', new VeryString());
-
-VeryVarManager.addVarType('Vector3', new VeryVector3());
-VeryVarManager.addVarType('向量', new VeryVector3());
-VeryVarManager.addVarType('GameObject', new VeryGameObject());
-VeryVarManager.addVarType('对象', new VeryGameObject());
+VeryVarManager.addVarType(VeryBool);
+VeryVarManager.addVarType(VeryNumber);
+VeryVarManager.addVarType(VeryString);
+VeryVarManager.addVarType(VeryVector3);
+VeryVarManager.addVarType(VeryGameObject);
 

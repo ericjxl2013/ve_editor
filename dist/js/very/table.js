@@ -17,13 +17,14 @@ var projectName = "VeRyEngine";
 var example = document.getElementById("VeryTable");
 var hot1 = new Handsontable(example, {
   data: Handsontable.helper.createEmptySpreadsheetData(300, 9),
-  colWidths: 100,
+  colWidths: 120,
   width: "50%",
   height: "100%",
   rowHeights: 23,
   rowHeaders: true,
   colHeaders: true,
   licenseKey: "non-commercial-and-evaluation",
+  autoColumnSize: true,
   fixedRowsTop: 1, // 固定显示第一行
   manualColumnResize: true, // 允许手动设置列宽
   manualRowResize: true, // 允许手动设置行宽
@@ -202,10 +203,10 @@ const saveImmediate = () => {
     .then(function(response) {
       let data = response.data;
       if (data.code === "00000") {
-        console.log("save success");
+        console.log("已保存");
       } else {
         // Do nothing
-        console.log("save error");
+        console.log("保存错误：" + data.message);
       }
     })
     .catch(function(error) {

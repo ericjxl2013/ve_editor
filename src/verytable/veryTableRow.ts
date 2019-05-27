@@ -58,7 +58,9 @@ export class VeryTableRow {
       return true;
     }
     for(let i: number = 0; i < this._rowData.length; i++) {
-      if(!this._rowData[i] && this._rowData[i] !== '') {
+      if(this._rowData[i] === '' || this._rowData[i] === null || this._rowData[i] === undefined) {
+        continue;
+      } else {
         return false;
       }
     }

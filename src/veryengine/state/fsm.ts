@@ -1,8 +1,7 @@
-import { Dictionary } from "../utility/dictionary";
 import { VE_State } from "./state";
-import { Time } from "../babylon";
+import { BabylonEngine } from "../babylon";
 import { StateConst } from "./stateConst";
-import { IVeryVar, VeryString } from "../variables";
+import { IVeryVar } from "../variables";
 import { VeryEngineObject } from "../object";
 
 export class VE_Fsm {
@@ -36,10 +35,7 @@ export class VE_Fsm {
   }
   private _veryObject: VeryEngineObject;
 
-  private _stateDics: Dictionary<number, VE_State> = new Dictionary<
-    number,
-    VE_State
-  >();
+  private _stateDics: { [key: number]: VE_State } = {};
   private _states: VE_State[] = [];
 
   public get count(): number {
@@ -64,32 +60,48 @@ export class VE_Fsm {
   }
 
   public isCreatedState(state_index: number): boolean {
-    return this._stateDics.ContainsKey(state_index);
-  }
-
-  public addState(state: VE_State, state_index: number): void {
-    if (!this._stateDics.ContainsKey(state_index)) {
-      this._stateDics.Add(state_index, state);
-      this._states.push(state);
-    }
-  }
-
-  public getState(state_index: number): Nullable<VE_State> {
-    return this._stateDics.GetValue(state_index);
-  }
-
-  public removeState(state_index: number): boolean {
-    if (this.isCreatedState(state_index)) {
-      this._stateDics.Remove(state_index);
+    if (this._stateDics[state_index]) {
       return true;
     } else {
       return false;
     }
   }
 
+  public addState(state: VE_State, state_index: number): void {
+    this._states.push(state);
+    if (state_index !== StateConst.STATE_INDEX && !this._stateDics[state_index]) {
+      this._stateDics[state_index] = state;
+    }
+  }
+
+  public getState(state_index: number): Nullable<VE_State> {
+    if (state_index === StateConst.STATE_INDEX) {
+      return this._states[0];
+    } else {
+      if (this._stateDics[state_index]) {
+        return this._stateDics[state_index];
+      } else {
+        return null;
+      }
+    }
+  }
+
+  public getStateInSequence(index: number): Nullable<VE_State> {
+    if (index >= 0 && index < this._states.length) {
+      return this._states[index];
+    } else {
+      return null;
+    }
+  }
+
+  public removeState(state_index: number): void {
+    delete this._stateDics[state_index];
+  }
+
   public receiveEvent(trigger_id: string): boolean {
-    if (Time.frameCount != this._frameCount) {
-      this._frameCount = Time.frameCount;
+
+    if (BabylonEngine.Scene.getFrameId() != this._frameCount) {
+      this._frameCount = BabylonEngine.Scene.getFrameId();
       this._triggerIDs = [];
       this._triggerIDs.push(trigger_id);
       return true;

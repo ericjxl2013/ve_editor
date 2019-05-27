@@ -11,6 +11,10 @@ export class VeryExpression implements IVeryVar {
     return "VeryExpression";
   }
 
+  public get ID(): string {
+    return "VeryExpression|公式变量";
+  }
+
   public get value(): IExpression {
     return this._value;
   }
@@ -33,7 +37,7 @@ export class VeryExpression implements IVeryVar {
 
   // 之后可能会有公式的情况
   public getValue(): any {
-    return this._value;
+    return this._value.evaluate();
   }
 
   public initValue(value_str: string, error_info: ErrorInfo): any {
