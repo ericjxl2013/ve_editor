@@ -537,6 +537,7 @@ export class LoaderManager {
             else {
               // 响应ID
               let actionArray: string[] = VE_StringFormat.paraSegment(table.getData(i, 6));
+              // console.log(actionArray);
               if (actionArray.length === 2 || actionArray.length === 3 || actionArray.length === 4) {
                 let actionData: VE_StateActionData;
                 if (actionArray.length === 2) {

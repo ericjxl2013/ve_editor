@@ -177,8 +177,8 @@ export class VE_State {
             this._stateActions[i]!.action!.SequenceState ===
             SequenceActionState.Running
           ) {
-            console.log(
-              "（项目：" +
+            console.error(
+              "错误信息 >>> （项目：" +
               this._fsm.projectName +
               "，对象：" +
               this._fsm.objectID +
@@ -195,8 +195,8 @@ export class VE_State {
             this._stateActions[i]!.action!.SequenceState ===
             SequenceActionState.Pause
           ) {
-            console.log(
-              "（项目：" +
+            console.error(
+              "错误信息 >>> （项目：" +
               this._fsm.projectName +
               "，对象：" +
               this._fsm.objectID +
@@ -255,8 +255,8 @@ export class VE_State {
 
   private getTemplateVar(): void {
     if (this._template!.templateInstance === null) {
-      console.log(
-        "项目：" +
+      console.error(
+        "错误信息 >>> 项目：" +
         this._fsm.projectName +
         "，对象：" +
         this._fsm.objectID +
@@ -284,8 +284,8 @@ export class VE_State {
           this._varID
         ).fsmVar;
       } else {
-        console.log(
-          "项目：" +
+        console.error(
+          "错误信息 >>> 项目：" +
           this._fsm.projectName +
           "，对象：" +
           this._fsm.objectID +

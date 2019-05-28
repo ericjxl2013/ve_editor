@@ -52,10 +52,10 @@ export class Action_Debug extends VE_ActionBehaviour {
       console.log(`打印信息 >>> ${this._strBuilder}`);
     }
     else if (this._debugMode == 1) {
-      console.log(`警告信息 >>> ${this._strBuilder}`);
+      console.warn(`警告信息 >>> ${this._strBuilder}`);
     }
     else if (this._debugMode == 2) {
-      console.log(`错误信息 >>> ${this._strBuilder}`);
+      console.error(`错误信息 >>> ${this._strBuilder}`);
     }
   }
 

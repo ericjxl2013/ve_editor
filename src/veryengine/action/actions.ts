@@ -97,7 +97,7 @@ export class VE_Actions {
 
       return action;
     } catch (error) {
-      console.log(`响应创建错误：${error.message}`);
+      console.error(`响应创建错误：${error.message}`);
       error_info.isRight = false;
       error_info.message = '响应创建错误：当前响应类型创建失败，请检查！响应类型：' + action_type + '，错误原因：' + error.message;
       return null;

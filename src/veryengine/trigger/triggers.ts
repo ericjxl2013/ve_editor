@@ -84,7 +84,7 @@ export class VE_Triggers {
       }
       return trigger;
     } catch (error) {
-      console.log(`触发创建错误：${error.message}`);
+      console.error(`触发创建错误：${error.message}`);
       error_info.isRight = false;
       error_info.message = '触发创建错误：当前触发类型创建失败，请检查！触发类型：' + trigger_type + '，错误原因：' + error.message;
       return null;

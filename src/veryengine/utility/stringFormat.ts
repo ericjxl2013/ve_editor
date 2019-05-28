@@ -251,7 +251,7 @@ export class VE_StringFormat {
         }
         else {
           // TODO
-          console.log("变量名：" + coloneStr[i] + "，该变量未被创建！");
+          console.error("变量名：" + coloneStr[i] + "，该变量未被创建！");
         }
       }
       else if (coloneStr[i].startsWith("%")) {
@@ -273,7 +273,7 @@ export class VE_StringFormat {
         }
         else {
           // TODO
-          console.log("变量名：" + coloneStr[i] + "，该BlurVar变量未被创建！");
+          console.error("变量名：" + coloneStr[i] + "，该BlurVar变量未被创建！");
         }
       }
       //递归处理“（）”中的参数

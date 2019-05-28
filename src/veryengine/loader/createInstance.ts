@@ -199,7 +199,8 @@ export class CreateInstance {
       for (let k: number = 0; k < veryObject.dataSource.actionCount; k++) {
         let actionID: string = veryObject.dataSource.getActionID(k);
         let actionPara: string[] = veryObject.dataSource.getActionPara(actionID);
-
+        // console.log(actionID);
+        // console.log(actionPara);
         if (!VE_Actions.hasAction(actionPara[0])) {
           VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getActionPos(actionID), "项目：" + project_name + "，对象：" + objectID + "，响应：" + actionID + "，响应类型：" + actionPara[0] + "，当前系统中不存在该响应类型，请检查！", ""));
           return false;

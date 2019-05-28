@@ -105,7 +105,7 @@ export class ExpManager {
   public static printError(): void {
     if (this.errors.length > 0) {
       for (let i: number = 0; i < this.errors.length; i++) {
-        console.log(this.errors[i].toString());
+        console.error(this.errors[i].toString());
         ShowError.showError(this.errors[i].toString());
       }
     }

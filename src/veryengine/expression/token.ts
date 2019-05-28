@@ -116,7 +116,7 @@ export class Token implements IPosition {
     return this.getTrigger() === trigger;
   }
 
-  public isOperator(symbols: string): boolean {
+  public isOperator(...symbols: string[]): boolean {
     if (symbols.length === 0) {
       return this.is(ExpressionType.OPERATOR);
     }

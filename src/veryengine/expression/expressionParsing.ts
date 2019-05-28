@@ -56,8 +56,9 @@ export class VE_ExpressionParsing {
 
   private static parse(): IExpression {
     let resultExp: IExpression = this.buildExpression();
+    // console.log(this._tokenizer.current());
     if (!this._tokenizer.current().isEnd()) {
-      this._tokenizer.addError(this._tokenizer.current(), `未定义字符：${this._tokenizer.current().getSource()}！`);
+      this._tokenizer.addError(this._tokenizer.current(), `未定义字符：${this._tokenizer.current().getSource()} `);
       this._tokenizer.consume();
     }
     this.errors = this._tokenizer.getProblemCollector();

@@ -28,6 +28,8 @@ export default class Game {
 		// 假设有运行中的engine，先停止，重新初始化
 		if (this._engine) {
 			// TODO: 对象中相关数据dispose
+			VE_Manager.dispose();
+			// console.log(VE_Manager.projects.projects);
 			this._engine.dispose();
 		}
 		this._engine = new BABYLON.Engine(this._canvas, true);
@@ -41,7 +43,7 @@ export default class Game {
 		this._scene = new BABYLON.Scene(this._engine);
 		BabylonEngine.Scene = this._scene;
 
-		// 设定相机
+		// TODO: 设定相机
 		var camera = new BABYLON.ArcRotateCamera("MainCamera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0), this._scene);
 		camera.setPosition(new BABYLON.Vector3(20, 200, 400));
 		camera.attachControl(this._canvas, true);
@@ -108,7 +110,7 @@ export default class Game {
 			try {
 				entrance.init(hot1.getData(), projectName);
 			} catch (e) { // TODO: 可能会影响效率
-				console.log(e);
+				console.error(e);
 			}
 
 			let objects: VE_Objects = VE_Manager.objects(projectName);

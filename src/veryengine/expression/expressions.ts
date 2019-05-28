@@ -156,7 +156,7 @@ export class BinaryExpression implements IExpression {
     if (this._expType === 'null') {
       // TODO
       this.isRight = false;
-      console.log("公式两边类型不匹配，左侧类型：" + left_exp.expType + "，右侧类型：" + right_exp.expType + "，计算类型：" + op.toString());
+      console.error("公式两边类型不匹配，左侧类型：" + left_exp.expType + "，右侧类型：" + right_exp.expType + "，计算类型：" + op.toString());
     }
   }
 

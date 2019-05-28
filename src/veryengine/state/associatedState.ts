@@ -1,9 +1,8 @@
 import { VE_State } from "./state";
-import { AssociatedFsmType, Severity } from "../enum";
+import { AssociatedFsmType } from "../enum";
 import { VE_Template } from "../template";
 import { StateConst } from "./stateConst";
 import { VE_Fsm } from "./fsm";
-import { VE_ErrorManager, VE_Error } from "../global";
 
 export class VE_AssociatedState {
 
@@ -75,17 +74,17 @@ export class VE_AssociatedState {
               return;
             }
             else {
-              VE_ErrorManager.Add(new VE_Error(this._posArray[i], "项目名：" + this._fromState.Fsm.projectName + "，对象名：" + this._fromState.Fsm.objectID + "，关联起始状态：" + this._fromState.Fsm.fsmID + "，关联模板变量：" + template.templateVarID + "，目标状态名：" + fsmID + "，序号：" + numberIndex + "，关联状态错误：在目标模板变量的目标状态中，关联状态序号超出范围，请检查！", '', Severity.Error));
+              console.error('错误信息 >>> 位置：' + this._posArray[i] + '，信息：' + "项目名：" + this._fromState.Fsm.projectName + "，对象名：" + this._fromState.Fsm.objectID + "，关联起始状态：" + this._fromState.Fsm.fsmID + "，关联模板变量：" + template.templateVarID + "，目标状态名：" + fsmID + "，序号：" + numberIndex + "，关联状态错误：在目标模板变量的目标状态中，关联状态序号超出范围，请检查！");
               return;
             }
           }
           else {
-            VE_ErrorManager.Add(new VE_Error(this._posArray[i], "项目名：" + this._fromState.Fsm.projectName + "，对象名：" + this._fromState.Fsm.objectID + "，关联起始状态：" + this._fromState.Fsm.fsmID + "，关联模板变量：" + template.templateVarID + "，目标状态名：" + fsmID + "，关联状态错误：在目标模板变量中无法查找到该目标状态名，请检查！", '', Severity.Error));
+            console.error('错误信息 >>> 位置：' + this._posArray[i] + '，信息：' + "项目名：" + this._fromState.Fsm.projectName + "，对象名：" + this._fromState.Fsm.objectID + "，关联起始状态：" + this._fromState.Fsm.fsmID + "，关联模板变量：" + template.templateVarID + "，目标状态名：" + fsmID + "，关联状态错误：在目标模板变量中无法查找到该目标状态名，请检查！");
             return;
           }
         }
         else {
-          VE_ErrorManager.Add(new VE_Error(this._posArray[i], "项目名：" + this._fromState.Fsm.projectName + "，对象名：" + this._fromState.Fsm.objectID + "，关联起始状态：" + this._fromState.Fsm.fsmID + "，关联模板变量：" + template.templateVarID + "，关联状态错误：当前模板变量未实例化创建，请检查！", '', Severity.Error));
+          console.error('错误信息 >>> 位置：' + this._posArray[i] + '，信息：' + "项目名：" + this._fromState.Fsm.projectName + "，对象名：" + this._fromState.Fsm.objectID + "，关联起始状态：" + this._fromState.Fsm.fsmID + "，关联模板变量：" + template.templateVarID + "，关联状态错误：当前模板变量未实例化创建，请检查！");
           return;
         }
       }

@@ -31,7 +31,7 @@ export class FunctionExpression implements IExpression {
     try {
       r = this._function.evaluate(this._paras);
     } catch (e) {
-      console.log('自定义函数编译错误，错误信息：' + e);
+      console.error('自定义函数编译错误，错误信息：' + e);
       return null;
     }
     return r;

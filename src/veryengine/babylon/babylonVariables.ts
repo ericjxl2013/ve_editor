@@ -56,7 +56,7 @@ export class GameObject {
       } else if (node instanceof BABYLON.TransformNode) {
         return new GameObject('', null, <BABYLON.TransformNode>node);
       } else {
-        console.log('GameObject.Find函数查找到不支持的类型：' + node.getClassName());
+        console.error('GameObject.Find函数查找到不支持的类型：' + node.getClassName());
         return null;
       }
     }

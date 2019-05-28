@@ -16,8 +16,14 @@ export class VE_Projects {
 
   }
 
+  public addProject(project_name: string): void {
+    if (this.projects.indexOf(project_name) === -1) {
+      this.projects.push(project_name);
+    }
+  }
+
   public isCreatedObjects(project_name: string): boolean {
-    if(this._objects[project_name]) {
+    if (this._objects[project_name]) {
       return true;
     } else {
       return false;
@@ -33,7 +39,7 @@ export class VE_Projects {
   }
 
   public isCreatedVariables(project_name: string): boolean {
-    if(this._variables[project_name]) {
+    if (this._variables[project_name]) {
       return true;
     } else {
       return false;
@@ -49,7 +55,7 @@ export class VE_Projects {
   }
 
   public isCreatedTemplates(project_name: string): boolean {
-    if(this._templates[project_name]) {
+    if (this._templates[project_name]) {
       return true;
     } else {
       return false;
@@ -65,7 +71,7 @@ export class VE_Projects {
   }
 
   public isCreatedGlobals(project_name: string): boolean {
-    if(this._variables[project_name]) {
+    if (this._variables[project_name]) {
       return true;
     } else {
       return false;
@@ -77,21 +83,43 @@ export class VE_Projects {
   }
 
   public clear(): void {
-    // TODO
-    this._objects = {};
-    this._templates = {};
-    this._variables = {};
+    for (let i: number = 0; i < this.projects.length; i++) {
+      this.disposeProject(this.projects[i]);
+    }
+    this.projects = [];
   }
 
+
+
   public clearProject(project_name: string): void {
+    this.disposeProject(project_name);
+    let index: number = this.projects.indexOf(project_name);
+    if (index > -1) {
+      this.projects.splice(index, 1);
+    }
+  }
+
+  private disposeProject(project_name: string): void {
+    if (this._objects[project_name]) {
+      this._objects[project_name].clear();
+    }
     delete this._objects[project_name];
+    if (this._templates[project_name]) {
+      this._templates[project_name].clear();
+    }
     delete this._templates[project_name];
+    if (this._variables[project_name]) {
+      this._variables[project_name].clear();
+    }
     delete this._variables[project_name];
   }
 
   public sleep(): void {
-    
+
   }
 
+  public dispose(): void {
+    this.clear();
+  }
 
 }

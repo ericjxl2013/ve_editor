@@ -11,6 +11,7 @@ export class VE_KeyboardMap {
     this._keyMap['回车'] = 'Enter';
     this._keyMap['shift'] = 'Shift';
     this._keyMap['control'] = 'Control';
+    this._keyMap['ctrl'] = 'Control';
     this._keyMap['alt'] = 'Alt';
     this._keyMap['pause'] = 'Pause';
     this._keyMap['capsLock'] = 'CapsLock';
