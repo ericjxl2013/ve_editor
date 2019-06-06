@@ -215,11 +215,11 @@ export class Tokenizer extends ForwardQuery<Token> {
   }
 
   private isAtStartOfIdentifier(): boolean {
-    return this._inputExp.current().isLetter() || this._inputExp.current().is('_') || this._inputExp.current().is('#');
+    return this._inputExp.current().isLetterOrCharactor() || this._inputExp.current().is('_') || this._inputExp.current().is('#');
   }
 
   private isIdentifierChar(current: ExpChar): boolean {
-    return current.isDigit() || current.isLetter() || current.is('_') || current.is('.') || current.is('#') || current.is(':') || current.is('：');
+    return current.isDigit() || current.isLetterOrCharactor() || current.is('_') || current.is('.') || current.is('#') || current.is(':') || current.is('：');
   }
 
   private isAtBracket(in_symbol: boolean): boolean {
@@ -278,7 +278,7 @@ export class Tokenizer extends ForwardQuery<Token> {
   }
 
   private isOperator(ch: ExpChar): boolean {
-    if (ch.isEndOfInput() || ch.isDigit() || ch.isLetter() || ch.isWhiteSpace()) {
+    if (ch.isEndOfInput() || ch.isDigit() || ch.isLetterOrCharactor() || ch.isWhiteSpace()) {
       return false;
     }
 
@@ -311,7 +311,7 @@ export class Tokenizer extends ForwardQuery<Token> {
     else if (result.isOperator(">") && this._inputExp.current().is('=')) {
       result.addToTrigger(this._inputExp.consume());
     }
-    else if (result.isOperator("!") && this._inputExp.current().is('=')) {
+    else if ((result.isOperator("!") || result.isOperator("！")) && this._inputExp.current().is('=')) {
       result.addToTrigger(this._inputExp.consume());
     }
     else if (result.isOperator("=") && this._inputExp.current().is('=')) {

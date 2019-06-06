@@ -15,6 +15,8 @@ export class VeryExpression implements IVeryVar {
     return "VeryExpression|公式变量";
   }
 
+  public name: string = '';
+
   public get value(): IExpression {
     return this._value;
   }

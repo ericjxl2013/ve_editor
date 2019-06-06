@@ -1,7 +1,7 @@
 import { VE_Templates, VE_Template } from "../template";
 import { VE_Manager } from "../manager";
 import { VE_Objects, VeryEngineObject } from "../object";
-import { VE_Variables, VeryVarManager, IVeryVar, VeryExpression } from "../variables";
+import { VE_Variables, VeryVarManager, IVeryVar, VeryExpression, VeryString, VarTools, VeryBool } from "../variables";
 import { ErrorInfo, VE_StringFormat } from "../utility";
 import { VE_ErrorManager, VE_Error } from "../global";
 import { VE_Expressions, IExpression } from "../expression";
@@ -123,7 +123,10 @@ export class CreateInstance {
       for (let k: number = 0; k < veryObject.dataSource.fsmCount; k++) {
         let fsmID: string = veryObject.dataSource.getFsmID(k);
         let fsmData: VE_FsmData = veryObject.dataSource.getFsmData(fsmID);
-        // 创建状态变量
+        // 创建状态变量，目前默认为string变量
+        let newVar: VeryString = new VeryString();
+        newVar.setValue(fsmData.initialValStr);
+        /* *
         let errorInfo: ErrorInfo = new ErrorInfo();
         let newVar: Nullable<IVeryVar> = VeryVarManager.createVariable(fsmID, fsmData.fsmType, fsmData.initialValStr, errorInfo);
         // TODO: List或者Dictionary处理
@@ -131,6 +134,7 @@ export class CreateInstance {
           VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getFsmPos(fsmID), "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态变量初始值创建错误，错误原因：" + errorInfo.message + "，请检查！", ''));
           return false;
         }
+        */
         // 状态机
         let fsm: VE_Fsm = new VE_Fsm(project_name, objectID, fsmID, newVar, veryObject);
         veryObject.addFsm(fsmID, fsm);
@@ -231,17 +235,25 @@ export class CreateInstance {
         // 状态信息关联：触发激活条件，触发，逻辑表达式，状态值计算公式，响应，关联状态
         for (let p: number = 0; p < fsmData.count; p++) {
           let stateData: VE_StateData = fsmData.getStateData(p);
+          if (fsm.hasStateValue(stateData.ValStr)) {
+            VE_ErrorManager.Add(VE_Error.error("（" + stateData.rowIndex + "，F）", "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，当前状态值重复，同一个状态的值不允许重复，请检查！", ""));
+            return false;
+          }
+          // 状态值，判断状态值不能重复，状态值为常量字符串
           let state: VE_State = new VE_State(fsm, fsm.count + 1);
-          // 状态值
+          state.setConstValue(stateData.ValStr);
+
+          /*
           if (stateData.isInitialValue) {
             state.setInitialValue(fsm.fsmVar.getValue());
           }
           else {
             // TODO: 状态赋值处理
-            if (!this.stateAssignment(project_name, objectID, fsmID, globalVars, objects, veryObject, fsm, stateData, state)) {
-              return false;
-            }
+            // if (!this.stateAssignment(project_name, objectID, fsmID, globalVars, objects, veryObject, fsm, stateData, state)) {
+            //   return false;
+            // }
           }
+          */
 
           // 响应是否顺序运行
           if (stateData.isSequence) {
@@ -313,38 +325,92 @@ export class CreateInstance {
               // 响应参数，目前默认只支持常量（两个bool值理论上可以为常量或者变量和公式值引用）
               // 启动标志
               let errorInfo: ErrorInfo = new ErrorInfo();
-              let enabledFlag: boolean = VE_TypeConvert.boolConvert(actionData.enabled, errorInfo);
-              if (!errorInfo.isRight) {
-                VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应启动参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
-                return false;
+              let enableVar: Nullable<IVeryVar> = null;
+              let enableStr: string = actionData.enabled.trim().toLowerCase();
+              if (enableStr === 'false' || enableStr === '停止') {
+                enableVar = new VeryBool();
+                enableVar.setValue(false);
+              } else if (enableStr === 'true' || enableStr === '启动') {
+                enableVar = new VeryBool();
+                enableVar.setValue(true);
+              } else {
+                // 支持变量：（1）*变量名；（2）对象名.*变量名；注意：必须返回boolean
+                if (actionData.enabled.indexOf(StateConst.VARIABLE_SYMBOL) > -1) {
+                  errorInfo.clear();
+                  enableVar = VarTools.GetVeryVarWithExpression(project_name, objectID, actionData.enabled, errorInfo);
+                  if (!errorInfo.isRight || enableVar === null) {
+                    VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，参数：" + actionData.enabled + "，响应启动参数格式不正确，错误信息：" + errorInfo.message, ""));
+                    return false;
+                  }
+                  if (enableVar.varType !== 'bool') {
+                    VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，参数：" + actionData.enabled + "，响应启动参数变量必须返回bool值类型，当前变量类型：" + enableVar.varType, ""));
+                    return false;
+                  }
+
+                } else {
+                  VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，参数：" + actionData.enabled + "，响应启动参数允许填写格式为：“启动/true”、“停止/false”、“*变量名”、“对象名.*变量名”，且变量不能为模板变量，且变量返回值必须为bool值，当前参数不符合，请检查！", ""));
+                  return false;
+                }
               }
 
               // 每帧运行
-              let everyFrameFlag = VE_TypeConvert.boolConvert(actionData.everyFrame, errorInfo);
-              if (!errorInfo.isRight) {
-                VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应每帧运行参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
-                return false;
+              let everyFrameVar: Nullable<IVeryVar> = null;
+              let everyFrameStr: string = actionData.everyFrame.trim().toLowerCase();
+              if (everyFrameStr === 'false' || everyFrameStr === '一次') {
+                everyFrameVar = new VeryBool();
+                everyFrameVar.setValue(false);
+              } else if (everyFrameStr === 'true' || everyFrameStr === '持续') {
+                everyFrameVar = new VeryBool();
+                everyFrameVar.setValue(true);
+              } else {
+                // 支持变量：（1）*变量名；（2）对象名.*变量名；注意：必须返回boolean
+                if (actionData.everyFrame.indexOf(StateConst.VARIABLE_SYMBOL) > -1) {
+                  errorInfo.clear();
+                  everyFrameVar = VarTools.GetVeryVarWithExpression(project_name, objectID, actionData.everyFrame, errorInfo);
+                  if (!errorInfo.isRight || everyFrameVar === null) {
+                    VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，参数：" + actionData.everyFrame + "，响应帧循环参数格式不正确，错误信息：" + errorInfo.message, ""));
+                    return false;
+                  }
+                  if (everyFrameVar.varType !== 'bool') {
+                    VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，参数：" + actionData.everyFrame + "，响应帧循环参数变量必须返回bool值类型，当前变量类型：" + everyFrameVar.varType, ""));
+                    return false;
+                  }
+
+                } else {
+                  VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，参数：" + actionData.everyFrame + "，响应帧循环参数允许填写格式为：“持续/true”、“一次/false”、“*变量名”、“对象名.*变量名”，且变量不能为模板变量，且变量返回值必须为bool值，当前参数不符合，请检查！", ""));
+                  return false;
+                }
               }
+
               // 顺序运行
-              let isSequence = VE_TypeConvert.boolConvert(actionData.isSequence, errorInfo);
-              if (!errorInfo.isRight) {
-                VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，响应动画顺序运行参数目前只允许填写bool常量true或者false，不允许填写变量，请检查！", ""));
+              let isSequenceStr: string = actionData.isSequence.trim().toLowerCase();
+              let isSequence: boolean = false;
+              if (isSequenceStr === 'false' || isSequenceStr === '同时') {
+                isSequence = false;
+              } else if (isSequenceStr === 'true' || isSequenceStr === '依次') {
+                isSequence = true;
+              } else {
+                VE_ErrorManager.Add(VE_Error.error(actionPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，响应：" + actionData.actionID + "，参数：" + actionData.isSequence + "，响应依次运行状态允许填写格式为：“同时/false”、“依次/true”，不允许填写变量，请检查！", ""));
                 return false;
               }
+
+              // 创建状态响应
               let stateAction: VE_StateAction = new VE_StateAction();
-              // console.log(`isSequence: ${isSequence}`);
-              stateAction.setAction(action, enabledFlag, everyFrameFlag, isSequence);
+              stateAction.setAction(action, enableVar, everyFrameVar, isSequence);
               state.addAction(stateAction);
             }
-            //赋值
+            // 赋值
             else {
-              // TODO
+              // TODO：能否再简单一些
               if (!this.assignmentAction(project_name, objectID, fsmID, globalVars, objects, veryObject, actionData, state)) {
                 return false;
               }
             }
           }
 
+          fsm.addState(state);
+
+          /*
           // 关联状态
           if (fsm.isCreatedState(stateData.stateIndex)) {
             VE_ErrorManager.Add(VE_Error.error("（" + stateData.rowIndex.toString() + "，I）", "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态赋值：" + stateData.ValStr + "，当前关联ID已创建，请勿重复创建！", ""));
@@ -353,6 +419,7 @@ export class CreateInstance {
           else {
             fsm.addState(state, stateData.stateIndex);
           }
+          */
         }
       }
     }
@@ -378,23 +445,21 @@ export class CreateInstance {
             let multipleAssociatedState: string[] = associatedStateInfo.split(/,|，/);
             for (let www: number = 0; www < multipleAssociatedState.length; www++) {
               associatedStateInfo = multipleAssociatedState[www].trim();
-              let stateIndex: number = StateConst.STATE_INDEX;
+              // let stateIndex: number = StateConst.STATE_INDEX;
+
+              let stateValue: string = StateConst.STATE_VALUE;
+
               let strArray: string[] = associatedStateInfo.split('=');
               if (strArray.length === 1) {
-                stateIndex = StateConst.STATE_INDEX;
               }
               else if (strArray.length === 2) {
-                let errorInfo: ErrorInfo = new ErrorInfo();
-                stateIndex = VE_TypeConvert.intConvert(strArray[1].trim(), errorInfo);
-                if (!errorInfo.isRight) {
-                  VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态格式错误，应为“状态名=子状态ID（整数）”的形式，请检查！", ""));
-                  return false;
-                }
+                stateValue = strArray[1].trim();
               }
               else {
-                VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态格式错误，应为“状态名=子状态ID（整数）”的形式，请检查！", ""));
+                VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态格式错误，应为“状态名 = 状态值”的形式，请检查！", ""));
                 return false;
               }
+
               // 1. 状态名
               // 2. 对象名.状态名
               // 3. *模板变量.状态名
@@ -415,7 +480,7 @@ export class CreateInstance {
                       if (aObject.isCreatedTemplate(varID)) {
                         let template: VE_Template = aObject.getTemplate(varID);
                         if (template.dataSource.isCreatedFsm(stateArray[2])) {
-                          associatedState.addTemplate(template, stateArray[2], stateIndex, associatedPos);
+                          associatedState.addTemplate(template, stateArray[2], stateValue, associatedPos);
                           // VE_AssociatedState associatedState = new VE_AssociatedState(state, template, stateArray[2], stateIndex);
                           // state.AddAssociatedState(associatedState);
                         }
@@ -448,7 +513,7 @@ export class CreateInstance {
                     if (veryObject.isCreatedTemplate(aObjectID)) {
                       let template: VE_Template = veryObject.getTemplate(aObjectID);
                       if (template.dataSource.isCreatedFsm(stateArray[1])) {
-                        associatedState.addTemplate(template, stateArray[1], stateIndex, associatedPos);
+                        associatedState.addTemplate(template, stateArray[1], stateValue, associatedPos);
                         // VE_AssociatedState associatedState = new VE_AssociatedState(state, template, stateArray[1], stateIndex);
                         // state.AddAssociatedState(associatedState);
                       }
@@ -461,7 +526,7 @@ export class CreateInstance {
                       if (globalVars.isCreatedTemplate(aObjectID)) {
                         let template: VE_Template = globalVars.getTemplate(aObjectID);
                         if (template.dataSource.isCreatedFsm(stateArray[1])) {
-                          associatedState.addTemplate(template, stateArray[1], stateIndex, associatedPos);
+                          associatedState.addTemplate(template, stateArray[1], stateValue, associatedPos);
                           // VE_AssociatedState associatedState = new VE_AssociatedState(state, template, stateArray[1], stateIndex);
                           // state.AddAssociatedState(associatedState);
                         }
@@ -488,12 +553,12 @@ export class CreateInstance {
                       VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.状态名”，当前对象名所对应的对象中无法查找到该状态名，请检查！", ""));
                       return false;
                     }
-                    let toState: Nullable<VE_State> = aFsm.getState(stateIndex);
+                    let toState: Nullable<VE_State> = aFsm.getState(stateValue);
                     if (toState === null) {
                       VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，当前关联状态填写格式为“对象名.状态名”，当前关联状态序号超出对应状态序号范围，请检查！", ""));
                       return false;
                     }
-                    associatedState.add(toState, stateIndex, associatedPos);
+                    associatedState.add(toState, stateValue, associatedPos);
                     // VE_AssociatedState associatedState = new VE_AssociatedState(state, toState);
                     // state.AddAssociatedState(associatedState);
                   }
@@ -510,13 +575,13 @@ export class CreateInstance {
                   VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，可以查找到对象，但是对象上无法查找到该状态，请检查！", ""));
                   return false;
                 }
-                let toState: Nullable<VE_State> = aFsm.getState(stateIndex);
+                let toState: Nullable<VE_State> = aFsm.getState(stateValue);
                 if (toState === null) {
                   VE_ErrorManager.Add(VE_Error.error(associatedPos, "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，关联状态：" + associatedStateInfo + "，状态名填写错误，可以查找到对象和状态，但是状态序号超出范围，请检查！", ""));
                   return false;
                 }
 
-                associatedState.add(toState, stateIndex, associatedPos);
+                associatedState.add(toState, stateValue, associatedPos);
                 //VE_AssociatedState associatedState = new VE_AssociatedState(state, toState);
                 //state.AddAssociatedState(associatedState);
               }
@@ -532,7 +597,7 @@ export class CreateInstance {
     return true;
   }
 
-
+  /**
   private static stateAssignment(project_name: string, object_id: string, fsm_id: string, global_vars: VE_Variables, objects: VE_Objects, very_object: VeryEngineObject, fsm: VE_Fsm, state_data: VE_StateData, state: VE_State): boolean {
     // 状态值只能为常量或者变量和公式引用，不能创建新公式
     // 允许引用模板变量，数据结构上需要支持
@@ -595,7 +660,7 @@ export class CreateInstance {
 
               let veryVar: Nullable<IVeryVar> = VeryVarManager.getVariable(valArray[1].substring(1), project_name, valArray[0], errorInfo);
               if (!errorInfo.isRight || veryVar === null) {
-                VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*变量”，*变量：" + valArray[1] + "无法在系统中查找到，错误信息：" + errorInfo, ""));
+                VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，当前赋值格式“对象名.*变量”，*变量：" + valArray[1] + "无法在系统中查找到，错误信息：" + errorInfo.message, ""));
                 return false;
               }
               else {
@@ -658,7 +723,7 @@ export class CreateInstance {
         let errorInfo: ErrorInfo = new ErrorInfo();
         let stateVar: Nullable<IVeryVar> = VeryVarManager.getVariable(varID, project_name, object_id, errorInfo);
         if (stateVar === null) {
-          VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量无法在当前系统中查找到，错误信息：" + errorInfo, ""));
+          VE_ErrorManager.Add(VE_Error.error("（" + state_data.rowIndex + "，F）", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，状态赋值：" + state_data.ValStr + "，状态赋值变量无法在当前系统中查找到，错误信息：" + errorInfo.message, ""));
           return false;
         }
         else {
@@ -685,7 +750,7 @@ export class CreateInstance {
     }
     return true;
   }
-
+  **/
 
   private static assignmentAction(project_name: string, object_id: string, fsm_id: string, global_vars: VE_Variables, objects: VE_Objects, very_object: VeryEngineObject, action_data: VE_StateActionData, state: VE_State): boolean {
     // 赋值
@@ -908,7 +973,7 @@ export class CreateInstance {
       if (!errorInfo.isRight || !localExp) {
         // errorInfo = "模板对象实例化失败：局部变量创建失败，公式创建错误：\n" + errorInfo + "，请检查！" + errorPos;
         // return null;
-        VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“公式”，公式解析错误，请检查！错误信息：" + errorInfo, ""));
+        VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“公式”，公式解析错误，请检查！错误信息：" + errorInfo.message, ""));
         return false;
       }
       assignment.setRightVariable(new VeryExpression(localExp));
@@ -1155,7 +1220,7 @@ export class CreateInstance {
             let errorInfo: ErrorInfo = new ErrorInfo();
             let newValue: any = assignment.leftVariable.initValue(varID, errorInfo);
             if (!errorInfo.isRight || !newValue) {
-              VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧变量类型与右侧常量值不匹配，错误信息：" + errorInfo + "，请检查！", ""));
+              VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧变量类型与右侧常量值不匹配，错误信息：" + errorInfo.message + "，请检查！", ""));
               return false;
             }
             else {

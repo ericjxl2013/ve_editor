@@ -202,8 +202,9 @@ export class VE_Expressions {
   private static errorMessage(errors: ParseError[]): string {
     let errorStr: string = '';
     for (let i: number = 0; i < errors.length; i++) {
-      errorStr += errors[i].getMessage() + ';\n';
+      errorStr += `\n(${(i+1)}) ${errors[i].getMessage()} ;`;
     }
+    errorStr += '\n';
     return errorStr;
   }
 

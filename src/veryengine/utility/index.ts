@@ -5,3 +5,5 @@ export * from './stringFormat';
 export * from './paraParserUtility';
 export * from './keyboardMap';
 export * from './typeConvert';
+export * from './vector3Utility';
+export * from './veryParas';

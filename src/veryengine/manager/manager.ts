@@ -74,6 +74,9 @@ export class VE_Manager {
       VE_Manager.clear();
       StateConst.LogCount = 0;
       StateConst.AssignmentFormulaCount = 0;
+      StateConst.TriggerCount = 0;
+      StateConst.ActionCount = 0;
+      StateConst.StateCount = 0;
     }
   }
 

@@ -7,6 +7,7 @@ import { VE_Manager } from "../manager";
 import { GameObject } from "../babylon";
 import { VeryEngineObject } from "../object";
 import { VE_TypeConvert } from "./typeConvert";
+import { VeryParas } from "./veryParas";
 
 export class ParaParserUtility {
 
@@ -53,7 +54,7 @@ export class ParaParserUtility {
    * @param log 是否打印错误信息；
    * 返回是否解析正确；
    */
-  public static GameObjectPara(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryGameObject, var_str: string, log: boolean = true): boolean {
+  public static GameObjectPara(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVar(project_name, object_id, var_str, errorInfo);
@@ -75,22 +76,19 @@ export class ParaParserUtility {
             return false;
           }
           else {
-            if (!very_var) {
-              very_var = new VeryGameObject();
-            }
-            very_var.value = template.templateInstance.gameObject;
+            paras.gameObject.value = template.templateInstance.gameObject;
             return true;
           }
         }
       }
       else if (veryVar.className === 'VeryGameObject') {
-        very_var = <VeryGameObject>veryVar;
+        paras.gameObject = <VeryGameObject>veryVar;
         return true;
       }
       else if (veryVar.className === 'VeryString') {
         let vString: VeryString = <VeryString>veryVar;
-        very_var.value = GameObject.Find(vString.value);
-        if (very_var.value === null) {
+        paras.gameObject.value = GameObject.Find(vString.value);
+        if (paras.gameObject.value === null) {
           if (log) {
             VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，物体：${vString.value}，无法在场景中查找到，请检查！`, '', Severity.Error));
           }
@@ -106,9 +104,6 @@ export class ParaParserUtility {
       }
     }
     else {
-      if (very_var === null) {
-        very_var = new VeryGameObject();
-      }
       if (var_str.toLowerCase().trim() === "this") {
         let veryObject: VeryEngineObject = VE_Manager.objects(project_name).getVeryObject(object_id);
         if (veryObject === null) {
@@ -118,11 +113,11 @@ export class ParaParserUtility {
           return false;
         }
         else {
-          very_var.value = veryObject.gameObject;
+          paras.gameObject.value = veryObject.gameObject;
         }
       }
       else if (var_str.toLowerCase().trim() === "null" || var_str.toLowerCase().trim() === "none" || var_str.toLowerCase().trim() === "") {
-        very_var.value = null;
+        paras.gameObject.value = null;
       }
       else if (var_str.startsWith("/")) {
         let veryObject: VeryEngineObject = VE_Manager.objects(project_name).getVeryObject(object_id);
@@ -137,7 +132,7 @@ export class ParaParserUtility {
           let childName: string = var_str.substring(1).trim();
           // TODO: 查询子物体
           // very_var.value = GameObject.FindChild(parentObj, childName);
-          if (very_var.value === null) {
+          if (paras.gameObject.value === null) {
             if (log) {
               VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，对象名：${object_id}，物体：${var_str}，该子物体无法在当前对象中查找到，请检查！`, '', Severity.Error));
             }
@@ -147,8 +142,8 @@ export class ParaParserUtility {
         }
       }
       else {
-        very_var.value = GameObject.Find(var_str);
-        if (very_var.value === null) {
+        paras.gameObject.value = GameObject.Find(var_str);
+        if (paras.gameObject.value === null) {
           if (log) {
             VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，物体 ：${object_id}，无法在场景中查找到，请检查！`, '', Severity.Error));
           }
@@ -159,7 +154,7 @@ export class ParaParserUtility {
     }
   }
 
-  public static GameObjectParaOnlyVar(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryGameObject, var_str: string, log: boolean = true): boolean {
+  public static GameObjectParaOnlyVar(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVar(project_name, object_id, var_str, errorInfo);
@@ -170,7 +165,7 @@ export class ParaParserUtility {
         return false;
       }
       else if (veryVar.className === 'VeryGameObject') {
-        very_var = <VeryGameObject>veryVar;
+        paras.gameObject = <VeryGameObject>veryVar;
         return true;
       }
       else {
@@ -188,20 +183,17 @@ export class ParaParserUtility {
     }
   }
 
-  public static StringPara(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryString, var_str: string, log: boolean = true): boolean {
+  public static StringPara(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
-      return ParaParserUtility.StringParaOnlyVar(project_name, object_id, id, para_type, very_var, var_str, log);
+      return ParaParserUtility.StringParaOnlyVar(project_name, object_id, id, para_type, paras, var_str, log);
     }
     else {
-      if (very_var === null) {
-        very_var = new VeryString();
-      }
-      very_var.value = var_str;
+      paras.string.value = var_str;
       return true;
     }
   }
 
-  public static StringParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryString, var_str: string, log: boolean = true): boolean {
+  public static StringParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVarWithExpression(project_name, object_id, var_str, errorInfo);
@@ -212,13 +204,12 @@ export class ParaParserUtility {
         return false;
       }
       else if (veryVar.className === 'VeryString') {
-        very_var = <VeryString>veryVar;
+        paras.string = <VeryString>veryVar;
         return true;
       }
       else if (veryVar.className === 'VeryExpression') {
         if (veryVar.varType === 'string') {
-          very_var = new VeryString();
-          very_var.setExpression(<VeryExpression>veryVar);
+          paras.string.setExpression(<VeryExpression>veryVar);
           return true;
         }
         else {
@@ -236,16 +227,13 @@ export class ParaParserUtility {
       return false;
     }
     else {
-      if (very_var === null) {
-        very_var = new VeryString();
-      }
-      very_var.value = var_str;
+      paras.string.value = var_str;
       return true;
     }
   }
 
 
-  public static StringParaOnlyVar(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryString, var_str: string, log: boolean = true): boolean {
+  public static StringParaOnlyVar(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVar(project_name, object_id, var_str, errorInfo);
@@ -256,7 +244,7 @@ export class ParaParserUtility {
         return false;
       }
       else if (veryVar.className === 'VeryString') {
-        very_var = <VeryString>veryVar;
+        paras.string = <VeryString>veryVar;
         return true;
       }
       else {
@@ -275,16 +263,13 @@ export class ParaParserUtility {
   }
 
 
-  public static NumberPara(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryNumber, var_str: string, log: boolean = true): boolean {
+  public static NumberPara(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
-      return ParaParserUtility.NumberParaOnlyVar(project_name, object_id, id, para_type, very_var, var_str, log);
+      return ParaParserUtility.NumberParaOnlyVar(project_name, object_id, id, para_type, paras, var_str, log);
     }
     else {
-      if (very_var === null) {
-        very_var = new VeryNumber();
-      }
-      very_var.value = parseFloat(var_str);
-      if (isNaN(very_var.value)) {
+      paras.number.value = parseFloat(var_str);
+      if (isNaN(paras.number.value)) {
         VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为number数字常量，请检查！`, '', Severity.Error));
         return false;
       }
@@ -292,7 +277,7 @@ export class ParaParserUtility {
     return true;
   }
 
-  public static NumberParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryNumber, var_str: string, log: boolean = true): boolean {
+  public static NumberParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVarWithExpression(project_name, object_id, var_str, errorInfo);
@@ -303,13 +288,12 @@ export class ParaParserUtility {
         return false;
       }
       else if (veryVar.className === 'VeryNumber') {
-        very_var = <VeryNumber>veryVar;
+        paras.number = <VeryNumber>veryVar;
         return true;
       }
       else if (veryVar.className === 'VeryExpression') {
         if (veryVar.varType === 'number') {
-          very_var = new VeryNumber();
-          very_var.setExpression(<VeryExpression>veryVar);
+          paras.number.setExpression(<VeryExpression>veryVar);
           return true;
         }
         else {
@@ -327,11 +311,8 @@ export class ParaParserUtility {
       }
     }
     else {
-      if (very_var === null) {
-        very_var = new VeryNumber();
-      }
-      very_var.value = parseFloat(var_str);
-      if (isNaN(very_var.value)) {
+      paras.number.value = parseFloat(var_str);
+      if (isNaN(paras.number.value)) {
         VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为number数字常量，请检查！`, '', Severity.Error));
         return false;
       }
@@ -339,7 +320,7 @@ export class ParaParserUtility {
     }
   }
 
-  public static NumberParaOnlyVar(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryNumber, var_str: string, log: boolean = true): boolean {
+  public static NumberParaOnlyVar(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVar(project_name, object_id, var_str, errorInfo);
@@ -348,7 +329,7 @@ export class ParaParserUtility {
         return false;
       }
       else if (veryVar.className === 'VeryNumber') {
-        very_var = <VeryNumber>veryVar;
+        paras.number = <VeryNumber>veryVar;
         return true;
       }
       else {
@@ -367,16 +348,13 @@ export class ParaParserUtility {
   }
 
 
-  public static BoolPara(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryBool, var_str: string, log: boolean = true): boolean {
+  public static BoolPara(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
-      return ParaParserUtility.BoolParaOnlyVar(project_name, object_id, id, para_type, very_var, var_str, log);
+      return ParaParserUtility.BoolParaOnlyVar(project_name, object_id, id, para_type, paras, var_str, log);
     }
     else {
-      if (very_var === null) {
-        very_var = new VeryBool();
-      }
       let errorInfo: ErrorInfo = new ErrorInfo();
-      very_var.value = VE_TypeConvert.boolConvert(var_str, errorInfo);
+      paras.bool.value = VE_TypeConvert.boolConvert(var_str, errorInfo);
       if (errorInfo.isRight === false) {
         VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为bool常量，请检查！`, '', Severity.Error));
         return false;
@@ -386,7 +364,7 @@ export class ParaParserUtility {
   }
 
 
-  public static BoolParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryBool, var_str: string, log: boolean = true) {
+  public static BoolParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true) {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVar(project_name, object_id, var_str, errorInfo);
@@ -397,13 +375,12 @@ export class ParaParserUtility {
         return false;
       }
       else if (veryVar.className === 'VeryBool') {
-        very_var = <VeryBool>veryVar;
+        paras.bool = <VeryBool>veryVar;
         return true;
       }
       else if (veryVar.className === 'VeryExpression') {
         if (veryVar.varType === 'bool') {
-          very_var = new VeryBool();
-          very_var.setExpression(<VeryExpression>veryVar);
+          paras.bool.setExpression(<VeryExpression>veryVar);
           return true;
         }
         else {
@@ -421,11 +398,8 @@ export class ParaParserUtility {
       }
     }
     else {
-      if (very_var === null) {
-        very_var = new VeryBool();
-      }
       let errorInfo: ErrorInfo = new ErrorInfo();
-      very_var.value = VE_TypeConvert.boolConvert(var_str, errorInfo);
+      paras.bool.value = VE_TypeConvert.boolConvert(var_str, errorInfo);
       if (errorInfo.isRight === false) {
         VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为bool常量，请检查！`, '', Severity.Error));
         return false;
@@ -434,7 +408,7 @@ export class ParaParserUtility {
     }
   }
 
-  public static BoolParaOnlyVar(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryBool, var_str: string, log: boolean = true): boolean {
+  public static BoolParaOnlyVar(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVar(project_name, object_id, var_str, errorInfo);
@@ -445,7 +419,7 @@ export class ParaParserUtility {
         return false;
       }
       else if (veryVar.className === 'VeryBool') {
-        very_var = <VeryBool>veryVar;
+        paras.bool = <VeryBool>veryVar;
         return true;
       }
       else {
@@ -464,7 +438,7 @@ export class ParaParserUtility {
   }
 
 
-  public static Vector3Para(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryVector3, var_str: string, log: boolean = true): boolean {
+  public static Vector3Para(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVar(project_name, object_id, var_str, errorInfo);
@@ -475,7 +449,7 @@ export class ParaParserUtility {
         return false;
       }
       else if (veryVar.className === 'VeryVector3') {
-        very_var = <VeryVector3>veryVar;
+        paras.vector3 = <VeryVector3>veryVar;
         return true;
       }
       else {
@@ -493,18 +467,18 @@ export class ParaParserUtility {
     }
   }
 
-  public static Vector3OrNumberPara(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryVector3, x: VeryNumber, y: VeryNumber, z: VeryNumber, is_vec: boolean[], var_str: string, log: boolean = true): boolean {
+  public static Vector3OrNumberPara(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (var_str.indexOf(",") > -1 || var_str.indexOf("，") > -1) {
-      is_vec[0] = false;
+      paras.isVec = false;
       let floatsArray: string[] = var_str.split(/,|，/);
       if (floatsArray.length === 3) {
-        if (!this.NumberPara(project_name, object_id, id, para_type, x, floatsArray[0].trim(), log)) {
+        if (!this.privateNumberPara(project_name, object_id, id, para_type, paras, floatsArray[0].trim(), 0, log)) {
           return false;
         }
-        if (!this.NumberPara(project_name, object_id, id, para_type, y, floatsArray[1].trim(), log)) {
+        if (!this.privateNumberPara(project_name, object_id, id, para_type, paras, floatsArray[1].trim(), 1, log)) {
           return false;
         }
-        if (!this.NumberPara(project_name, object_id, id, para_type, z, floatsArray[2].trim(), log)) {
+        if (!this.privateNumberPara(project_name, object_id, id, para_type, paras, floatsArray[2].trim(), 2, log)) {
           return false;
         }
         return true;
@@ -517,13 +491,13 @@ export class ParaParserUtility {
       }
     }
     else {
-      is_vec[0] = true;
-      return this.Vector3Para(project_name, object_id, id, para_type, very_var, var_str, log);
+      paras.isVec = true;
+      return this.Vector3Para(project_name, object_id, id, para_type, paras, var_str, log);
     }
   }
 
 
-  public static Vector3ParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryVector3, var_str: string, log: boolean = true): boolean {
+  public static Vector3ParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (VarTools.IsVarID(var_str)) {
       let errorInfo: ErrorInfo = new ErrorInfo();
       let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVarWithExpression(project_name, object_id, var_str, errorInfo);
@@ -534,12 +508,12 @@ export class ParaParserUtility {
         return false;
       }
       else if (veryVar.className === 'VeryVector3') {
-        very_var = <VeryVector3>veryVar;
+        paras.vector3 = <VeryVector3>veryVar;
         return true;
       }
       else if (veryVar.className === 'VeryExpression') {
         if (veryVar.varType === 'Vector3') {
-          very_var.setExpression(<VeryExpression>veryVar);
+          paras.vector3.setExpression(<VeryExpression>veryVar);
           return true;
         }
         else {
@@ -564,18 +538,18 @@ export class ParaParserUtility {
     }
   }
 
-  public static Vector3OrNumberParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, very_var: VeryVector3, x: VeryNumber, y: VeryNumber, z: VeryNumber, is_vec: boolean[], var_str: string, log: boolean = true): boolean {
+  public static Vector3OrNumberParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, log: boolean = true): boolean {
     if (var_str.indexOf(",") > -1 || var_str.indexOf("，") > -1) {
-      is_vec[0] = false;
+      paras.isVec = false;
       let floatsArray: string[] = var_str.split(/,|，/);
       if (floatsArray.length === 3) {
-        if (!this.NumberParaWithExpression(project_name, object_id, id, para_type, x, floatsArray[0].trim(), log)) {
+        if (!this.privateNumberParaWithExpression(project_name, object_id, id, para_type, paras, floatsArray[0].trim(), 0, log)) {
           return false;
         }
-        if (!this.NumberParaWithExpression(project_name, object_id, id, para_type, y, floatsArray[1].trim(), log)) {
+        if (!this.privateNumberParaWithExpression(project_name, object_id, id, para_type, paras, floatsArray[1].trim(), 1, log)) {
           return false;
         }
-        if (!this.NumberParaWithExpression(project_name, object_id, id, para_type, z, floatsArray[2].trim(), log)) {
+        if (!this.privateNumberParaWithExpression(project_name, object_id, id, para_type, paras, floatsArray[2].trim(), 2, log)) {
           return false;
         }
         return true;
@@ -588,8 +562,92 @@ export class ParaParserUtility {
       }
     }
     else {
-      is_vec[0] = true;
-      return this.Vector3ParaWithExpression(project_name, object_id, id, para_type, very_var, var_str, log);
+      paras.isVec = true;
+      return this.Vector3ParaWithExpression(project_name, object_id, id, para_type, paras, var_str, log);
+    }
+  }
+
+  private static privateNumberParaWithExpression(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, index: number, log: boolean = true): boolean {
+    if (VarTools.IsVarID(var_str)) {
+      let errorInfo: ErrorInfo = new ErrorInfo();
+      let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVarWithExpression(project_name, object_id, var_str, errorInfo);
+      if (veryVar === null) {
+        if (log) {
+          VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，${errorInfo.message}`, '', Severity.Error));
+        }
+        return false;
+      }
+      else if (veryVar.className === 'VeryNumber') {
+        paras.vecNumbers[index] = <VeryNumber>veryVar;
+        return true;
+      }
+      else if (veryVar.className === 'VeryExpression') {
+        if (veryVar.varType === 'number') {
+          paras.vecNumbers[index].setExpression(<VeryExpression>veryVar);
+          return true;
+        }
+        else {
+          if (log) {
+            VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，该公式变量计算结果不为number数字，请检查！`, '', Severity.Error));
+          }
+          return false;
+        }
+      }
+      else {
+        if (log) {
+          VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为number数字变量，请检查，请检查！`, '', Severity.Error));
+        }
+        return false;
+      }
+    }
+    else {
+      paras.vecNumbers[index].value = parseFloat(var_str);
+      if (isNaN(paras.vecNumbers[index].value)) {
+        VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为number数字常量，请检查！`, '', Severity.Error));
+        return false;
+      }
+      return true;
+    }
+  }
+
+  private static privateNumberPara(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, index: number, log: boolean = true): boolean {
+    if (VarTools.IsVarID(var_str)) {
+      return ParaParserUtility.privateNumberParaOnlyVar(project_name, object_id, id, para_type, paras, var_str, index, log);
+    }
+    else {
+      paras.vecNumbers[index].value = parseFloat(var_str);
+      if (isNaN(paras.vecNumbers[index].value)) {
+        VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为number数字常量，请检查！`, '', Severity.Error));
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static privateNumberParaOnlyVar(project_name: string, object_id: string, id: string, para_type: ParaType, paras: VeryParas, var_str: string, index: number, log: boolean = true): boolean {
+    if (VarTools.IsVarID(var_str)) {
+      let errorInfo: ErrorInfo = new ErrorInfo();
+      let veryVar: Nullable<IVeryVar> = VarTools.GetVeryVar(project_name, object_id, var_str, errorInfo);
+      if (veryVar === null) {
+        VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，${errorInfo.message}`, '', Severity.Error));
+        return false;
+      }
+      else if (veryVar.className === 'VeryNumber') {
+        paras.vecNumbers[index] = <VeryNumber>veryVar;
+        return true;
+      }
+      else {
+        if (log) {
+          VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为number数字变量，请检查！`, '', Severity.Error));
+        }
+        return false;
+      }
+    }
+    else {
+      if (log) {
+        VE_ErrorManager.Add(new VE_Error('', `${id}  ${para_type === ParaType.Action ? '响应' : '触发'} 传入参数错误，变量：${var_str}，应为number数字变量，不能为常量，请检查！`, '', Severity.Error));
+      }
+      return false;
     }
   }
 

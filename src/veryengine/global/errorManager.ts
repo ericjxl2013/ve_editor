@@ -110,12 +110,12 @@ export class VE_ErrorManager {
     if (prefix) {
       for (let i: number = 0; i < this._errorList.length; i++) {
         if (this._errorList[i].getSeverity() === Severity.Error) {
-          console.error('错误：' + prefix + " -> " + this._errorList[i].toString());
+          console.error('编译错误 >>> ' + prefix + " -> " + this._errorList[i].toString());
           this._errorList.splice(i, 1);
           i--;
         }
         else if (this._errorList[i].getSeverity() === Severity.Warning) {
-          console.warn('警告：' + prefix + " -> " + this._errorList[i].toString());
+          console.warn('编译警告 >>> ' + prefix + " -> " + this._errorList[i].toString());
           this._errorList.splice(i, 1);
           i--;
         }
@@ -123,12 +123,12 @@ export class VE_ErrorManager {
     } else {
       for (let i: number = 0; i < this._errorList.length; i++) {
         if (this._errorList[i].getSeverity() === Severity.Error) {
-          console.error('错误：' + this._errorList[i].toString());
+          console.error('编译错误 >>> ' + this._errorList[i].toString());
           this._errorList.splice(i, 1);
           i--;
         }
         else if (this._errorList[i].getSeverity() === Severity.Warning) {
-          console.warn('警告：' + this._errorList[i].toString());
+          console.warn('编译警告 >>> ' + this._errorList[i].toString());
           this._errorList.splice(i, 1);
           i--;
         }
@@ -144,7 +144,7 @@ export class VE_ErrorManager {
     if (prefix) {
       for (let i: number = 0; i < this._errorList.length; i++) {
         if (this._errorList[i].getSeverity() === Severity.Warning) {
-          console.warn('警告：' + prefix + " -> " + this._errorList[i].toString());
+          console.warn('编译警告 >>> ' + prefix + " -> " + this._errorList[i].toString());
           this._errorList.splice(i, 1);
           i--;
         }
@@ -152,7 +152,7 @@ export class VE_ErrorManager {
     } else {
       for (let i: number = 0; i < this._errorList.length; i++) {
         if (this._errorList[i].getSeverity() === Severity.Warning) {
-          console.warn('警告：' + this._errorList[i].toString());
+          console.warn('编译警告 >>> ' + this._errorList[i].toString());
           this._errorList.splice(i, 1);
           i--;
         }
@@ -168,7 +168,7 @@ export class VE_ErrorManager {
     if (prefix) {
       for (let i: number = 0; i < this._errorList.length; i++) {
         if (this._errorList[i].getSeverity() === Severity.Error) {
-          console.error('错误：' + prefix + " -> " + this._errorList[i].toString());
+          console.error('编译错误 >>> ' + prefix + " -> " + this._errorList[i].toString());
           this._errorList.splice(i, 1);
           i--;
         }
@@ -176,7 +176,7 @@ export class VE_ErrorManager {
     } else {
       for (let i: number = 0; i < this._errorList.length; i++) {
         if (this._errorList[i].getSeverity() === Severity.Error) {
-          console.error('错误：' + prefix + " -> " + this._errorList[i].toString());
+          console.error('编译错误 >>> ' + prefix + " -> " + this._errorList[i].toString());
           this._errorList.splice(i, 1);
           i--;
         }

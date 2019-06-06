@@ -49,13 +49,16 @@ export class Action_Debug extends VE_ActionBehaviour {
     }
     this._strBuilder = this._strBuilder.trim();
     if (this._debugMode === 0) {
-      console.log(`打印信息 >>> ${this._strBuilder}`);
+      // console.log(`一般信息 >>> ${this._strBuilder}`);
+      console.log(this._strBuilder);
     }
     else if (this._debugMode == 1) {
-      console.warn(`警告信息 >>> ${this._strBuilder}`);
+      // console.warn(`警告信息 >>> ${this._strBuilder}`);
+      console.warn(this._strBuilder);
     }
     else if (this._debugMode == 2) {
-      console.error(`错误信息 >>> ${this._strBuilder}`);
+      // console.error(`错误信息 >>> ${this._strBuilder}`);
+      console.error(this._strBuilder);
     }
   }
 

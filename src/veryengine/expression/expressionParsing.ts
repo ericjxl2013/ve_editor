@@ -46,12 +46,21 @@ export class VE_ExpressionParsing {
     this._objectID = object_id;
     this._fsmID = fsm_id;
     this._varScope = var_scope;
+    input_exp = this.replace(input_exp);
+    // console.warn(`公式： ${input_exp}`);
     this._tokenizer = new Tokenizer(input_exp);
     // while(!this._tokenizer.current().isEnd()) {
     //   console.log(this._tokenizer.consume());
     // }
     this.errors = [];
     return this.parse();
+  }
+
+  private static replace(str: string): string {
+    str = str.replace(/（/g, '(');
+    str = str.replace(/）/g, ')');
+    str = str.replace(/！/g, '!');
+    return str;
   }
 
   private static parse(): IExpression {
@@ -152,15 +161,17 @@ export class VE_ExpressionParsing {
     return left;
   }
 
+  // TODO：这个应该是指数
   private static exponentExp(): IExpression {
     let left: IExpression = this.atomExp();
-    if (this._tokenizer.current().isOperator('!') || this._tokenizer.current().isOperator('！')) {
+    if (this._tokenizer.current().isOperator('!', '！')) {
       left = new BinaryExpression(left, left, BinaryOperator.Not);
     }
     return left;
   }
 
   private static atomExp(): IExpression {
+    // console.warn(this._tokenizer.current());
     // 处理起始为“-”
     if (this._tokenizer.current().isOperator('-')) {
       this._tokenizer.consume();
@@ -169,13 +180,14 @@ export class VE_ExpressionParsing {
       return result;
     }
     // 取非运算
-    if (this._tokenizer.current().isOperator('!') && (this._tokenizer.next().isIdentifier() || this._tokenizer.next().isKeyword() || this._tokenizer.next().isStartBracket())) {
+    if (this._tokenizer.current().isOperator('!', '！') && (this._tokenizer.next().isIdentifier() || this._tokenizer.next().isKeyword() || this._tokenizer.next().isStartBracket())) {
       this._tokenizer.consume();
       let newValue: IExpression = this.atomExp();
       if (newValue.expType === 'bool') {
         let notExp: BinaryExpression = new BinaryExpression(newValue, newValue, BinaryOperator.Not);
         return notExp;
       } else {
+        
         this._tokenizer.addError(this._tokenizer.current(), '取非运算(!)后应跟着bool值类型！');
         return ConstantExpression.Empty();
       }
@@ -345,6 +357,7 @@ export class VE_ExpressionParsing {
     }
 
     // 未知情况
+    // console.warn(this._tokenizer.current());
     this._tokenizer.addError(this._tokenizer.current(), `检测到无效字符：${this._tokenizer.current().getSource()}，请检查！`);
     this._tokenizer.consume();
 

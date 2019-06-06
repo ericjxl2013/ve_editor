@@ -22,11 +22,12 @@ export class LoaderManager {
   private _projectName: string = '';
 
   private _lastFsmID: string = '';
+  private _lastObjectID: string = '';
   private _activeTemplate: Nullable<VE_Template> = null;
   private _activeObject: Nullable<VeryEngineObject> = null;
   private _activeFsmData: Nullable<VE_FsmData> = null;
   private _activeStateData: Nullable<VE_StateData> = null;
-
+  private _emptyLine: boolean = false;
 
   constructor() {
 
@@ -48,12 +49,14 @@ export class LoaderManager {
       for (let i: number = 1; i < table.RowCount; i++) {
         // console.log(`行号：${i+1}，内容：${table.getData(i, 0)}`);
         // 注释行，直接跳过
-        if(table.getData(i, 0).startsWith('//')) {
+        if (table.getData(i, 0).startsWith('//')) {
           continue;
         }
         // 空行
-        if(table.getRow(i)!.isEmpty()) {
+        if (table.getRow(i)!.isEmpty()) {
           // console.log('空行：' + (i + 1));
+          // TODO：空行直接分隔状态；
+          this._emptyLine = true;
           continue;
         }
         // （1）模板对象，创建
@@ -61,7 +64,7 @@ export class LoaderManager {
           this._activeFsmData = null;
           this._activeStateData = null;
           this._currentType = AnalisysType.Template;
-          let templateID = table.getData(i, 0).replace(' ', '').substring(3);
+          let templateID = table.getData(i, 0).replace(/ /g, '').substring(3);
           // TODO: 继承关系
           if (templateID.indexOf(':') > -1 || templateID.indexOf('：') > -1) {
 
@@ -71,6 +74,8 @@ export class LoaderManager {
               return false;
             }
             if (!templates.isCreatedTemplate(templateID)) {
+              this._lastObjectID = templateID;
+              this._emptyLine = true;
               let template: VE_Template = new VE_Template(project_name, templateID);
               templates.addTemplate(templateID, template);
               this._activeTemplate = template;
@@ -97,7 +102,7 @@ export class LoaderManager {
               return false;
             }
           }
-          
+
           if (!VE_StringFormat.isIDLegal(objectID)) {
             VE_ErrorManager.Add(VE_Error.error(table.pos(i, 0), "对象名：" + table.getData(i, 0) + "，当前对象名不合法，包含非法字符，请检查！", table.ID))
             return false;
@@ -113,6 +118,8 @@ export class LoaderManager {
               return false;
             }
           }
+          this._lastObjectID = objectID;
+          this._emptyLine = true;
           if (!objects.isCreated(objectID)) {
             // 规范化数据存储结构，与模板对象通用
             let tempObject: VeryEngineObject = new VeryEngineObject(project_name, objectID, activeGameObject);
@@ -128,6 +135,7 @@ export class LoaderManager {
           let paraData: string = table.getData(i, 5);
           // 全局变量
           if (this._currentType === AnalisysType.Global) {
+            this._emptyLine = true;
             // 字符串加法公式咋办？双引号先不移除
             let varArray: string[] = VE_StringFormat.paraSegment(paraData);
             if (varArray.length === 2 || varArray.length === 3) {
@@ -159,28 +167,29 @@ export class LoaderManager {
             // 状态赋值
             // 目前暂不考虑赋值公式中有等号的情况，赋值公式后面只能是常量或者已创建的变量
             if (paraArray.length === 2 && paraArray[0].trim() === this._lastFsmID) {
+              this._emptyLine = false;
               if (this._activeFsmData === null) {
                 VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，当前状态不属于任何对象和模板对象，请检查！", table.ID))
                 return false;
               } else {
-                let stateInfo: string[] = paraArray[1].trim().split(/,|，/);
-                let stateIndex: number = StateConst.STATE_INDEX;
-                let stateData: Nullable<VE_StateData> = null;
-                if (stateInfo.length === 2) {
-                  stateInfo[0] = stateInfo[0].trim();
-                  stateInfo[1] = stateInfo[1].trim();
-                  if (stateInfo[1].startsWith('#')) {
-                    stateIndex = parseInt(stateInfo[1].substring(1));
-                    if (stateIndex === NaN) {
-                      VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，当前整数转化错误！", table.ID))
-                      return false;
-                    }
-                  } else {
-                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，请检查！", table.ID))
-                    return false;
-                  }
-                }
-                stateData = new VE_StateData(this._activeFsmData, stateInfo[0].trim(), false, stateIndex);
+                // let stateInfo: string[] = paraArray[1].trim().split(/,|，/);
+                // let stateIndex: number = StateConst.STATE_INDEX;
+                // let stateData: Nullable<VE_StateData> = null;
+                // if (stateInfo.length === 2) {
+                //   stateInfo[0] = stateInfo[0].trim();
+                //   stateInfo[1] = stateInfo[1].trim();
+                //   if (stateInfo[1].startsWith('#')) {
+                //     stateIndex = parseInt(stateInfo[1].substring(1));
+                //     if (stateIndex === NaN) {
+                //       VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，当前整数转化错误！", table.ID))
+                //       return false;
+                //     }
+                //   } else {
+                //     VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，请检查！", table.ID))
+                //     return false;
+                //   }
+                // }
+                let stateData: VE_StateData = new VE_StateData(this._activeFsmData, paraArray[1].trim(), false);
                 stateData.rowIndex = i;
                 this._activeFsmData.addState(stateData);
                 this._activeStateData = stateData;
@@ -188,6 +197,7 @@ export class LoaderManager {
             }
             // 公式变量，局部变量
             else {
+              this._emptyLine = true;
               let varArray: string[] = VE_StringFormat.paraSegment(paraData);
               if (varArray.length === 3) {
                 let varID: string = varArray[0].trim();
@@ -233,6 +243,7 @@ export class LoaderManager {
           }
           // 局部变量，一般变量，模板变量或者公式变量
           else {
+            this._emptyLine = true;
             let varArray: string[] = VE_StringFormat.paraSegment(paraData);
             if (varArray.length === 2 || varArray.length === 3) {
               let varID: string = varArray[0].trim();
@@ -284,36 +295,35 @@ export class LoaderManager {
         // （4）状态 + 触发 + 条件 + 响应 + 关联状态，多种复合情况
         else {
           // 状态解析
-          if (table.getData(i, 5) !== '') {
-            let paraData: string = table.getData(i, 5);
+          let hasState: boolean = false;
+          let paraData: string = table.getData(i, 5);
+          if (paraData !== '') {
+            hasState = true;
+            this._emptyLine = false;
+          }
+          // 空行分隔新状态
+          else {
+            if (this._emptyLine) {
+              this._emptyLine = false;
+              hasState = true;
+              paraData = (this._lastObjectID + '_空状态_' + StateConst.StateCount++) + ',' + StateConst.STATE_VALUE;
+            }
+          }
+
+          // 状态解析，状态值只能为string字符串，非空行，且状态为空，跳过状态解析
+          if (hasState) {
             // 状态赋值
             if (paraData.indexOf('=') > -1) {
               let stateArray: string[] = paraData.split('=');
               let fsmID: string = stateArray[0].trim();
-              // 目前暂不考虑赋值公式中有等号的情况，赋值公式后面只能是常量或者已创建的变量
+              // 状态
               if (stateArray.length === 2 && fsmID === this._lastFsmID) {
                 if (this._activeFsmData === null) {
                   VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，当前状态不属于任何对象和模板对象，请检查！", table.ID))
                   return false;
                 } else {
-                  let stateInfo: string[] = stateArray[1].trim().split(/,|，/);
-                  let stateIndex: number = StateConst.STATE_INDEX;
-                  let stateData: Nullable<VE_StateData> = null;
-                  if (stateInfo.length === 2) {
-                    stateInfo[0] = stateInfo[0].trim();
-                    stateInfo[1] = stateInfo[1].trim();
-                    if (stateInfo[1].startsWith('#')) {
-                      stateIndex = parseInt(stateInfo[1].substring(1));
-                      if (stateIndex === NaN) {
-                        VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，当前整数转化错误！", table.ID))
-                        return false;
-                      }
-                    } else {
-                      VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + table.getData(i, 5) + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID=赋值，#整数ID”，请检查！", table.ID))
-                      return false;
-                    }
-                  }
-                  stateData = new VE_StateData(this._activeFsmData, stateInfo[0].trim(), false, stateIndex);
+                  // let stateIndex: number = StateConst.STATE_INDEX;
+                  let stateData: VE_StateData = new VE_StateData(this._activeFsmData, stateArray[1].trim(), false);
                   stateData.rowIndex = i;
                   this._activeFsmData.addState(stateData);
                   this._activeStateData = stateData;
@@ -326,108 +336,86 @@ export class LoaderManager {
             // 创建状态机
             else {
               let varArray: string[] = VE_StringFormat.paraSegment(paraData);
-              if (varArray.length === 2 || varArray.length === 3 || varArray.length === 4) {
+              if (varArray.length === 2) {
                 let fsmID: string = varArray[0].trim();
                 if (!VE_StringFormat.isIDLegal(fsmID)) {
                   VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态名：" + table.getData(i, 5) + "，当前状态名不合法，包含非法字符，请检查！", table.ID))
                   return false;
                 }
+                varArray[1] = varArray[1].trim();
                 this._lastFsmID = fsmID;
-                let paraArray: string[] = [varArray[1].trim()];
-                if (varArray.length === 2) {
-                  paraArray[1] = '';
-                } else {
-                  paraArray[1] = varArray[2].trim();
-                }
-                let stateIndex: number = StateConst.STATE_INDEX;
-                if (varArray.length === 4) {
-                  if (varArray[3].startsWith('#')) {
-                    stateIndex = parseInt(varArray[3].substring(1));
-                    if (stateIndex === NaN) {
-                      VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + varArray[3] + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID，变量类型，变量值，#整数ID”，当前整数转化错误！", table.ID))
-                      return false;
-                    }
-                  } else {
-                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态赋值：" + varArray[3] + "，状态关联ID格式错误，状态关联标志ID写法：“状态ID，变量类型，变量值，#整数ID”，当前整数转化错误！", table.ID))
-                    return false;
-                  }
-                }
+                // let stateIndex: number = StateConst.STATE_INDEX;
                 // 判断是模板状态，还是对象状态，注意：局部变量名与状态名也不能重合
                 if (this._currentType === AnalisysType.Object) {
                   if (this._activeObject!.varData.isCreatedVariable(fsmID)) {
-                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，状态名：" + fsmID + "，状态名与局部变量名不能相同，当前局部变量已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._lastObjectID + "，状态名：" + fsmID + "，状态名与局部变量名不能相同，当前局部变量已创建，请检查！", table.ID))
                     return false;
                   }
                   // 状态重复判断，应该是判断未初始化的原始数据
                   if (this._activeObject!.dataSource.isCreatedFsm(fsmID)) {
-                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，状态名：" + fsmID + "，当前状态已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._lastObjectID + "，状态名：" + fsmID + "，当前状态已创建，请检查！", table.ID))
                     return false;
                   }
                   // 创建状态机数据
                   this._activeObject!.dataSource.createFsm(fsmID, table.pos(i, 5));
                   this._activeFsmData = this._activeObject!.dataSource.getFsmData(fsmID);
                   // 初始化状态机
-                  if (VeryVarManager.hasVarType(paraArray[0])) {
-                    this._activeFsmData.initFsm(paraArray[0], paraArray[1]);
-                    // 创建具体状态
-                    let stateData: VE_StateData = new VE_StateData(this._activeFsmData, paraArray[1], true, stateIndex);
-                    stateData.rowIndex = i;
-                    this._activeFsmData.addState(stateData);
-                    this._activeStateData = stateData;
-                  } else {
-                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "对象名：" + this._activeObject!.objectID + "，状态名：" + fsmID + "，类型：" + paraArray[0] + "，状态类型错误，当前状态变量类型在系统中不存在，请检查！", table.ID))
-                    return false;
-                  }
+                  this._activeFsmData.initFsm('string', varArray[1]);
+                  // 创建具体状态
+                  let stateData: VE_StateData = new VE_StateData(this._activeFsmData, varArray[1], true);
+                  stateData.rowIndex = i;
+                  this._activeFsmData.addState(stateData);
+                  this._activeStateData = stateData;
                 }
                 else if (this._currentType === AnalisysType.Template) {
                   if (this._activeTemplate!.varData.isCreatedVariable(fsmID)) {
-                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，状态名：" + fsmID + "，状态名与局部变量名不能相同，当前局部变量已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._lastObjectID + "，状态名：" + fsmID + "，状态名与局部变量名不能相同，当前局部变量已创建，请检查！", table.ID))
                     return false;
                   }
                   // 状态重复判断，应该是判断未初始化的原始数据
                   if (this._activeTemplate!.dataSource.isCreatedFsm(fsmID)) {
-                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.templateID + "，状态名：" + fsmID + "，当前状态已创建，请检查！", table.ID))
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._lastObjectID + "，状态名：" + fsmID + "，当前状态已创建，请检查！", table.ID))
                     return false;
                   }
                   // 创建状态机数据
                   this._activeTemplate!.dataSource.createFsm(fsmID, table.pos(i, 5));
                   this._activeFsmData = this._activeTemplate!.dataSource.getFsmData(fsmID);
                   // 初始化状态机
-                  if (VeryVarManager.hasVarType(paraArray[0])) {
-                    this._activeFsmData.initFsm(paraArray[0], paraArray[1]);
-                    // 创建具体状态
-                    let stateData: VE_StateData = new VE_StateData(this._activeFsmData, paraArray[1], true, stateIndex);
-                    stateData.rowIndex = i;
-                    this._activeFsmData.addState(stateData);
-                    this._activeStateData = stateData;
-                  } else {
-                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "模板对象名：" + this._activeTemplate!.objectID + "，状态名：" + fsmID + "，类型：" + paraArray[0] + "，状态类型错误，当前状态变量类型在系统中不存在，请检查！", table.ID))
-                    return false;
-                  }
+                  this._activeFsmData.initFsm('string', varArray[1]);
+                  // 创建具体状态
+                  let stateData: VE_StateData = new VE_StateData(this._activeFsmData, varArray[1], true);
+                  stateData.rowIndex = i;
+                  this._activeFsmData.addState(stateData);
+                  this._activeStateData = stateData;
                 }
                 else {
                   VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "局部变量：" + table.getData(i, 5) + "，当前局部变量所属未知，格式错误，请检查！", table.ID))
                   return false;
                 }
               } else {
-                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态：" + table.getData(i, 5) + "，当前状态格式不正确，应为“状态名，类型，初始值”的形式，请检查！", table.ID))
+                VE_ErrorManager.Add(VE_Error.error(table.pos(i, 5), "状态：" + table.getData(i, 5) + "，当前状态格式不正确，应为“状态名，状态值”的形式，请检查！", table.ID));
                 return false;
               }
             }
           }
 
           // 触发解析
-          if (table.getData(i, 2) !== '') {
+          if (table.getData(i, 2) !== '' || table.getData(i, 3) !== '') {
             if (this._activeFsmData === null || this._activeStateData === null) {
-              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 2), "触发：" + table.getData(i, 2) + "，当前触发不属于任何对象和模板对象，请检查！", table.ID))
+              VE_ErrorManager.Add(VE_Error.error(table.pos(i, 2), "触发：" + table.getData(i, 2) + "，当前触发不属于任何对象和模板对象，请检查！", table.ID));
               return false;
             }
             // 触发定义不为空，则加入到DataSource中，并且判断重复性
             let triggerID: string = table.getData(i, 2);
-            if (!VE_StringFormat.isIDLegal(triggerID)) {
+            if (table.getData(i, 2) === '') {
+              triggerID = this._lastObjectID + '_' + this._lastFsmID + '_空触发_' + StateConst.TriggerCount++;
+            }
+            let idTemp: string = triggerID.replace(/./g, '');
+            if (!VE_StringFormat.isIDLegal(idTemp)) {
               VE_ErrorManager.Add(VE_Error.error(table.pos(i, 2), "触发名：" + table.getData(i, 2) + "，当前触发名不合法，包含非法字符，请检查！", table.ID))
               return false;
             }
+
             if (table.getData(i, 3) !== '') {
               if (!this._activeFsmData!.dataSource.isCreatedTrigger(triggerID)) {
                 this._activeFsmData!.dataSource.addTrigger(triggerID, VE_StringFormat.paraSegment(table.getData(i, 3)), table.pos(i, 2));
@@ -457,7 +445,7 @@ export class LoaderManager {
               return false;
             }
 
-            // 关联状态逻辑条件
+            // 关联状态逻辑条件 --- 保留！！！！
             if (table.getData(i, 4) !== '') {
               if (this._activeFsmData === null || this._activeStateData === null) {
                 VE_ErrorManager.Add(VE_Error.error(table.pos(i, 4), "状态逻辑条件：" + table.getData(i, 4) + "，当前状态逻辑条件不属于任何对象和模板对象，请检查！", table.ID))
@@ -471,71 +459,120 @@ export class LoaderManager {
               }
             }
 
-            if (table.getData(i, 3) !== '') {
-              VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 3), "触发参数：" + table.getData(i, 3) + "，该处无触发定义，但是填写了触发参数，请检查！", table.ID))
-            }
+            // if (table.getData(i, 3) !== '') {
+            //   VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 3), "触发参数：" + table.getData(i, 3) + "，该处无触发定义，但是填写了触发参数，请检查！", table.ID))
+            // }
           }
 
           // 响应解析
-          if (table.getData(i, 6) !== '') {
+          if (table.getData(i, 6) !== '' || table.getData(i, 7) !== '') {
             if (this._activeFsmData === null || this._activeStateData === null) {
               VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，当前响应不属于任何对象和模板对象，请检查！", table.ID))
               return false;
             }
-            // 特殊调试响应
-            let tempStr: string = table.getData(i, 6).toLowerCase();
-            if (tempStr.startsWith('log(') || tempStr.startsWith('log（') || tempStr.startsWith('调试（') || tempStr.startsWith('调试(')) {
-              let newActionID: string = project_name + '___' + StateConst.LogCount++;
-              let actionData: VE_StateActionData = new VE_StateActionData(newActionID, 'true', 'false');
-              this._activeStateData.addAction(actionData, table.pos(i, 6));
-              let actionPara: string = table.getData(i, 6).substring(4);
-              if (tempStr.startsWith('调试')) {
-                actionPara = table.getData(i, 6).substring(3);
-              }
-              this._activeFsmData.dataSource.addAction(newActionID, ['调试', '调试', actionPara.substring(0, actionPara.length - 1)], ['false', 'false'], table.pos(i, 6));
-              if (table.getData(i, 7) !== '') {
-                VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
-              }
-            }
-            else if (tempStr.startsWith('error(') || tempStr.startsWith('error（') || tempStr.startsWith('错误（') || tempStr.startsWith('错误(')) {
-              let newActionID: string = project_name + '___' + StateConst.LogCount++;
-              let actionData: VE_StateActionData = new VE_StateActionData(newActionID, 'true', 'false');
-              this._activeStateData.addAction(actionData, table.pos(i, 6));
-              let actionPara: string = table.getData(i, 6).substring(6);
-              if (tempStr.startsWith('错误')) {
-                actionPara = table.getData(i, 6).substring(3);
-              }
-              this._activeFsmData.dataSource.addAction(newActionID, ['调试', '错误', actionPara.substring(0, actionPara.length - 1)], ['false', 'false'], table.pos(i, 6));
-              if (table.getData(i, 7) !== '') {
-                VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
-              }
-            }
-            else if (tempStr.startsWith('warn(') || tempStr.startsWith('warn（') || tempStr.startsWith('警告（') || tempStr.startsWith('警告(')) {
-              let newActionID: string = project_name + '___' + StateConst.LogCount++;
-              let actionData: VE_StateActionData = new VE_StateActionData(newActionID, 'true', 'false');
-              this._activeStateData.addAction(actionData, table.pos(i, 6));
-              let actionPara: string = table.getData(i, 6).substring(5);
-              if (tempStr.startsWith('警告')) {
-                actionPara = table.getData(i, 6).substring(3);
-              }
-              this._activeFsmData.dataSource.addAction(newActionID, ['调试', '警告', actionPara.substring(0, actionPara.length - 1)], ['false', 'false'], table.pos(i, 6));
-              if (table.getData(i, 7) !== '') {
-                VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
-              }
-            }
-            else if (table.getData(i, 6).indexOf('=') > -1) {
-              if (table.getData(i, 7) !== '') {
-                VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处不应该再有响应定义，但是填写了响应参数，请检查！", table.ID))
-              }
 
-              // 允许“=”后面直接赋值 公式
-              let equalIndex: number = table.getData(i, 6).indexOf('=');
-              let actionData: VE_StateActionData = new VE_StateActionData('');
-              actionData.setAssignmentAction(table.getData(i, 6), table.getData(i, 6).substring(0, equalIndex).trim(), table.getData(i, 6).substring(equalIndex + 1).trim());
-              this._activeStateData.addAction(actionData, table.pos(i, 6));
-            }
-            else {
-              // 响应ID
+            // 分3种类型，合成2种
+            if (table.getData(i, 7) !== '') {
+              // 响应定义（有响应名或为空）、变量赋值、log调试；
+              let tempStr: string = table.getData(i, 7).toLowerCase();
+              if (tempStr.startsWith('log(') || tempStr.startsWith('log（') || tempStr.startsWith('调试（') || tempStr.startsWith('调试(')) {
+                let newActionID: string = project_name + '__log__' + StateConst.LogCount++;
+                let actionData: VE_StateActionData = new VE_StateActionData(newActionID, 'true', 'false');
+                this._activeStateData.addAction(actionData, table.pos(i, 7));
+                let actionPara: string = table.getData(i, 7).substring(4);
+                if (tempStr.startsWith('调试')) {
+                  actionPara = table.getData(i, 7).substring(3);
+                }
+                this._activeFsmData.dataSource.addAction(newActionID, ['调试', '调试', actionPara.substring(0, actionPara.length - 1)], ['true', 'false'], table.pos(i, 7));
+                if (table.getData(i, 6) !== '') {
+                  VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 6), "响应名：" + table.getData(i, 6) + "，该处不应该再有响应定义，但是填写了响应名，请检查！", table.ID))
+                }
+              }
+              else if (tempStr.startsWith('error(') || tempStr.startsWith('error（') || tempStr.startsWith('错误（') || tempStr.startsWith('错误(')) {
+                let newActionID: string = project_name + '__log__' + StateConst.LogCount++;
+                let actionData: VE_StateActionData = new VE_StateActionData(newActionID, 'true', 'false');
+                this._activeStateData.addAction(actionData, table.pos(i, 7));
+                let actionPara: string = table.getData(i, 7).substring(6);
+                if (tempStr.startsWith('错误')) {
+                  actionPara = table.getData(i, 7).substring(3);
+                }
+                this._activeFsmData.dataSource.addAction(newActionID, ['调试', '错误', actionPara.substring(0, actionPara.length - 1)], ['true', 'false'], table.pos(i, 7));
+                if (table.getData(i, 6) !== '') {
+                  VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 6), "响应名：" + table.getData(i, 6) + "，该处不应该再有响应定义，但是填写了响应名，请检查！", table.ID))
+                }
+              }
+              else if (tempStr.startsWith('warn(') || tempStr.startsWith('warn（') || tempStr.startsWith('警告（') || tempStr.startsWith('警告(')) {
+                let newActionID: string = project_name + '__log__' + StateConst.LogCount++;
+                let actionData: VE_StateActionData = new VE_StateActionData(newActionID, 'true', 'false');
+                this._activeStateData.addAction(actionData, table.pos(i, 7));
+                let actionPara: string = table.getData(i, 7).substring(5);
+                if (tempStr.startsWith('警告')) {
+                  actionPara = table.getData(i, 7).substring(3);
+                }
+                this._activeFsmData.dataSource.addAction(newActionID, ['调试', '警告', actionPara.substring(0, actionPara.length - 1)], ['true', 'false'], table.pos(i, 7));
+                if (table.getData(i, 6) !== '') {
+                  VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 6), "响应名：" + table.getData(i, 6) + "，该处不应该再有响应定义，但是填写了响应名，请检查！", table.ID))
+                }
+              }
+              else {
+                // 响应ID
+                let actionArray: string[] = VE_StringFormat.paraSegment(table.getData(i, 7));
+                // TODO：分辨是变量赋值 还是 响应参数
+                // 允许“=”后面直接赋值 公式
+                if (actionArray.length === 1 && actionArray[0].indexOf('=') > -1) {
+                  if (table.getData(i, 6) !== '') {
+                    VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 6), "响应名：" + table.getData(i, 6) + "，该处不应该再有响应定义，但是填写了响应名，请检查！", table.ID))
+                  }
+
+                  // 允许“=”后面直接赋值 公式
+                  let equalIndex: number = table.getData(i, 7).indexOf('=');
+                  let actionData: VE_StateActionData = new VE_StateActionData('');
+                  actionData.setAssignmentAction(table.getData(i, 7), table.getData(i, 7).substring(0, equalIndex).trim(), table.getData(i, 7).substring(equalIndex + 1).trim());
+                  this._activeStateData.addAction(actionData, table.pos(i, 7));
+                } else {
+
+                  let actionNames: string[];
+                  if (table.getData(i, 6) !== '') {
+                    actionNames = VE_StringFormat.paraSegment(table.getData(i, 6));
+                  } else {
+                    actionNames = [this._lastObjectID + '_' + this._lastFsmID + '_空响应_' + StateConst.ActionCount++, 'true', 'false', 'false'];
+                  }
+
+                  // console.log(actionArray);
+                  if (actionNames.length === 2 || actionNames.length === 3 || actionNames.length === 4) {
+                    let actionData: VE_StateActionData;
+                    if (actionNames.length === 2) {
+                      actionData = new VE_StateActionData(actionNames[0], actionNames[1]);
+                    } else if (actionNames.length === 3) {
+                      actionData = new VE_StateActionData(actionNames[0], actionNames[1], actionNames[2]);
+                    } else {
+                      actionData = new VE_StateActionData(actionNames[0], actionNames[1], actionNames[2], actionNames[3]);
+                    }
+                    this._activeStateData.addAction(actionData, table.pos(i, 6));
+                  } else {
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，响应格式不正确，应为“响应ID，启动标志（bool），每帧运行标志（bool）”的形式，请检查！", table.ID))
+                    return false;
+                  }
+
+                  // 响应定义
+                  if (!VE_StringFormat.isIDLegal(actionNames[0])) {
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应名：" + table.getData(i, 6) + "，当前响应名不合法，包含非法字符，请检查！", table.ID))
+                    return false;
+                  }
+                  if (!this._activeFsmData.dataSource.isCreatedAction(actionNames[0])) {
+                    if (actionNames.length == 2) {
+                      this._activeFsmData.dataSource.addAction(actionNames[0], VE_StringFormat.paraSegment(table.getData(i, 7)), [actionNames[1], 'false'], table.pos(i, 6));
+                    } else {
+                      this._activeFsmData.dataSource.addAction(actionNames[0], VE_StringFormat.paraSegment(table.getData(i, 7)), [actionNames[1], actionNames[2]], table.pos(i, 6));
+                    }
+                  } else {
+                    VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，当前响应已在该对象中定义，请勿重复定义，请检查！", table.ID))
+                    return false;
+                  }
+                }
+              }
+            } else {
+              // 响应名引用；
               let actionArray: string[] = VE_StringFormat.paraSegment(table.getData(i, 6));
               // console.log(actionArray);
               if (actionArray.length === 2 || actionArray.length === 3 || actionArray.length === 4) {
@@ -552,28 +589,6 @@ export class LoaderManager {
                 VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，响应格式不正确，应为“响应ID，启动标志（bool），每帧运行标志（bool）”的形式，请检查！", table.ID))
                 return false;
               }
-
-              // 响应定义
-              if (table.getData(i, 7) !== '') {
-                if (!VE_StringFormat.isIDLegal(actionArray[0])) {
-                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应名：" + table.getData(i, 6) + "，当前响应名不合法，包含非法字符，请检查！", table.ID))
-                  return false;
-                }
-                if (!this._activeFsmData.dataSource.isCreatedAction(actionArray[0])) {
-                  if (actionArray.length == 2) {
-                    this._activeFsmData.dataSource.addAction(actionArray[0], VE_StringFormat.paraSegment(table.getData(i, 7)), [actionArray[1], 'false'], table.pos(i, 6));
-                  } else {
-                    this._activeFsmData.dataSource.addAction(actionArray[0], VE_StringFormat.paraSegment(table.getData(i, 7)), [actionArray[1], actionArray[2]], table.pos(i, 6));
-                  }
-                } else {
-                  VE_ErrorManager.Add(VE_Error.error(table.pos(i, 6), "响应：" + table.getData(i, 6) + "，当前响应已在该对象中定义，请勿重复定义，请检查！", table.ID))
-                  return false;
-                }
-              }
-            }
-          } else {
-            if (table.getData(i, 7) !== '') {
-              VE_ErrorManager.Add(VE_Error.warning(table.pos(i, 7), "响应参数：" + table.getData(i, 7) + "，该处无响应定义，但是填写了响应参数，请检查！", table.ID))
             }
           }
 

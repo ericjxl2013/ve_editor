@@ -379,7 +379,7 @@ export class VE_StringFormat {
           }
         }
       }
-      else if (para_str[i] === '"') {
+      else if (para_str[i] === '"' || para_str[i] === '\'' || para_str[i] === '“' || para_str[i] === '”' || para_str[i] === '‘' || para_str[i] === '’') {
         strBuilder += para_str[i];
         quotationMark = !quotationMark;
       }
@@ -469,6 +469,7 @@ export class VE_StringFormat {
 VE_StringFormat.init();
 
 // console.log(VE_StringFormat.paraSegment("设置相机背景颜色, Main Camera, *插值背景色"));
-// console.log(VE_StringFormat.paraSegment("颜色插值, *相机背景色, *目标背景色, 1, *插值背景色"));
+// console.log(VE_StringFormat.paraSegment(`浮点数比较, *Float1, *Float2, 0.0001, >=`));
+// console.log(VE_StringFormat.paraSegment(`对象.*变量1 = 'ksd./,.34'`));
 
 // console.log(VE_StringFormat.paraSegment("创建模板对象, *针, Pin, Example/SpinAPin/Pin , null, (0, -6, 0), (0,0,90),false"));

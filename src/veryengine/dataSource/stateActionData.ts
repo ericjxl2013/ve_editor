@@ -3,6 +3,7 @@ import { StateActionType } from "../enum";
 export class VE_StateActionData {
 
   public actionID: string;
+  // （1）启动/停止，一次/持续，依次/同时；（2）true/false；（3）一般变量/公式，bool值类型；
   public enabled: string;
   public everyFrame: string;
   public isSequence: string;

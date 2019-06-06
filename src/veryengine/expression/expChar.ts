@@ -19,10 +19,10 @@ export class ExpChar implements IPosition {
 
   public getLine(): number {
     return this._line;
-  }  
-  
+  }
+
   public getPos(): number {
-    
+
     return this._pos;
   }
 
@@ -30,8 +30,16 @@ export class ExpChar implements IPosition {
     return (/\d/).test(this._value);
   }
 
-  public isLetter(): boolean {
-    return (/[a-zA-Z]/).test(this._value);
+  public isLetterOrCharactor(): boolean {
+    if((/[！；：，。《》？、“”‘’（）【】￥]/).test(this._value)) {
+      return false;
+    }
+    var result: boolean = (/[a-zA-Z]/).test(this._value);
+    // 汉字等符号识别
+    if (!result) {
+      result = escape(this._value).indexOf('%u') > -1;
+    }
+    return result;
   }
 
   public isWhiteSpace(): boolean {
@@ -47,8 +55,8 @@ export class ExpChar implements IPosition {
   }
 
   public is(...val: string[]): boolean {
-    for(let i: number = 0; i < val.length; i++) {
-      if(val[i] === this._value && val[i] !== '\0') {
+    for (let i: number = 0; i < val.length; i++) {
+      if (val[i] === this._value && val[i] !== '\0') {
         return true;
       }
     }

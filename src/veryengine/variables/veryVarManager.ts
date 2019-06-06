@@ -84,6 +84,7 @@ export class VeryVarManager {
       let result: any = (<IVeryVar>variable).initValue(value, error_info);
       if (error_info.isRight) {
         (<IVeryVar>variable).setValue(result);
+        (<IVeryVar>variable).name = var_id;
         return <IVeryVar>variable;
       } else {
         return null;

@@ -19,7 +19,7 @@ export class VE_FsmData {
   public get initialValStr(): string {
     return this._initialValStr;
   }
-  private _initialValStr: string = 'defalut';
+  private _initialValStr: string = '';
 
   private _states: VE_StateData[] = [];
 

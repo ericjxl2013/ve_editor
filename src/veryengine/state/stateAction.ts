@@ -2,6 +2,7 @@
 import { VE_ActionBehaviour } from "../action/actionBehaviour";
 import { StateActionType } from "../enum";
 import { VE_Assignment } from "../action";
+import { IVeryVar, VeryBool } from "../variables";
 
 export class VE_StateAction {
 
@@ -15,15 +16,15 @@ export class VE_StateAction {
   }
   private _action: Nullable<VE_ActionBehaviour> = null;
 
-  public get enabled(): boolean {
+  public get enabled(): IVeryVar {
     return this._enabled;
   }
-  private _enabled: boolean = false;
+  private _enabled: IVeryVar;
 
-  public get everyFrame(): boolean {
+  public get everyFrame(): IVeryVar {
     return this._everyFrame;
   }
-  private _everyFrame: boolean = false;
+  private _everyFrame: IVeryVar;
 
   public get assignment(): Nullable<VE_Assignment> {
     return this._assignment;
@@ -31,10 +32,11 @@ export class VE_StateAction {
   private _assignment: Nullable<VE_Assignment> = null;
 
   constructor() {
-
+    this._enabled = new VeryBool();
+    this._everyFrame = new VeryBool();
   }
 
-  public setAction(action: VE_ActionBehaviour, enabled: boolean = false, every_frame: boolean = false, sequence: boolean = false): void {
+  public setAction(action: VE_ActionBehaviour, enabled: IVeryVar = new VeryBool(), every_frame: IVeryVar = new VeryBool(), sequence: boolean = false): void {
     this._action = action;
     this._enabled = enabled;
     this._everyFrame = every_frame;

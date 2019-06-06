@@ -1,6 +1,7 @@
 import { ActionType, SequenceActionState } from "../enum";
 import { GameObject } from "../babylon";
 import { VeryEngineObject } from "../object";
+import { VE_SequenceActions } from "../state";
 
 export abstract class VE_ActionBehaviour {
 
@@ -36,7 +37,7 @@ export abstract class VE_ActionBehaviour {
   }
   private _actionID: string = '';
 
-  public get Type(): ActionType {
+  public get type(): ActionType {
     return ActionType.Normal;
   }
 
@@ -56,7 +57,7 @@ export abstract class VE_ActionBehaviour {
   }
   private _sequenceState: SequenceActionState = SequenceActionState.Initial;
 
-  // private VE_SequenceActions _sequenceAction = null;
+  private _sequenceAction: Nullable<VE_SequenceActions> = null;
 
   public set(scene: BABYLON.Scene): void {
     this.scene = scene;
@@ -90,6 +91,12 @@ export abstract class VE_ActionBehaviour {
     }
   }
 
+  public sequenceAction(sequence: VE_SequenceActions, action_val: boolean, every_frame: boolean): void {
+    this._sequenceAction = sequence;
+    this._sequenceState = SequenceActionState.Running;
+    this.action(action_val, every_frame);
+  }
+
   public abstract active(): void;
 
 
@@ -117,7 +124,10 @@ export abstract class VE_ActionBehaviour {
 
   public finish(): void {
     this._sequenceState = SequenceActionState.Initial;
-
+    if(this._sequenceAction !== null) {
+      this._sequenceAction.finishAction(this);
+      this._sequenceAction = null;
+    }
     this.enabled = false;
   }
 

@@ -1,2 +1,3 @@
-export * from './translate';
+export * from './transform';
 export * from './debug';
+export * from './vector3';

@@ -67,7 +67,6 @@ export class VE_Actions {
       // variable = Object.create(this._actionDics[action_type]);
       // new方式创建响应，Object.create方式创建因为prototype的关系，引用变量是唯一的，所有创建的响应共享，不合适
       variable = new this._actionFunctionDics[action_type].prototype.constructor();
-
       if (!variable) {
         error_info.isRight = false;
         error_info.message = '响应创建错误：当前响应创建失败，请检查！响应类型：' + action_type;
@@ -83,7 +82,6 @@ export class VE_Actions {
         error_info.message = "该响应创建失败，响应参数格式错误！";
         return null;
       }
-
       // TODO:响应初始化
       error_info.clear();
       let everyFrameFlag = VE_TypeConvert.boolConvert(init_val[1], error_info);
@@ -94,7 +92,6 @@ export class VE_Actions {
       }
       action.setEveryFrame(everyFrameFlag);
       action.enabled = false;
-
       return action;
     } catch (error) {
       console.error(`响应创建错误：${error.message}`);

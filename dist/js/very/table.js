@@ -17,7 +17,7 @@ var projectName = "VeRyEngine";
 var example = document.getElementById("VeryTable");
 var hot1 = new Handsontable(example, {
   data: Handsontable.helper.createEmptySpreadsheetData(300, 9),
-  colWidths: 120,
+  colWidths: [120, 80, 120, 150, 150, 150, 150, 180, 120],
   width: "50%",
   height: "100%",
   rowHeights: 23,
@@ -98,8 +98,8 @@ hot1.setDataAtCell(0, 2, "触发名");
 hot1.setDataAtCell(0, 3, "触发参数");
 hot1.setDataAtCell(0, 4, "逻辑条件");
 hot1.setDataAtCell(0, 5, "变量定义/状态定义和赋值");
-hot1.setDataAtCell(0, 6, "响应名/变量赋值");
-hot1.setDataAtCell(0, 7, "响应参数");
+hot1.setDataAtCell(0, 6, "响应名");
+hot1.setDataAtCell(0, 7, "响应参数/变量赋值");
 hot1.setDataAtCell(0, 8, "关联状态");
 
 // 第一行为ReadOnly、居中

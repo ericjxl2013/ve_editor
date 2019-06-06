@@ -10,7 +10,8 @@ import {
 import { VE_Template } from "../template";
 import { IVeryVar, VeryExpression } from "../variables";
 import { IExpression } from "../expression";
-import { VE_SequenceActions, VE_Assignment } from "../action";
+import { VE_Assignment } from "../action";
+import { VE_SequenceActions } from "./sequenceActions";
 
 export class VE_State {
   public get Fsm(): VE_Fsm {
@@ -23,10 +24,10 @@ export class VE_State {
   }
   private _isInitialValue: boolean = false;
 
-  public get Value(): any {
+  public get Value(): string {
     return this._value;
   }
-  private _value: any = "";
+  private _value: string = "";
 
   private _assignmentType: AssignmentType = AssignmentType.Const;
 
@@ -58,14 +59,14 @@ export class VE_State {
   public logicalAssociated: Nullable<IExpression> = null;
 
   private _stateActions: VE_StateAction[] = [];
-  private _assocaitedStates: VE_AssociatedState[] = [];
+  private _associatedStates: VE_AssociatedState[] = [];
 
   public get IsSequence(): boolean {
     return this._isSequence;
   }
   private _isSequence: boolean = false;
 
-  public _sequenceActions: Nullable<VE_SequenceActions> = null;
+  public _sequenceActions: VE_SequenceActions = new VE_SequenceActions();
 
   // 假设当前为序列运行，需要做一些判断
   // 1.判断当前是否正在运行，若正在运行，则失败
@@ -126,9 +127,89 @@ export class VE_State {
   }
 
   public addAssociatedState(associated_state: VE_AssociatedState): void {
-    this._assocaitedStates.push(associated_state);
+    this._associatedStates.push(associated_state);
   }
 
+
+  public action(trigger_id: string): void {
+    // 先访问Parent，确定是否可激活响应
+    if (this._fsm.receiveEvent(trigger_id)) {
+      // 常量，设置状态值
+      this.Fsm.setValue(this.Value);
+
+      if (!this._isSequence) {
+        // 运行响应
+        for (let i: number = 0; i < this._stateActions.length; i++) {
+          let stateAction: VE_StateAction = this._stateActions[i];
+          // 一般响应
+          if (stateAction.type === StateActionType.Action) {
+            // TODO: 目前为常量，理论上可以为变量
+            stateAction!.action!.action(
+              stateAction.enabled.getValue(),
+              stateAction.everyFrame.getValue()
+            );
+          }
+          // 赋值响应
+          else {
+            stateAction!.assignment!.assign();
+          }
+        }
+        // 关联状态
+        if (this._associatedStates.length > 0) {
+          // 对方可能是模板对象
+          // 测试对象
+          for (let i: number = 0; i < this._associatedStates.length; i++) {
+            this._associatedStates[i].connect();
+          }
+        }
+      } else {
+        // 顺序运行响应是否允许运行检测
+        for (let i: number = 0; i < this._stateActions.length; i++) {
+          //只有时间相关响应需要检测
+          if (this._stateActions[i].type === StateActionType.Action && this._stateActions[i]!.action!.type === ActionType.Animation
+          ) {
+            if (this._stateActions[i]!.action!.SequenceState === SequenceActionState.Prepared || this._stateActions[i]!.action!.SequenceState === SequenceActionState.Running
+            ) {
+              console.error(
+                "错误信息 >>> （项目：" +
+                this._fsm.projectName +
+                "，对象：" +
+                this._fsm.objectID +
+                "，状态：" +
+                this._fsm.fsmID +
+                "，ID：" +
+                this._index +
+                "），当前状态中的响应：" +
+                this._stateActions[i]!.action!.actionID +
+                "，该响应处于“依次”运行状态，运行结束前不允许再次启动！"
+              );
+              return;
+            } else if (this._stateActions[i]!.action!.SequenceState === SequenceActionState.Pause) {
+              console.error(
+                "错误信息 >>> （项目：" +
+                this._fsm.projectName +
+                "，对象：" +
+                this._fsm.objectID +
+                "，状态：" +
+                this._fsm.fsmID +
+                "，ID：" +
+                this._index +
+                "），当前状态中的响应：" +
+                this._stateActions[i]!.action!.actionID +
+                "，该响应处于“依次”运行状态（暂停中），运行结束前不允许再次启动！"
+              );
+              return;
+            }
+          }
+        }
+
+        this._sequenceActions!.sequenceAction(this._stateActions, this._associatedStates);
+      }
+
+    }
+  }
+
+  /*
   // TODO
   public action(trigger_id: string): void {
     // 先访问Parent，确定是否可激活响应
@@ -211,47 +292,48 @@ export class VE_State {
             return;
           }
         }
-      }
 
-      //状态响应顺序运行, TODO: 动画响应表格逻辑被修改，以下逻辑有冗余
-      if (this._isSequence) {
-        // TODO: 这里
-        console.log('顺序运行状态');
-        // this._sequenceActions = this._fsm.VeryObject.gameObject.AddComponent<
-        //   VE_SequenceActions
-        // >();
-        // this._sequenceActions!.sequenceAction(
-        //   this._stateActions,
-        //   this._associatedStates
-        // );
-      } else {
-        // 运行响应
-        for (let i: number = 0; i < this._stateActions.length; i++) {
-          let stateAction: VE_StateAction = this._stateActions[i];
-          // 一般响应
-          if (stateAction.type === StateActionType.Action) {
-            // TODO: 目前为常量，理论上可以为变量
-            stateAction!.action!.action(
-              stateAction.enabled,
-              stateAction.everyFrame
-            );
+        //状态响应顺序运行, TODO: 动画响应表格逻辑被修改，以下逻辑有冗余
+        if (this._isSequence) {
+          // TODO: 这里
+          console.log('顺序运行状态');
+          // this._sequenceActions = this._fsm.VeryObject.gameObject.AddComponent<
+          //   VE_SequenceActions
+          // >();
+          // this._sequenceActions!.sequenceAction(
+          //   this._stateActions,
+          //   this._associatedStates
+          // );
+        } else {
+          // 运行响应
+          for (let i: number = 0; i < this._stateActions.length; i++) {
+            let stateAction: VE_StateAction = this._stateActions[i];
+            // 一般响应
+            if (stateAction.type === StateActionType.Action) {
+              // TODO: 目前为常量，理论上可以为变量
+              stateAction!.action!.action(
+                stateAction.enabled,
+                stateAction.everyFrame
+              );
+            }
+            // 赋值响应
+            else {
+              stateAction!.assignment!.assign();
+            }
           }
-          // 赋值响应
-          else {
-            stateAction!.assignment!.assign();
-          }
-        }
-        // 关联状态
-        if (this._assocaitedStates.length > 0) {
-          // 对方可能是模板对象
-          // 测试对象
-          for (let i: number = 0; i < this._assocaitedStates.length; i++) {
-            this._assocaitedStates[i].connect();
+          // 关联状态
+          if (this._assocaitedStates.length > 0) {
+            // 对方可能是模板对象
+            // 测试对象
+            for (let i: number = 0; i < this._assocaitedStates.length; i++) {
+              this._assocaitedStates[i].connect();
+            }
           }
         }
       }
     }
   }
+  */
 
   private getTemplateVar(): void {
     if (this._template!.templateInstance === null) {

@@ -74,6 +74,10 @@ export class Token implements IPosition {
     return this._source;
   }
 
+  public getValue(): string {
+    return this._source;
+  }
+
   public getLine(): number {
     return this._line;
   }

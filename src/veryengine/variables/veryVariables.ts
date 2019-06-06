@@ -17,6 +17,8 @@ export class VeryBool implements IVeryVar {
     return 'bool|开关';
   }
 
+  public name: string = '';
+
   private _isExpression: boolean = false;
   private _expression: Nullable<VeryExpression> = null;
 
@@ -95,6 +97,8 @@ export class VeryNumber implements IVeryVar {
     return 'number|数字';
   }
 
+  public name: string = '';
+
   private _isExpression: boolean = false;
   private _expression: Nullable<VeryExpression> = null;
 
@@ -165,6 +169,8 @@ export class VeryString implements IVeryVar {
     return 'string|字符串';
   }
 
+  public name: string = '';
+
   private _isExpression: boolean = false;
   private _expression: Nullable<VeryExpression> = null;
 
@@ -233,6 +239,8 @@ export class VeryVector3 implements IVeryVar {
   public get ID(): string {
     return 'Vector3|向量';
   }
+
+  public name: string = '';
 
   private _isExpression: boolean = false;
   private _expression: Nullable<VeryExpression> = null;
@@ -328,6 +336,8 @@ export class VeryGameObject implements IVeryVar {
   public get ID(): string {
     return 'GameObject|对象';
   }
+
+  public name: string = '';
 
   public get value(): Nullable<GameObject> {
     return this._value;

@@ -11,7 +11,7 @@ export class VE_AssociatedState {
 
   private _posArray: string[] = [];
 
-  private _numberIndex: { [key: number]: number } = {};
+  private _stateValues: { [key: number]: string } = {};
   private _states: { [key: number]: VE_State } = {};
   private _templates: { [key: number]: VE_Template } = {};
   private _templateFsmIDs: { [key: number]: string } = {};
@@ -25,20 +25,20 @@ export class VE_AssociatedState {
     this._fromState = from_state;
   }
 
-  public add(state: VE_State, index: number, pos: string): void {
+  public add(state: VE_State, state_value: string, pos: string): void {
     this._types.push(AssociatedFsmType.Object);
     let key: number = this._types.length;
     this._indexs.push(key);
-    this._numberIndex[key] = index;
+    this._stateValues[key] = state_value;
     this._states[key] = state;
     this._posArray.push(pos);
   }
 
-  public addTemplate(template: VE_Template, fsm_id: string, index: number, pos: string): void {
+  public addTemplate(template: VE_Template, fsm_id: string, state_value: string, pos: string): void {
     this._types.push(AssociatedFsmType.Template);
     let key: number = this._types.length;
     this._indexs.push(key);
-    this._numberIndex[key] = index;
+    this._stateValues[key] = state_value;
     this._templates[key] = template;
     this._templateFsmIDs[key] = fsm_id;
     this._posArray.push(pos);
@@ -62,19 +62,19 @@ export class VE_AssociatedState {
       else {
         let template: VE_Template = this._templates[Key];
         let fsmID: string = this._templateFsmIDs[Key];
-        let numberIndex: number = this._numberIndex[Key];
+        let stateValue: string = this._stateValues[Key];
 
         if (template.templateInstance !== null) {
           if (template.templateInstance.isCreatedFsm(fsmID)) {
             let fsm: VE_Fsm = template.templateInstance.getFsm(fsmID);
-            let toState: Nullable<VE_State> = fsm.getState(numberIndex);
+            let toState: Nullable<VE_State> = fsm.getState(stateValue);
             if (toState !== null) {
               toState.action(StateConst.ASSOCIATED_STATE_PREFIX + this._fromState.Fsm.ID);
               //一个成功即返回
               return;
             }
             else {
-              console.error('错误信息 >>> 位置：' + this._posArray[i] + '，信息：' + "项目名：" + this._fromState.Fsm.projectName + "，对象名：" + this._fromState.Fsm.objectID + "，关联起始状态：" + this._fromState.Fsm.fsmID + "，关联模板变量：" + template.templateVarID + "，目标状态名：" + fsmID + "，序号：" + numberIndex + "，关联状态错误：在目标模板变量的目标状态中，关联状态序号超出范围，请检查！");
+              console.error('错误信息 >>> 位置：' + this._posArray[i] + '，信息：' + "项目名：" + this._fromState.Fsm.projectName + "，对象名：" + this._fromState.Fsm.objectID + "，关联起始状态：" + this._fromState.Fsm.fsmID + "，关联模板变量：" + template.templateVarID + "，目标状态名：" + fsmID + "，状态值：" + stateValue + "，关联状态错误：在目标模板变量的目标状态中，无法查找到该状态，请检查！");
               return;
             }
           }

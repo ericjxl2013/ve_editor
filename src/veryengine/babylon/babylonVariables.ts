@@ -124,6 +124,23 @@ export class Transform {
 
   private _tempVec: BABYLON.Vector3 = BABYLON.Vector3.Zero();
 
+  public get parent(): Nullable<Transform> {
+    return this._parent;
+  }
+  private _parent: Nullable<Transform> = null;
+
+  public set parent(val: Nullable<Transform>) {
+    if (!this.isEmpty) {
+      if (val && !val.isEmpty) {
+        this._transformNode!.setParent(val.transformNode);
+        this._parent = val;
+      } else {
+        this._transformNode!.setParent(null);
+        this._parent = null;
+      }
+    }
+  }
+
   /**
    * 获取相对坐标
    */
@@ -302,6 +319,20 @@ export class Transform {
         this._name = '';
       }
     }
+
+    // 设置父物体
+    if (this._transformNode) {
+      let tempParent: Nullable<BABYLON.Node> = this._transformNode.parent;
+      if (tempParent) {
+        if (tempParent instanceof BABYLON.Mesh) {
+          this._parent = new Transform(tempParent.name, <BABYLON.Mesh>tempParent);
+        } else {
+          this._parent = new Transform(tempParent.name, null, <BABYLON.TransformNode>tempParent);
+        }
+      }
+    } else {
+      this._parent = null;
+    }
   }
 
   /**
@@ -323,9 +354,9 @@ export class Transform {
   public translateRelativeTo(translation: BABYLON.Vector3, trans: Transform): void {
     if (this.transformNode) {
       let direction: BABYLON.Vector3 = translation.clone();
-      if(trans && trans.transformNode) {
+      if (trans && trans.transformNode) {
         direction = this.transformDirection(direction);
-      } 
+      }
       this.transformNode.translate(direction, 1, BABYLON.Space.WORLD);
     }
   }
@@ -337,6 +368,7 @@ export class Transform {
   /**
    * 局部坐标位置转世界坐标位置；
    * @param local_position 局部坐标位置；
+   * 返回新Vector3向量；
    */
   public transformPosition(local_position: BABYLON.Vector3): BABYLON.Vector3 {
     if (this.transformNode) {
@@ -350,6 +382,7 @@ export class Transform {
   /**
    * 局部方向向量转世界方向向量，转换后保持向量长度相等；
    * @param local_direction 局部方向向量；
+   * 返回新Vector3向量；
    */
   public transformDirection(local_direction: BABYLON.Vector3): BABYLON.Vector3 {
     if (this.transformNode) {
@@ -363,6 +396,7 @@ export class Transform {
   /**
    * 世界坐标位置转局部坐标位置；
    * @param global_position 世界坐标位置；
+   * 返回新Vector3向量；
    */
   public inverseTransformPosition(global_position: BABYLON.Vector3): BABYLON.Vector3 {
     if (this.transformNode) {
@@ -376,6 +410,7 @@ export class Transform {
   /**
    * 世界方向向量转局部方向向量，转换后保持向量长度相等；
    * @param global_direction 世界方向向量；
+   * 返回新Vector3向量；
    */
   public inverseTransformDirection(global_direction: BABYLON.Vector3): BABYLON.Vector3 {
     if (this.transformNode) {

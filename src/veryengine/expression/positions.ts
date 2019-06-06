@@ -1,4 +1,5 @@
 export interface IPosition {
+  getValue(): string;
   getLine(): number;
   getPos(): number;
 }
@@ -52,7 +53,7 @@ export class ParseError{
   public static Warning(pos: IPosition, msg: string): ParseError {
     let message: string = msg;
     if(pos.getLine() > 0) {
-      message = `警告>>>行号：${pos.getLine()}，字符序号：${pos.getPos()}，警告信息：${msg}`;
+      message = `公式解析警告 >>> 错误字符序号：${pos.getPos()}，警告信息：${msg}`;
     }
     return new ParseError(pos, message, SeverityExp.Warning);
   }
@@ -60,7 +61,7 @@ export class ParseError{
   public static Error(pos: IPosition, msg: string): ParseError {
     let message: string = msg;
     if(pos.getLine() > 0) {
-      message = `错误>>>行号：${pos.getLine()}，字符序号：${pos.getPos()}，警告信息：${msg}`;
+      message = `公式解析错误 >>> 错误字符序号：${pos.getPos()}，警告信息：${msg}`;
     }
     return new ParseError(pos, message, SeverityExp.Error);
   }

@@ -1,7 +1,7 @@
 import { VE_State } from "./state";
 import { BabylonEngine } from "../babylon";
 import { StateConst } from "./stateConst";
-import { IVeryVar } from "../variables";
+import { IVeryVar, VeryString } from "../variables";
 import { VeryEngineObject } from "../object";
 
 export class VE_Fsm {
@@ -25,10 +25,10 @@ export class VE_Fsm {
   }
   private _fsmID: string = "";
 
-  public get fsmVar(): IVeryVar {
+  public get fsmVar(): VeryString {
     return this._fsmVar;
   }
-  private _fsmVar: IVeryVar;
+  private _fsmVar: VeryString;
 
   public get VeryObject(): VeryEngineObject {
     return this._veryObject;
@@ -49,7 +49,7 @@ export class VE_Fsm {
     project_name: string,
     object_id: string,
     fsm_id: string,
-    fsm_variable: IVeryVar,
+    fsm_variable: VeryString,
     very_object: VeryEngineObject
   ) {
     this._projectName = project_name;
@@ -67,24 +67,30 @@ export class VE_Fsm {
     }
   }
 
-  public addState(state: VE_State, state_index: number): void {
+  public addState(state: VE_State): void {
     this._states.push(state);
-    if (state_index !== StateConst.STATE_INDEX && !this._stateDics[state_index]) {
-      this._stateDics[state_index] = state;
-    }
   }
 
-  public getState(state_index: number): Nullable<VE_State> {
-    if (state_index === StateConst.STATE_INDEX) {
-      return this._states[0];
-    } else {
-      if (this._stateDics[state_index]) {
-        return this._stateDics[state_index];
-      } else {
-        return null;
+  public getState(state_value: string): Nullable<VE_State> {
+    for(let i: number = 0; i < this._states.length; i++) {
+      if(this._states[i].Value === state_value) {
+        return this._states[i];
       }
     }
+    return null;
   }
+
+  // public getState(state_index: number): Nullable<VE_State> {
+  //   if (state_index === StateConst.STATE_INDEX) {
+  //     return this._states[0];
+  //   } else {
+  //     if (this._stateDics[state_index]) {
+  //       return this._stateDics[state_index];
+  //     } else {
+  //       return null;
+  //     }
+  //   }
+  // }
 
   public getStateInSequence(index: number): Nullable<VE_State> {
     if (index >= 0 && index < this._states.length) {
@@ -122,5 +128,14 @@ export class VE_Fsm {
 
   public setValue(value: any): void {
     this._fsmVar.setValue(value);
+  }
+
+  public hasStateValue(val: string): boolean {
+    for (let i = 0; i < this._states.length; i++) {
+      if (this._states[i].Value === val) {
+        return true;
+      }
+    }
+    return false;
   }
 }

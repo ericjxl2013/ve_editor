@@ -20,11 +20,6 @@ export class VE_StateData {
   }
   private _isInitialValue: boolean;
 
-  public get stateIndex(): number {
-    return this._stateIndex;
-  }
-  private _stateIndex: number = StateConst.STATE_INDEX;
-
   public logicalExp: string = '';
 
   public rowIndex: number = -1;
@@ -53,11 +48,10 @@ export class VE_StateData {
     return this._associatedStates.length;
   }
 
-  constructor(fsm_data: VE_FsmData, val_str: string, is_initial_value: boolean, state_index: number = StateConst.STATE_INDEX) {
+  constructor(fsm_data: VE_FsmData, val_str: string, is_initial_value: boolean) {
     this._fsmData = fsm_data;
     this._valStr = val_str;
     this._isInitialValue = is_initial_value;
-    this._stateIndex = state_index;
   }
 
   public hasTrigger(index: number): boolean {
