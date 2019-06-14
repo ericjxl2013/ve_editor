@@ -24215,7 +24215,7 @@ declare module BABYLON {
        * @param doNotCloneChildren defines a boolean indicating that children must not be cloned (false by default)
        * @returns the new mesh
        */
-      clone(name: string, newParent: Node, doNotCloneChildren?: boolean): Nullable<AbstractMesh>;
+      clone(name: string, newParent?: Node, doNotCloneChildren?: boolean): Nullable<AbstractMesh>;
       /**
        * Disposes all the submeshes of the current meshnp
        * @returns the current mesh
@@ -25722,7 +25722,7 @@ declare module BABYLON {
        *
        * Returns the clone.
        */
-      clone(name: string, newParent: Node, doNotCloneChildren?: boolean): InstancedMesh;
+      clone(name: string, newParent?: Node, doNotCloneChildren?: boolean): InstancedMesh;
       /**
        * Disposes the InstancedMesh.
        * Returns nothing.
@@ -29019,7 +29019,7 @@ declare module BABYLON {
        * @param doNotCloneChildren Do not clone children hierarchy
        * @returns the new transform node
        */
-      clone(name: string, newParent: Node, doNotCloneChildren?: boolean): Nullable<TransformNode>;
+      clone(name: string, newParent?: Node, doNotCloneChildren?: boolean): Nullable<TransformNode>;
       /**
        * Serializes the objects information.
        * @param currentSerializationObject defines the object to serialize in

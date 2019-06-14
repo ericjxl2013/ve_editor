@@ -70,6 +70,7 @@ export class Action_Vector3_Interpolate extends VE_ActionBehaviour {
         else {
           this._acceptVec.value = Vector3Utility.Slerp(vec1, vec2, 1);
         }
+        this._acceptVec.value.set(vec2.x, vec2.y, vec2.z);
         this.timesUp();
       }
       else {

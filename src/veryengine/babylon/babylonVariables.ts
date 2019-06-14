@@ -27,8 +27,11 @@ export class GameObject {
     return this._transform.isEmpty;
   }
 
+  public get mesh(): Nullable<BABYLON.AbstractMesh> {
+    return this._transform.mesh;
+  }
 
-  constructor(name?: string, mesh: Nullable<BABYLON.Mesh> = null, node: Nullable<BABYLON.TransformNode> = null) {
+  constructor(name?: string, mesh: Nullable<BABYLON.AbstractMesh> = null, node: Nullable<BABYLON.TransformNode> = null) {
     if (mesh) {
       this._transform = new Transform('', mesh);
     } else {
@@ -51,13 +54,37 @@ export class GameObject {
     if (!node) {
       return null;
     } else {
-      if (node instanceof BABYLON.Mesh) {
-        return new GameObject('', <BABYLON.Mesh>node);
+      if (node instanceof BABYLON.AbstractMesh) {
+        return new GameObject('', <BABYLON.AbstractMesh>node);
       } else if (node instanceof BABYLON.TransformNode) {
         return new GameObject('', null, <BABYLON.TransformNode>node);
       } else {
         console.error('GameObject.Find函数查找到不支持的类型：' + node.getClassName());
         return null;
+      }
+    }
+  }
+
+
+  public static CreateInstance(game_object: GameObject): Nullable<GameObject> {
+    if (!game_object) {
+      return null;
+    }
+
+    if (game_object.isEmpty) {
+      return new GameObject();
+    } else {
+      if (game_object.transform.mesh) {
+        let tempMesh: BABYLON.AbstractMesh;
+        if (game_object.transform.mesh instanceof BABYLON.Mesh) {
+          tempMesh = (<BABYLON.Mesh>game_object.transform.mesh).createInstance(game_object.name + '_instance');
+        } else {
+          tempMesh = (<BABYLON.InstancedMesh>game_object.transform.mesh).sourceMesh.createInstance(game_object.name + '_instance');
+        }
+        return new GameObject('', tempMesh);
+      } else {
+        let newNode: Nullable<BABYLON.TransformNode> = game_object.transform.transformNode!.clone(game_object.name + '_intance');
+        return new GameObject('', null, newNode);
       }
     }
   }
@@ -78,7 +105,7 @@ export class Transform {
   // private _gameObject: GameObject;
 
   private _transformNode: BABYLON.Nullable<BABYLON.TransformNode> = null;
-  private _mesh: BABYLON.Nullable<BABYLON.Mesh> = null;
+  private _mesh: BABYLON.Nullable<BABYLON.AbstractMesh> = null;
 
   public get transformNode(): Nullable<BABYLON.TransformNode> {
     if (this._mesh) {
@@ -88,6 +115,10 @@ export class Transform {
     } else {
       return null;
     }
+  }
+
+  public get mesh(): Nullable<BABYLON.AbstractMesh> {
+    return this._mesh;
   }
 
   public get isMesh(): boolean {
@@ -299,7 +330,7 @@ export class Transform {
 
 
 
-  constructor(name?: string, mesh: Nullable<BABYLON.Mesh> = null, node: Nullable<BABYLON.TransformNode> = null) {
+  constructor(name?: string, mesh: Nullable<BABYLON.AbstractMesh> = null, node: Nullable<BABYLON.TransformNode> = null) {
     if (mesh) {
       this._mesh = mesh;
       this._transformNode = mesh;
@@ -324,8 +355,8 @@ export class Transform {
     if (this._transformNode) {
       let tempParent: Nullable<BABYLON.Node> = this._transformNode.parent;
       if (tempParent) {
-        if (tempParent instanceof BABYLON.Mesh) {
-          this._parent = new Transform(tempParent.name, <BABYLON.Mesh>tempParent);
+        if (tempParent instanceof BABYLON.AbstractMesh) {
+          this._parent = new Transform(tempParent.name, <BABYLON.AbstractMesh>tempParent);
         } else {
           this._parent = new Transform(tempParent.name, null, <BABYLON.TransformNode>tempParent);
         }

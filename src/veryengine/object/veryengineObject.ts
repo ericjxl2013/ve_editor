@@ -150,7 +150,10 @@ export class VeryEngineObject {
 
   // }
 
-  unload(): void { }
+  // TODO：实现
+  public unload(): void { 
+
+  }
 
   // setUnloadCallback(callback): void {}
 

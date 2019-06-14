@@ -25,6 +25,8 @@ export class VE_Template {
 
   public templateInstance: Nullable<VeryEngineObject> = null;
 
+  public backupInstances: VeryEngineObject[] = [];
+
   public dataSource: VE_DataSource;
 
   public varData: VE_VariableData;
@@ -42,7 +44,7 @@ export class VE_Template {
     this.varData = new VE_VariableData(project_name);
   }
 
-  public setInstance(instance_obj: VeryEngineObject): void {
+  public setInstance(instance_obj: Nullable<VeryEngineObject>): void {
     this.templateInstance = instance_obj;
   }
 
@@ -52,6 +54,10 @@ export class VE_Template {
 
   public addVariable(var_id: string, var_paras: string[], pos: string): void {
     this.varData.addVariable(var_id, var_paras, pos);
+  }
+
+  public increase(): void {
+    this._instanceCount++;
   }
 
   public unload(): void {
