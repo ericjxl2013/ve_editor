@@ -65,6 +65,13 @@ export class GameObject {
     }
   }
 
+  // TODO
+  public static Destroy(obj: GameObject): void {
+    if(obj) {
+      obj.transform.destroy();
+    }
+  }
+
 
   public static CreateInstance(game_object: GameObject): Nullable<GameObject> {
     if (!game_object) {
@@ -452,6 +459,12 @@ export class Transform {
     } else {
       return global_direction;
     }
+  }
+
+
+  public destroy(): void {
+    if(this.mesh) this.mesh.dispose();
+    if(this.transformNode) this.transformNode.dispose();
   }
 
 }

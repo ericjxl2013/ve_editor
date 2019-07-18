@@ -27,3 +27,32 @@ export class Vector3Utility {
   }
 
 }
+
+export class FloatUitlity {
+
+
+  public static Lerp(start: number, end: number, t: number): number {
+    if (t < 0) {
+      t = 0;
+    } else if (t > 1) {
+      t = 1;
+    }
+    return start + (end - start) * t;
+  }
+
+  public static SLerp(start: number, end: number, t: number): number {
+    if (t < 0) {
+      t = 0;
+    } else if (t > 1) {
+      t = 1;
+    }
+    // sin函数来实现曲线效果
+    let para: number = (Math.sin(Math.PI * (t - 0.5)) + 1) * 0.5;
+    return start + (end - start) * para;
+  }
+
+
+
+
+
+}

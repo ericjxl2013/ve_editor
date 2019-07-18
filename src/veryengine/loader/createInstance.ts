@@ -68,7 +68,7 @@ export class CreateInstance {
         // 公式之间以从前到后的解析顺序变异，若前面的公式引用了后面的公式，会直接报错
         let errorInfo: ErrorInfo = new ErrorInfo();
         let globalExp: IExpression = VE_Expressions.createGlobalExpression(varID, varPara[1], project_name, errorInfo);
-        if (!errorInfo.isRight || !globalExp) {
+        if (!errorInfo.isRight || globalExp === null) {
           VE_ErrorManager.Add(VE_Error.error(globalVars.varData.getPos(varID), "项目：" + project_name + "，全局变量：" + varID + "," + varPara[0] + "," + varPara[1] + "，全局变量创建失败，公式创建错误：\n" + errorInfo.message, ""));
           return false;
         }
@@ -155,7 +155,7 @@ export class CreateInstance {
           // 公式之间以从前到后的解析顺序变异，若前面的公式引用了后面的公式，会直接报错
           let errorInfo: ErrorInfo = new ErrorInfo();
           let newVar: IExpression = VE_Expressions.createLocalExpression(varID, varPara[1], project_name, objectID, errorInfo);
-          if (!errorInfo.isRight || !newVar) {
+          if (!errorInfo.isRight || newVar === null) {
             VE_ErrorManager.Add(VE_Error.error(veryObject.varData.getPos(varID), "项目：" + project_name + "，对象：" + objectID + "，局部变量：" + varID + "," + varPara[0] + "," + varPara[1] + "，局部变量创建失败，公式创建错误：\n" + errorInfo.message, ''));
             return false;
           }
@@ -169,7 +169,7 @@ export class CreateInstance {
 
     // TODO: UI
 
-    // 6. 触发——触发创建
+    // 5. 触发——触发创建
     for (let i: number = 0; i < objects.count; i++) {
       let objectID: string = objects.getObjectID(i);
       let veryObject: VeryEngineObject = objects.getVeryObject(objectID);
@@ -186,7 +186,7 @@ export class CreateInstance {
           let errorInfo: ErrorInfo = new ErrorInfo();
           let trigger: Nullable<VE_TriggerBehaviour> = VE_Triggers.createTrigger(veryObject, triggerID, triggerPara[0], triggerPara.slice(1), errorInfo);
 
-          if (!errorInfo.isRight || !trigger) {
+          if (!errorInfo.isRight || trigger === null) {
             VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getTriggerPos(triggerID), "项目：" + project_name + "，对象：" + objectID + "，触发：" + triggerID + "，触发创建错误，原因：" + errorInfo.message + "，请检查！", ""));
             return false;
           }
@@ -196,7 +196,7 @@ export class CreateInstance {
       }
     }
 
-    // 5. 响应——响应创建
+    // 6. 响应——响应创建
     for (let i: number = 0; i < objects.count; i++) {
       let objectID: string = objects.getObjectID(i);
       let veryObject: VeryEngineObject = objects.getVeryObject(objectID);
@@ -213,7 +213,7 @@ export class CreateInstance {
           let errorInfo: ErrorInfo = new ErrorInfo();
           let action: Nullable<VE_ActionBehaviour> = VE_Actions.createAction(veryObject, actionID, actionPara[0], actionPara.slice(1), veryObject.dataSource.getActionInitVal(actionID), errorInfo);
 
-          if (!errorInfo.isRight || !action) {
+          if (!errorInfo.isRight || action === null) {
             VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getActionPos(actionID), "项目：" + project_name + "，对象：" + objectID + "，响应：" + actionID + "，响应创建错误，原因：" + errorInfo.message + "，请检查！", ""));
             return false;
           }
@@ -264,7 +264,7 @@ export class CreateInstance {
           if (stateData.logicalExp !== '') {
             let errorInfo: ErrorInfo = new ErrorInfo();
             let logicalExp: IExpression = VE_Expressions.createFsmExpression('', stateData.logicalExp, project_name, objectID, fsmID, errorInfo);
-            if (!errorInfo.isRight || !logicalExp) {
+            if (!errorInfo.isRight || logicalExp === null) {
               VE_ErrorManager.Add(VE_Error.error("（" + stateData.rowIndex.toString() + "，E）", "项目：" + project_name + "，对象：" + objectID + "，状态：" + fsmID + "，状态逻辑表达式：" + stateData.logicalExp + "，逻辑表达式创建失败，公式创建错误：\n" + errorInfo.message, ""));
               return false;
             }
@@ -296,7 +296,7 @@ export class CreateInstance {
             }
             // console.log(state);
             // console.log(trigger);
-            trigger.addTriggerTarget(logicalExp!, state);
+            trigger.addTriggerTarget(logicalExp, state);
             // 触发启动条件
             if (triggerData.logicalSwitch !== '') {
               // 触发启动条件
@@ -970,7 +970,7 @@ export class CreateInstance {
       let errorInfo: ErrorInfo = new ErrorInfo();
       StateConst.AssignmentFormulaCount++;
       let localExp: IExpression = VE_Expressions.createLocalExpression(StateConst.AssignmentPrefix + StateConst.AssignmentFormulaCount.toString(), varID, project_name, object_id, errorInfo);
-      if (!errorInfo.isRight || !localExp) {
+      if (!errorInfo.isRight || localExp === null) {
         // errorInfo = "模板对象实例化失败：局部变量创建失败，公式创建错误：\n" + errorInfo + "，请检查！" + errorPos;
         // return null;
         VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号右侧格式“公式”，公式解析错误，请检查！错误信息：" + errorInfo.message, ""));
@@ -1219,7 +1219,7 @@ export class CreateInstance {
           if (assignment.leftVariable !== null) {
             let errorInfo: ErrorInfo = new ErrorInfo();
             let newValue: any = assignment.leftVariable.initValue(varID, errorInfo);
-            if (!errorInfo.isRight || !newValue) {
+            if (!errorInfo.isRight || newValue === null) {
               VE_ErrorManager.Add(VE_Error.error("", "项目：" + project_name + "，对象：" + object_id + "，状态：" + fsm_id + "，赋值响应：" + action_data.totalString + "，当前赋值响应等号左侧变量类型与右侧常量值不匹配，错误信息：" + errorInfo.message + "，请检查！", ""));
               return false;
             }

@@ -2,7 +2,7 @@
 
 import { VeryEngine, VE_Objects, VE_Manager } from "./veryengine/veryEngine";
 
-import { BabylonEngine } from "./veryengine/babylon";
+import { BabylonEngine, Time } from "./veryengine/babylon";
 
 export default class Game {
 	private _canvas: HTMLCanvasElement;
@@ -42,6 +42,7 @@ export default class Game {
 
 		this._scene = new BABYLON.Scene(this._engine);
 		BabylonEngine.Scene = this._scene;
+		Time.start();
 
 		// TODO: 设定相机
 		var camera = new BABYLON.ArcRotateCamera("MainCamera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0), this._scene);
@@ -53,14 +54,15 @@ export default class Game {
 
 		let inputMap: { [key: string]: boolean } = {};
 
-		// 加载过度动画开
-		engine.displayLoadingUI();
+		// TODO: 加载过度动画开
+		engine.hideLoadingUI();
+		// engine.displayLoadingUI();
 
 		// TODO: 加载scene.babylon场景文件，当前为默认
 		BABYLON.SceneLoader.Append("./scene/", "scene.babylon", this._scene, function (scene) {
 			// do something with the scene
 			// 加载过度动画关
-			engine.hideLoadingUI();
+			// engine.hideLoadingUI();
 
 			// Keyboard events
 			// var blue = scene.getMeshByName('blue')!;
@@ -126,6 +128,7 @@ export default class Game {
 				}
 
 			})
+
 
 		});
 

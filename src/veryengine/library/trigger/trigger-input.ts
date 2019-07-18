@@ -50,7 +50,7 @@ export class Trigger_MouseDown extends VE_TriggerBehaviour {
             this._downFlag = false;
           }
         }
-      })
+      });
 
       return true;
     }
@@ -61,6 +61,7 @@ export class Trigger_MouseDown extends VE_TriggerBehaviour {
     if (this._observer) {
       this._scene.onPointerObservable.remove(this._observer);
     }
+    this._observer = null;
   }
 
 }
@@ -111,7 +112,7 @@ export class Trigger_MouseUp extends VE_TriggerBehaviour {
             this.sendEvent();
           }
         }
-      })
+      });
 
       return true;
     }
@@ -122,6 +123,7 @@ export class Trigger_MouseUp extends VE_TriggerBehaviour {
     if (this._observer) {
       this._scene.onPointerObservable.remove(this._observer);
     }
+    this._observer = null;
   }
 
 }
@@ -166,7 +168,7 @@ export class Trigger_MouseButton extends VE_TriggerBehaviour {
         } else if (pointInfo.type === BABYLON.PointerEventTypes.POINTERUP) {
           this._mouseUpdate[pointInfo.event.button] = false;
         }
-      })
+      });
 
       return true;
     }
@@ -183,6 +185,7 @@ export class Trigger_MouseButton extends VE_TriggerBehaviour {
     if (this._observer) {
       this._scene.onPointerObservable.remove(this._observer);
     }
+    this._observer = null;
   }
 
 }
@@ -237,6 +240,7 @@ export class Trigger_Keyboard extends VE_TriggerBehaviour {
     if (this._observer) {
       this._scene.onKeyboardObservable.remove(this._observer);
     }
+    this._observer = null;
   }
 
 
@@ -291,6 +295,7 @@ export class Trigger_KeyDown extends VE_TriggerBehaviour {
     if (this._observer) {
       this._scene.onKeyboardObservable.remove(this._observer);
     }
+    this._observer = null;
   }
 
 
@@ -345,6 +350,7 @@ export class Trigger_KeyUp extends VE_TriggerBehaviour {
     if (this._observer) {
       this._scene.onKeyboardObservable.remove(this._observer);
     }
+    this._observer = null;
   }
 
 
@@ -432,6 +438,7 @@ export class Trigger_KeyboardCombine extends VE_TriggerBehaviour {
     if (this._observer) {
       this._scene.onKeyboardObservable.remove(this._observer);
     }
+    this._observer = null;
   }
 
 

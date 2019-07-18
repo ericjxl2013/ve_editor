@@ -25,17 +25,22 @@ export class VE_Template {
 
   public templateInstance: Nullable<VeryEngineObject> = null;
 
-  public backupInstances: VeryEngineObject[] = [];
-
   public dataSource: VE_DataSource;
 
   public varData: VE_VariableData;
 
-  public instanceCount(): number {
-    return this._instanceCount;
+  public get counter(): number {
+    return this._counter;
   }
-  private _instanceCount: number = 0;
+  private _counter: number = 0;
 
+  public backupInstances: VeryEngineObject[] = [];
+
+  public activeCount(): number {
+    return this.backupInstances.length;
+  }
+
+  public instanceArray: VE_Template[] = [];
 
   constructor(project_name: string, template_id: string) {
     this._projectName = project_name;
@@ -44,8 +49,9 @@ export class VE_Template {
     this.varData = new VE_VariableData(project_name);
   }
 
-  public setInstance(instance_obj: Nullable<VeryEngineObject>): void {
+  public addInstance(instance_obj: VeryEngineObject): void {
     this.templateInstance = instance_obj;
+    this.backupInstances.push(instance_obj);
   }
 
   public isCreatedVariable(var_id: string): boolean {
@@ -57,11 +63,23 @@ export class VE_Template {
   }
 
   public increase(): void {
-    this._instanceCount++;
+    this._counter++;
   }
 
-  public unload(): void {
-    //TODO: 直接删除？
+  public unload(all_instance: boolean = false): void {
+    if (all_instance) {
+      this.backupInstances = [];
+    } else {
+      this.backupInstances.pop();
+    }
+    this.templateInstance = null;
+  }
+
+  public unloadInstance(instance: VeryEngineObject): void {
+    let index: number = this.backupInstances.indexOf(instance);
+    if (index > -1) {
+      this.backupInstances.splice(index, 1);
+    }
   }
 
   public clone(object_id: string, template_var_id: string): VE_Template {
@@ -70,7 +88,7 @@ export class VE_Template {
     cloneTemplate._templateVarID = template_var_id;
     cloneTemplate.dataSource = this.dataSource;
     cloneTemplate.varData = this.varData;
-    cloneTemplate._instanceCount = this._instanceCount;
+    cloneTemplate._counter = this._counter;
     return cloneTemplate;
   }
 

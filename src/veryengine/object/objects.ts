@@ -47,7 +47,6 @@ export class VE_Objects {
   }
 
   public unloadObject(object_id: string): void {
-    // this._objectIDs.re
     ArrayUtility.remove(this._objectIDs, object_id);
     delete this._objectDics.object_id;
 

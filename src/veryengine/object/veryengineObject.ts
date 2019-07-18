@@ -19,7 +19,9 @@ export class VeryEngineObject {
   }
   private _objectID: string = '';
 
-  public gameObject: GameObject = new GameObject('');
+  public gameObject: GameObject;
+
+  public template: Nullable<VE_Template> = null;
 
   private _variables: { [key: string]: IVeryVar } = {};
   private _expressions: { [key: string]: IExpression } = {};
@@ -32,7 +34,7 @@ export class VeryEngineObject {
 
   public varData: VE_VariableData;
 
-
+  private _unloadCallback: ((object_id: string) => void) | null = null;
 
   constructor(project_name: string, object_id: string, game_object: GameObject) {
     this._projectName = projectName;
@@ -146,31 +148,37 @@ export class VeryEngineObject {
     }
   }
 
+  public update(): void {
+    // trigger update
+    Object.keys(this._triggers).forEach(key => {
+      this._triggers[key].update();
+    })
+    // action update
+    Object.keys(this._actions).forEach(key => {
+      this._actions[key].update();
+    })
+    // TODO: template
+
+  }
+
   // getState(fsm_id: string, index: number): VE_State {
 
   // }
 
-  // TODO：实现
-  public unload(): void { 
 
+  public unload(): void {
+    if (this._unloadCallback != null) {
+      this._unloadCallback(this._objectID);
+      this.clear();
+      if (this.gameObject) {
+        GameObject.Destroy(this.gameObject);
+      }
+    }
   }
 
-  // setUnloadCallback(callback): void {}
-
-
-  public update(): void {
-    // trigger update
-    Object.keys(this._triggers).forEach( key => {
-      this._triggers[key].update();
-    })
-    // action update
-    Object.keys(this._actions).forEach( key => {
-      this._actions[key].update();
-    })
-    // TODO: template
-    
+  public setUnloadCallback(callback: (id: string) => void): void {
+    this._unloadCallback = callback;
   }
-
 
   public clear(): void {
 
@@ -191,6 +199,7 @@ export class VeryEngineObject {
     }
 
     this._fsms = {};
+    this.template = null;
 
     if (this._actions) {
       Object.keys(this._actions).forEach(key => {
