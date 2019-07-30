@@ -240,7 +240,7 @@ export class VE_Templates {
       } else {
         // 自定义触发特殊处理
         if (trigger.className === "Trigger_Custom") {
-          VE_CustomTriggerManager.AddTriggerEvent(this._projectName, newObjectID, triggerID, (<Trigger_Custom>trigger).customEvent);
+          VE_CustomTriggerManager.AddTriggerEvent(this._projectName, newObjectID, triggerID, ((<Trigger_Custom>trigger).customEvent).bind(trigger));
         }
         instance.addTrigger(triggerID, trigger);
       }

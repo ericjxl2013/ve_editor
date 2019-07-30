@@ -1,6 +1,6 @@
 
 
-import Game from "./game";
+import { Game } from "./game";
 
 let game!: Game;
 let initFlag: boolean = false;
@@ -31,7 +31,7 @@ function toggleDebug(): void {
 
 function init(): void {
   // 等待表格数据加载完成
-  if(dataLoaded) {
+  if (dataLoaded) {
     initGame();
   } else {
     setTimeout(init, 500);

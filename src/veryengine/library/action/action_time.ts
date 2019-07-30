@@ -89,7 +89,7 @@ export class Action_Timer extends VE_ActionBehaviour {
       // 参数2：触发ID
       let triggerArray: string[] = para_array[1].split(/,|，/);
       for (let i: number = 0; i < triggerArray.length; i++) {
-        VE_CustomTriggerManager.ConnectCustomTrigger(this.projectName, this.objectID, triggerArray[i].trim(), this.setCallback);
+        VE_CustomTriggerManager.ConnectCustomTrigger(this.projectName, this.objectID, triggerArray[i].trim(), this.setCallback.bind(this));
       }
 
       // 参数3：总时间

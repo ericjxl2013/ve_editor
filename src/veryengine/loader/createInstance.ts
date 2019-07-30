@@ -7,12 +7,13 @@ import { VE_ErrorManager, VE_Error } from "../global";
 import { VE_Expressions, IExpression } from "../expression";
 import { VE_FsmData, VE_StateData, VE_StateTriggerData, VE_StateActionData } from "../dataSource";
 import { VE_Fsm, VE_State, VE_StateAction, VE_AssociatedState, StateConst } from "../state";
-import { VE_Triggers, VE_TriggerBehaviour } from "../trigger";
+import { VE_Triggers, VE_TriggerBehaviour, VE_CustomTriggerManager } from "../trigger";
 import { VE_Actions, VE_ActionBehaviour, VE_Assignment } from "../action";
 import { StateActionType, AssignType } from "../enum";
 import { VE_TypeConvert } from "../utility/typeConvert";
 import { VE_AssignmentTypeJudge } from "../action/assignmentTypeJudge";
 import { VerySceneVariables } from "../scene";
+import { Trigger_Custom } from "../library/trigger";
 
 export class CreateInstance {
 
@@ -190,7 +191,10 @@ export class CreateInstance {
             VE_ErrorManager.Add(VE_Error.error(veryObject.dataSource.getTriggerPos(triggerID), "项目：" + project_name + "，对象：" + objectID + "，触发：" + triggerID + "，触发创建错误，原因：" + errorInfo.message + "，请检查！", ""));
             return false;
           }
-
+          // 自定义触发特殊处理
+          if (trigger.className === "Trigger_Custom") {
+            VE_CustomTriggerManager.AddTriggerEvent(project_name, objectID, triggerID, ((<Trigger_Custom>trigger).customEvent).bind(trigger));
+          }
           veryObject.addTrigger(triggerID, trigger!);
         }
       }

@@ -11,7 +11,6 @@ import { VE_Reset } from "./manager";
 export * from "./index";
 
 export class VeryEngine {
-
   
 
 
